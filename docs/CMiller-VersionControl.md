@@ -48,7 +48,11 @@ Version control, also known as revision control, records changes to a file or se
 
 **1. There are three types of version control.**
 
-[ Name & describe the three types of version control here.]
+[1. **Local Version Control:** Local version control stores different versions of files on a single computer. It allows a developer to track changes and return to an earlier version, but the history is only stored locally on that computer.
+
+2. **Centralized Version Control:** Centralized version control uses one central server that stores the main repository and version history. Developers connect to the server to access and update files. This makes collaboration easier, but if the central server becomes unavailable, access to the repository may be interrupted.
+
+3. **Distributed Version Control:** Distributed version control gives each developer a complete copy of the repository and its history on their own computer. Developers can make commits locally and later share their changes with a remote repository. Git is an example of a distributed version control system.]
 
 **2. Using Terminal, there are also essential Git commands to know.**
 
