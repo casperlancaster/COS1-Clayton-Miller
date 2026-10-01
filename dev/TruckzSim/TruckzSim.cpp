@@ -1,12 +1,14 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include <iomanip>
 
 #include "Truck.h"
 #include "Driver.h"
 #include "Load.h"
 #include "Company.h"
 #include "DispatchManager.h"
+
 
 void ShowMainMenu()
 {
@@ -115,7 +117,7 @@ void AddTruck(Company& company)
 
 }
 
-void DispalyTrucks(const Company& company)
+void DisplayTrucks(const Company& company)
 {
     const std::vector<Truck>& trucks = company.GetTrucks();
 
@@ -168,7 +170,7 @@ void RunFleetManagement(Company& company)
             break;
 
         case 2:
-            DispalyTrucks(company);
+            DisplayTrucks(company);
             break;
 
         case 0:
@@ -339,25 +341,35 @@ void AddLoad(Company& company)
         return;
     }
 
+    std::string payInput;
+    std::string cleanedPay;
+
     std::cout << "Enter load pay: $";
-    std::cin >> pay;
+    std::getline(std::cin, payInput);
 
-    if (std::cin.fail() || pay < 0.0)
+    for (char character : payInput)
     {
-        std::cin.clear();
-        std::cin.ignore(
-            std::numeric_limits<std::streamsize>::max(),
-            '\n'
-        );
+        if (character != ',' && character != '$')
+        {
+            cleanedPay += character;
+        }
+    }
 
+    try
+    {
+        pay = std::stod(cleanedPay);
+    }
+    catch (...)
+    {
         std::cout << "Invalid load pay.\n";
         return;
     }
 
-    std::cin.ignore(
-        std::numeric_limits<std::streamsize>::max(),
-        '\n'
-    );
+    if (pay < 0.0)
+    {
+        std::cout << "Invalid load pay.\n";
+        return;
+    }
 
     newLoad.SetLoadNumber(loadNumber);
     newLoad.SetOrigin(origin);
@@ -388,7 +400,13 @@ void DisplayLoads(const Company & company)
             std::cout << "\nLoad #" << loads[i].GetLoadNumber() << "\n";
             std::cout << "Origin: " << loads[i].GetOrigin() << "\n";
             std::cout << "Destination: " << loads[i].GetDestination() << "\n";
-            std::cout << "Pay: $" << loads[i].GetPay() << "\n";
+            std::cout << "Pay: $"
+                << std::fixed
+                << std::setprecision(2)
+                << loads[i].GetPay()
+                << std::defaultfloat
+                << std::setprecision(6)
+                << "\n";
             std::cout << "Status: " << loads[i].GetStatus() << "\n";
 
             if (loads[i].GetStatus() == "Assigned")
