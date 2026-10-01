@@ -1,9 +1,12 @@
 #include <iostream>
 #include <string>
 #include <limits>
+
 #include "Truck.h"
 #include "Driver.h"
 #include "Load.h"
+#include "Company.h"
+#include "DispatchManager.h"
 
 void ShowMainMenu()
 {
@@ -26,6 +29,11 @@ void ShowMainMenu()
 
 int main()
 {
+    Company company;
+    company.SetCompanyName("TruckzSim Logistics");
+
+    DispatchManager dispatchManager(&company);
+
     int choice = -1;
 
     while (choice != 0)
@@ -52,8 +60,19 @@ int main()
         switch (choice)
         {
         case 1:
-            std::cout << "Dispatch Center is under development.\n";
+            if (dispatchManager.HasCompany())
+            {
+                std::cout
+                    << "Dispatch Center connected to "
+                    << dispatchManager.GetCompany()->GetCompanyName()
+                    << ".\n";
+            }
+            else
+            {
+                std::cout << "Dispatch Center is not connected to a company.\n";
+            }
             break;
+            
 
         case 2:
             std::cout << "Fleet Management is under development.\n";
@@ -68,7 +87,12 @@ int main()
             break;
 
         case 5:
-            std::cout << "Company Overview is under development.\n";
+            std::cout << "========== COMPANY OVERVIEW ==========\n";
+            std::cout << "Company: " << company.GetCompanyName() << "\n";
+            std::cout << "Trucks: " << company.GetTrucks().size() << "\n";
+            std::cout << "Drivers: " << company.GetDrivers().size() << "\n";
+            std::cout << "Loads: " << company.GetLoads().size() << "\n";
+            std::cout << "========================================\n";
             break;
 
         case 6:
