@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="TruckzSim.vcxproj" />
+  <Project Path="TruckzSim.vcxproj" Id="a0b41020-ac22-4556-8ccd-76111036072d" />
 </Solution>
