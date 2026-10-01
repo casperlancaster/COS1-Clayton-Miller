@@ -70,22 +70,22 @@ List the correct Git commands to do the actions listed below in Terminal. Replac
 **3. Connecting to GitHub using Terminal.**
 HTTPS is the the correct way to connect to GitHub in this course. Describe how you connect to GitHub from Terminal using this protocol. What steps do you take?
 
-[ Describe the steps to connect Terminal to a GitHub repo here ]
+[ To connect to a GitHub repository using HTTPS, I first copy the repository's HTTPS URL from GitHub. In Terminal, I navigate to the folder where I want the repository to be stored. I can then use 'git clone' followed by the HTTPS URL to create a local copy of the repository. If I already have a local Git repository, I can connect it to GitHub with 'git remote add origin' followed by the HTTPS URL. I can use 'git remote -v' to verify that the remote repository is connected correctly. After the connection is established, I can use 'git pull' to retrieve changes from GitHub and 'git push' to upload my local commits. GitHub may require me to authenticate through my account or browser when using HTTPS. ]
 
 **4. Using .gitignore and Why it's Important**  
 Most repositories contain a .gitignore file.
 
 - What is the purpose of this file?
   <br>
-  [Fill in answer here]
+  [ A '.gitignore' file tells Git which files and folders should not be tracked or included in commits. This is useful for excluding temporary files, generated files, personal settings, and other files that do not belong in the repository. ]
 
 - What is the "**.DS_Store**" file and why would you want to ignore it?
   <br>
-  [Fill in answer here]
+  [ '.DS_Store' is a hidden file created by macOS Finder to store folder display settings and metadata. It is usually ignored because it is specific to one computer and is not needed for the project source code. ]
 
 - What other file or folder would you want to add to a .gitignore file and why?
   <br>
-  [Fill in answer here]
+  [ Another file or folder I would add to '.gitignore' is the '.vs/' folder created by Visual Studio. It contains local Visual Studio settings and temporary development files that are specific to my computer and do not need to be shared in the GitHub repository. ]
 
 <br>
 
