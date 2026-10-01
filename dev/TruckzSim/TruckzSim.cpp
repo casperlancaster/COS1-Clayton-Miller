@@ -49,6 +49,17 @@ void ShowDriverMenu()
     std::cout << "Select an option: ";
 }
 
+void ShowFreightMarketMenu()
+{
+    std::cout << "\n";
+    std::cout << "========== FREIGHT MARKET ==========\n";
+    std::cout << "1. Add Load\n";
+    std::cout << "2. View Loads\n";
+    std::cout << "0. Return to Main Menu\n";
+    std::cout << "====================================\n";
+    std::cout << "Select an option: ";
+}
+
 void AddTruck(Company& company)
 {
     Truck newTruck;
@@ -269,6 +280,162 @@ void RunDriverManagement(Company& company)
     }
 }
 
+void AddLoad(Company& company)
+{
+    Load newLoad;
+
+    int loadNumber = 0;
+    std::string origin;
+    std::string destination;
+    double pay = 0.0;
+
+    std::cout << "\n========== ADD LOAD ==========\n";
+
+    std::cout << "Enter load number: ";
+    std::cin >> loadNumber;
+
+    if (std::cin.fail() || loadNumber <= 0)
+    {
+        std::cin.clear();
+        std::cin.ignore(
+            std::numeric_limits<std::streamsize>::max(),
+            '\n'
+        );
+
+        std::cout << "Invalid load number.\n";
+        return;
+    }
+
+    std::cin.ignore(
+        std::numeric_limits<std::streamsize>::max(),
+        '\n'
+    );
+
+    std::cout << "Enter origin: ";
+    std::getline(std::cin, origin);
+
+    if (origin.empty())
+    {
+        std::cout << "Origin cannot be empty.\n";
+        return;
+    }
+
+    std::cout << "Enter destination: ";
+    std::getline(std::cin, destination);
+
+    if (destination.empty())
+    {
+        std::cout << "Destination cannot be empty.\n";
+        return;
+    }
+
+    std::cout << "Enter load pay: $";
+    std::cin >> pay;
+
+    if (std::cin.fail() || pay < 0.0)
+    {
+        std::cin.clear();
+        std::cin.ignore(
+            std::numeric_limits<std::streamsize>::max(),
+            '\n'
+        );
+
+        std::cout << "Invalid load pay.\n";
+        return;
+    }
+
+    std::cin.ignore(
+        std::numeric_limits<std::streamsize>::max(),
+        '\n'
+    );
+
+    newLoad.SetLoadNumber(loadNumber);
+    newLoad.SetOrigin(origin);
+    newLoad.SetDestination(destination);
+    newLoad.SetPay(pay);
+    newLoad.SetStatus("Available");
+
+    company.AddLoad(newLoad);
+
+    std::cout << "\nLoad #" << loadNumber
+        << " added successfully.\n";
+}
+
+void DisplayLoads(const Company & company)
+{
+    const std::vector<Load>& loads = company.GetLoads();
+
+    std::cout << "\n========== AVAILABLE LOADS ==========\n";
+
+    if (loads.empty())
+    {
+        std::cout << "No loads have been added yet.\n";
+    }
+    else
+    {
+        for (int i = 0; i < loads.size(); i++)
+        {
+            std::cout << "\nLoad #" << loads[i].GetLoadNumber() << "\n";
+            std::cout << "Origin: " << loads[i].GetOrigin() << "\n";
+            std::cout << "Destination: "
+                << loads[i].GetDestination() << "\n";
+            std::cout << "Pay: $" << loads[i].GetPay() << "\n";
+            std::cout << "Status: " << loads[i].GetStatus() << "\n";
+        }
+    }
+
+    std::cout << "=====================================\n";
+}
+
+void RunFreightMarket(Company & company)
+{
+    int choice = -1;
+
+    while (choice != 0)
+    {
+        ShowFreightMarketMenu();
+
+        std::cin >> choice;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore(
+                std::numeric_limits<std::streamsize>::max(),
+                '\n'
+            );
+
+            choice = -1;
+
+            std::cout << "\nInvalid input. Please enter a number.\n";
+            continue;
+        }
+
+        std::cin.ignore(
+            std::numeric_limits<std::streamsize>::max(),
+            '\n'
+        );
+
+        switch (choice)
+        {
+        case 1:
+            AddLoad(company);
+            break;
+
+        case 2:
+            DisplayLoads(company);
+            break;
+
+        case 0:
+            break;
+
+        default:
+            std::cout << "\nInvalid selection.\n";
+            break;
+        }
+    }
+}
+
 int main()
 {
     Company company;
@@ -325,7 +492,7 @@ int main()
             break;
 
         case 4:
-            std::cout << "Freight Market is under development.\n";
+            RunFreightMarket(company);
             break;
 
         case 5:
