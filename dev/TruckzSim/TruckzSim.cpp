@@ -27,6 +27,130 @@ void ShowMainMenu()
     std::cout << "Select an option: ";
 }
 
+void ShowFleetMenu()
+{
+    std::cout << "\n";
+    std::cout << "========== FLEET MANAGEMENT ==========\n";
+    std::cout << "1. Add Truck\n";
+    std::cout << "2. View Trucks\n";
+    std::cout << "0. Return to Main Menu\n";
+    std::cout << "======================================\n";
+    std::cout << "Select an option: ";
+}
+
+void AddTruck(Company& company)
+{
+    Truck newTruck;
+
+    int unitNumber = 0;
+    double mileage = 0.0;
+
+    std::cout << "\n========== ADD TRUCK ==========\n";
+
+    std::cout << "Enter unit number: ";
+    std::cin >> unitNumber;
+
+    if (std::cin.fail())
+    {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        std::cout << "Invalid unit number.\n";
+        return;
+
+    }
+
+    std::cout << "Enter current mileage: ";
+    std::cin >> mileage;
+
+    if (std::cin.fail())
+    {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        std::cout << "Invalid mileage.\n";
+        return;
+    }
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    newTruck.SetUnitNumber(unitNumber);
+    newTruck.SetMileage(mileage);
+    newTruck.SetStatus("Available");
+
+    company.AddTruck(newTruck);
+
+    std::cout << "\nTruck #" << unitNumber << " added successfully.\n";
+
+}
+
+void DispalyTrucks(const Company& company)
+{
+    const std::vector<Truck>& trucks = company.GetTrucks();
+
+    std::cout << "\n========== COMPANY FLEET ==========\n";
+
+    if (trucks.empty())
+    {
+        std::cout << "No trucks have been added yet.\n";
+    }
+    else
+    {
+        for (int i = 0; i < trucks.size(); i++)
+        {
+            std::cout << "\nTruck #" << trucks[i].GetUnitNumber() << "\n";
+            std::cout << "Mileage: " << trucks[i].GetMileage() << "\n";
+            std::cout << "Status: " << trucks[i].GetStatus() << "\n";
+        }
+    }
+
+    std::cout << "==================================\n";
+}
+
+void RunFleetManagement(Company& company)
+{
+    int choice = -1;
+
+    while (choice != 0)
+    {
+        ShowFleetMenu();
+
+        std::cin >> choice;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            choice = -1;
+
+            std::cout << "\nInvalid input. Please enter a number.\n";
+            continue;
+        }
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        switch (choice)
+        {
+        case 1:
+            AddTruck(company);
+            break;
+
+        case 2:
+            DispalyTrucks(company);
+            break;
+
+        case 0:
+            break;
+
+        default:
+            std::cout << "\nInvalid selection.\n";
+            break;
+        }
+    }
+}
+
+
+
 int main()
 {
     Company company;
@@ -75,7 +199,7 @@ int main()
             
 
         case 2:
-            std::cout << "Fleet Management is under development.\n";
+            RunFleetManagement(company);
             break;
 
         case 3:
