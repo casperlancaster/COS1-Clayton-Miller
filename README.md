@@ -1,42 +1,20 @@
-# 🚀 Welcome to Project & Portfolio!
-
-This repository will be used to keep track of research and development conducted in this class. Follow the instructions below to get started.
-cos
-### Getting Started
-
-**1.** Review the [About](./docs/01_about/README.md) README and all of the links it provides.
-
-**2.** Review the documentation and [Getting Started](./docs/02_getting_started/README.md) steps in this repository's docs folder.
-
-**3.** Attend the first Live Lecture to see a live setup demo. If you are unable to attend, make sure to watch the archive.
-
-### Next Steps...
-
-After completing the above steps, feel free to begin updating this readme where indicated below. Remember to update this document each week to receive proper credit for the weekly Milestone assignment.
-
-<br>
-
-> ❗️ &nbsp; Now that you have read to this point, go ahead and delete this sentence and everything above it.
-
-<br>
-
 # Project & Portfolio 1
 
-### Student First & Last Name
+### Clayton Miller
 
-Hello my name is [enter name]. I am a student from [where are you from?]. The purpose of this repository is to practice development using version control. This work will help me begin to build a portfolio of skills and accomplishment that can be shared in the future.
+Hello, my name is Clayton Miller. I am a Game Development bachelor's student at Full Sail University. The purpose of this repository is to practice development using version control while building TruckzSim, a C++ trucking company simulation. This work will help me continue developing my programming and game development skills while building portfolio-ready experience that can be shared in the future.
 
 <br>
 
-## 📢 &nbsp; Weekly Stand Up
+## 📢 Weekly Stand Up
 
 Each week I will summarize my milestone activity and progress by writing a stand-up. A stand-up is meant to be a succinct update on how things are going. Use these prompts as a guide on what to write about:
 
-⚙️ Overview - What I worked on this past week
+⚙️ Overview - What I worked on this past week  
 <br>
-🌵 Challenges - What problems did I have & how I'm addressing them
+🌵 Challenges - What problems did I have & how I'm addressing them  
 <br>
-🏆 Accomplishments - What is something I "leveled up" on this week
+🏆 Accomplishments - What is something I "leveled up" on this week  
 <br>
 🔮 Next Steps - What I plan to prioritize and do next
 
@@ -44,7 +22,21 @@ Each week I will summarize my milestone activity and progress by writing a stand
 
 ### Week 1
 
-Replace this paragraph with your stand up for this week. Use the prompts above to summarize your most recent milestone activity and work.
+#### ⚙️ Overview
+
+This week I made a lot of progress on TruckzSim. I completed the initial Truck, Driver, Load, Company, and DispatchManager classes and built a persistent main menu for the program. I also added working systems for creating and displaying trucks, drivers, and loads. The Dispatch Center can now assign an available driver and truck to a load, update their statuses, and prevent the same driver or truck from being assigned to multiple active loads.
+
+#### 🌵 Challenges
+
+One of the biggest challenges this week was getting more comfortable with how the different classes should interact with each other. I also ran into a linker error while adding new Company getters and had to trace it back to missing function definitions in the .cpp file. Another issue I found during testing was that entering a load payment with a comma caused part of the value to be ignored, so I updated the input handling to accept formatted currency correctly.
+
+#### 🏆 Accomplishments
+
+I feel like I leveled up the most in program structure, debugging, and Git/GitHub workflow this week. TruckzSim went from a basic project structure to a working simulation foundation with multiple classes, vectors, pointers, input validation, record management, and connected systems. I also became more comfortable working on the dev branch, making meaningful commits, pushing changes, managing Issues, and moving tasks through the Project board as they were completed.
+
+#### 🔮 Next Steps
+
+For the next milestone, I plan to continue expanding the core TruckzSim systems and make the simulation more interactive. I want to improve the Dispatch Center, add more company and economy functionality, expand the fleet and driver systems, improve input validation, and continue organizing the code so the different systems stay separated and easier to maintain as the project grows.
 
 ### Week 2
 
