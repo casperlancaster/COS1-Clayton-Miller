@@ -38,6 +38,17 @@ void ShowFleetMenu()
     std::cout << "Select an option: ";
 }
 
+void ShowDriverMenu()
+{
+    std::cout << "\n";
+    std::cout << "========== DRIVER MANAGEMENT ==========\n";
+    std::cout << "1. Add Driver\n";
+    std::cout << "2. View Drivers\n";
+    std::cout << "0. Return to Main Menu\n";
+    std::cout << "=======================================\n";
+    std::cout << "Select an option: ";
+}
+
 void AddTruck(Company& company)
 {
     Truck newTruck;
@@ -149,7 +160,114 @@ void RunFleetManagement(Company& company)
     }
 }
 
+void AddDriver(Company& company)
+{
+    Driver newDriver;
 
+    int driverID = 0;
+    std::string driverName;
+
+    std::cout << "\n========== ADD DRIVER ==========\n";
+
+    std::cout << "Enter Driver ID: ";
+    std::cin >> driverID;
+
+    if (std::cin.fail() || driverID <= 0)
+    {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        
+        std::cout << "Invalid driver ID.\n";
+        return;
+    }
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout << "Enter driver name: ";
+    std::getline(std::cin, driverName);
+
+    if (driverName.empty())
+    {
+        std::cout << "Driver name cannot be empty.\n";
+        return;
+    }
+
+    newDriver.SetDriverID(driverID);
+    newDriver.SetName(driverName);
+    newDriver.SetStatus("Available");
+
+    company.AddDriver(newDriver);
+
+    std::cout << "\nDriver " << driverName << " added successfully.\n";
+}
+
+void DisplayDrivers(const Company& company)
+{
+    const std::vector<Driver>& drivers = company.GetDrivers();
+
+    std::cout << "\n========== COMPANY DRIVERS ==========\n";
+
+    if (drivers.empty())
+    {
+        std::cout << "No drivers have been added yet.\n";
+    }
+    else
+    {
+        for (int i = 0; i < drivers.size(); i++)
+        {
+            std::cout << "\nDriver ID: " << drivers[i].GetDriverID() << "\n";
+
+            std::cout << "Name: " << drivers[i].GetName() << "\n";
+
+            std::cout << "Status: " << drivers[i].GetStatus() << "\n";
+        }
+    }
+
+    std::cout << "===============================================\n";
+}
+
+void RunDriverManagement(Company& company)
+{
+    int choice = -1;
+
+    while (choice != 0)
+    {
+        ShowDriverMenu();
+
+        std::cin >> choice;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            choice = -1;
+
+            std::cout << "\nInvalid input. Please enter a number.\n";
+            continue;
+        }
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        switch (choice)
+        {
+        case 1:
+            AddDriver(company);
+            break;
+
+        case 2:
+            DisplayDrivers(company);
+            break;
+
+        case 0:
+            break;
+
+        default:
+            std::cout << "\nInvalid selection.\n";
+            break;
+        }
+    }
+}
 
 int main()
 {
@@ -203,7 +321,7 @@ int main()
             break;
 
         case 3:
-            std::cout << "Driver Management is under development.\n";
+            RunDriverManagement(company);
             break;
 
         case 4:
