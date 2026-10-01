@@ -58,14 +58,14 @@ Version control, also known as revision control, records changes to a file or se
 
 List the correct Git commands to do the actions listed below in Terminal. Replace CMD with the correct command and keep or enhance the brief description.
 
-- [ CMD ]: Clone a repository
-- [ CMD ]: Set-up a global user name
-- [ CMD ]: Set-up a global email address (to match my GitHub account email)
-- [ CMD ]: Shows the current state of your directory and staging area
-- [ CMD ]: Add modified files to the next commit
-- [ CMD ]: Make a commit with a new message
-- [ CMD ]: Show my commit history
-- [ CMD ]: Show Git's help screen
+- [ git clone <repository-url> ]: Clone a repository
+- [ git config --global user.name "Casper Lancaster" ]: Set-up a global user name
+- [ git config --global user.email "Casperlancaster94@gmail.com ]: Set-up a global email address (to match my GitHub account email)
+- [ git status ]: Shows the current state of your directory and staging area
+- [ git add <file> ]: Add modified files to the next commit
+- [ git commit -m "commit message" ]: Make a commit with a new message
+- [ git log ]: Show my commit history
+- [ git help ]: Show Git's help screen
 
 **3. Connecting to GitHub using Terminal.**
 HTTPS is the the correct way to connect to GitHub in this course. Describe how you connect to GitHub from Terminal using this protocol. What steps do you take?
