@@ -9,6 +9,8 @@ private:
     std::string destination;
     double pay;
     std::string status;
+    int assignedDriverID;
+    int assignedTruckUnitNumber;
 
 public:
     Load();
@@ -18,10 +20,14 @@ public:
     std::string GetDestination() const;
     double GetPay() const;
     std::string GetStatus() const;
+    int GetAssignedDriverID() const;
+    int GetAssignedTruckUnitNumber() const;
 
     void SetLoadNumber(int newLoadNumber);
     void SetOrigin(const std::string& newOrigin);
     void SetDestination(const std::string& newDestination);
     void SetPay(double newPay);
     void SetStatus(const std::string& newStatus);
+    void SetAssignedDriverID(int newDriverID);
+    void SetAssignedTruckUnitNumber(int newTruckUnitNumber);
 };

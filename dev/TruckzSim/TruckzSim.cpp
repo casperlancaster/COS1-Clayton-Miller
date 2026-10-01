@@ -60,6 +60,16 @@ void ShowFreightMarketMenu()
     std::cout << "Select an option: ";
 }
 
+void ShowDispatchMenu()
+{
+    std::cout << "\n";
+    std::cout << "========== DISPATCH CENTER ==========\n";
+    std::cout << "1. Assign Load\n";
+    std::cout << "0. Return to Main Menu\n";
+    std::cout << "=====================================\n";
+    std::cout << "Select an option: ";
+}
+
 void AddTruck(Company& company)
 {
     Truck newTruck;
@@ -377,11 +387,18 @@ void DisplayLoads(const Company & company)
         {
             std::cout << "\nLoad #" << loads[i].GetLoadNumber() << "\n";
             std::cout << "Origin: " << loads[i].GetOrigin() << "\n";
-            std::cout << "Destination: "
-                << loads[i].GetDestination() << "\n";
+            std::cout << "Destination: " << loads[i].GetDestination() << "\n";
             std::cout << "Pay: $" << loads[i].GetPay() << "\n";
             std::cout << "Status: " << loads[i].GetStatus() << "\n";
+
+            if (loads[i].GetStatus() == "Assigned")
+            {
+                std::cout << "Assigned Driver ID: " << loads[i].GetAssignedDriverID() << "\n";
+                std::cout << "Assigned Truck: " << loads[i].GetAssignedTruckUnitNumber() << "\n";
+            }
         }
+
+        
     }
 
     std::cout << "=====================================\n";
@@ -436,6 +453,100 @@ void RunFreightMarket(Company & company)
     }
 }
 
+void RunDispatchCenter(DispatchManager& dispatchManager)
+{
+    int choice = -1;
+
+    while (choice != 0)
+    {
+        ShowDispatchMenu();
+
+        std::cin >> choice;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            choice = -1;
+
+            std::cout << "\nInvalid input. Please enter a number.\n";
+            continue;
+        }
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        switch (choice)
+        {
+        case 1:
+        {
+            int loadNumber = 0;
+            int driverID = 0;
+            int truckUnitNumber = 0;
+
+            std::cout << "\n========== ASSIGN LOAD ==========\n";
+
+            std::cout << "Enter a load number: ";
+            std::cin >> loadNumber;
+
+            if (std::cin.fail())
+            {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                std::cout << "Invalid load number.\n";
+                break;
+            }
+
+            std::cout << "Enter Driver ID: ";
+            std::cin >> driverID;
+
+            if (std::cin.fail())
+            {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                std::cout << "Invalid Driver ID.\n";
+                break;
+            }
+
+            std::cout << "Enter Truck Unit Number: ";
+            std::cin >> truckUnitNumber;
+
+            if (std::cin.fail())
+            {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                std::cout << "Invalid Truck Unit Number.\n";
+                break;
+            }
+
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            bool assigned = dispatchManager.AssignLoad(loadNumber, driverID, truckUnitNumber);
+
+            if (assigned)
+            {
+                std::cout << "\nLoad #" << loadNumber << " assigned successfully.\n";
+            }
+            else
+            {
+                std::cout << "\nUnable to assign load. Check that the load, " << "driver, and truck exist and are available.\n";
+            }
+            break;
+        }
+
+        case 0:
+            break;
+
+        default:
+            std::cout << "\nInvalid selection.\n";
+            break;
+        }
+    }
+}
+
 int main()
 {
     Company company;
@@ -469,17 +580,7 @@ int main()
         switch (choice)
         {
         case 1:
-            if (dispatchManager.HasCompany())
-            {
-                std::cout
-                    << "Dispatch Center connected to "
-                    << dispatchManager.GetCompany()->GetCompanyName()
-                    << ".\n";
-            }
-            else
-            {
-                std::cout << "Dispatch Center is not connected to a company.\n";
-            }
+            RunDispatchCenter(dispatchManager);
             break;
             
 

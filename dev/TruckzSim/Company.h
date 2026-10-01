@@ -16,6 +16,7 @@ private:
 	std::vector<Driver> drivers;
 	std::vector<Load> loads;
 
+
 public:
 	Company();
 
@@ -25,6 +26,10 @@ public:
 	void AddTruck(const Truck& newTruck);
 	void AddDriver(const Driver& newDriver);
 	void AddLoad(const Load& newLoad);
+	
+	std::vector<Truck>& GetTrucks();
+	std::vector<Driver>& GetDrivers();
+	std::vector<Load>& GetLoads();
 
 	const std::vector<Truck>& GetTrucks() const;
 	const std::vector<Driver>& GetDrivers() const;

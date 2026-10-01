@@ -15,4 +15,5 @@ public:
 	void SetCompany(Company* newCompany);
 
 	bool HasCompany() const;
+	bool AssignLoad(int loadNumber, int driverID, int truckUnitNumber);
 };

@@ -44,3 +44,18 @@ const std::vector<Load>& Company::GetLoads() const
 {
 	return loads;
 }
+
+std::vector<Truck>& Company::GetTrucks()
+{
+	return trucks;
+}
+
+std::vector<Driver>& Company::GetDrivers()
+{
+	return drivers;
+}
+
+std::vector<Load>& Company::GetLoads()
+{
+	return loads;
+}
