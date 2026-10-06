@@ -204,6 +204,7 @@ void ShowDispatchMenu()
     std::cout << "\n";
     std::cout << "========== DISPATCH CENTER ==========\n";
     std::cout << "1. Assign Load\n";
+    std::cout << "2. View Available Resources\n";
     std::cout << "0. Return to Main Menu\n";
     std::cout << "=====================================\n";
 }
@@ -475,6 +476,166 @@ void RunFreightMarket(Company& company)
 }
 
 
+const Load* FindLoad(const Company& company, int loadNumber)
+{
+    for (const Load& load : company.GetLoads())
+    {
+        if (load.GetLoadNumber() == loadNumber)
+        {
+            return &load;
+        }
+    }
+
+    return nullptr;
+}
+
+
+const Driver* FindDriver(const Company& company, int driverID)
+{
+    for (const Driver& driver : company.GetDrivers())
+    {
+        if (driver.GetDriverID() == driverID)
+        {
+            return &driver;
+        }
+    }
+
+    return nullptr;
+}
+
+
+const Truck* FindTruck(const Company& company, int truckUnitNumber)
+{
+    for (const Truck& truck : company.GetTrucks())
+    {
+        if (truck.GetUnitNumber() == truckUnitNumber)
+        {
+            return &truck;
+        }
+    }
+
+    return nullptr;
+}
+
+
+bool HasAvailableLoad(const Company& company)
+{
+    for (const Load& load : company.GetLoads())
+    {
+        if (load.GetStatus() == "Available")
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+bool HasAvailableDriver(const Company& company)
+{
+    for (const Driver& driver : company.GetDrivers())
+    {
+        if (driver.GetStatus() == "Available")
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+bool HasAvailableTruck(const Company& company)
+{
+    for (const Truck& truck : company.GetTrucks())
+    {
+        if (truck.GetStatus() == "Available")
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+void DisplayAvailableDispatchResources(const Company& company)
+{
+    std::cout << "\n========== AVAILABLE LOADS ==========\n";
+
+    bool foundLoad = false;
+
+    for (const Load& load : company.GetLoads())
+    {
+        if (load.GetStatus() == "Available")
+        {
+            foundLoad = true;
+
+            std::cout << "Load #" << load.GetLoadNumber()
+                << " | " << load.GetOrigin()
+                << " -> " << load.GetDestination()
+                << " | Pay: $"
+                << std::fixed
+                << std::setprecision(2)
+                << load.GetPay()
+                << std::defaultfloat
+                << std::setprecision(6)
+                << "\n";
+        }
+    }
+
+    if (!foundLoad)
+    {
+        std::cout << "No available loads.\n";
+    }
+
+    std::cout << "\n========== AVAILABLE DRIVERS ==========\n";
+
+    bool foundDriver = false;
+
+    for (const Driver& driver : company.GetDrivers())
+    {
+        if (driver.GetStatus() == "Available")
+        {
+            foundDriver = true;
+
+            std::cout << "Driver ID " << driver.GetDriverID()
+                << " | " << driver.GetName()
+                << "\n";
+        }
+    }
+
+    if (!foundDriver)
+    {
+        std::cout << "No available drivers.\n";
+    }
+
+    std::cout << "\n========== AVAILABLE TRUCKS ==========\n";
+
+    bool foundTruck = false;
+
+    for (const Truck& truck : company.GetTrucks())
+    {
+        if (truck.GetStatus() == "Available")
+        {
+            foundTruck = true;
+
+            std::cout << "Truck #" << truck.GetUnitNumber()
+                << " | Mileage: " << truck.GetMileage()
+                << "\n";
+        }
+    }
+
+    if (!foundTruck)
+    {
+        std::cout << "No available trucks.\n";
+    }
+
+    std::cout << "========================================\n";
+}
+
+
 void RunDispatchCenter(DispatchManager& dispatchManager)
 {
     int choice = -1;
@@ -488,6 +649,42 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
         {
         case 1:
         {
+            if (!dispatchManager.HasCompany())
+            {
+                std::cout << "\nDispatch Center is not connected to a company.\n";
+                break;
+            }
+
+            Company* company = dispatchManager.GetCompany();
+
+            DisplayAvailableDispatchResources(*company);
+
+            bool canDispatch = true;
+
+            if (!HasAvailableLoad(*company))
+            {
+                std::cout << "\nA load cannot be assigned because there are no available loads.\n";
+                canDispatch = false;
+            }
+
+            if (!HasAvailableDriver(*company))
+            {
+                std::cout << "A load cannot be assigned because there are no available drivers.\n";
+                canDispatch = false;
+            }
+
+            if (!HasAvailableTruck(*company))
+            {
+                std::cout << "A load cannot be assigned because there are no available trucks.\n";
+                canDispatch = false;
+            }
+
+            if (!canDispatch)
+            {
+                std::cout << "Add or free the required resources before trying again.\n";
+                break;
+            }
+
             std::cout << "\n========== ASSIGN LOAD ==========\n";
 
             int loadNumber = ReadPositiveInt(
@@ -495,15 +692,63 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
                 "load number"
             );
 
+            const Load* selectedLoad = FindLoad(*company, loadNumber);
+
+            if (selectedLoad == nullptr)
+            {
+                std::cout << "Load #" << loadNumber << " does not exist.\n";
+                break;
+            }
+
+            if (selectedLoad->GetStatus() != "Available")
+            {
+                std::cout << "Load #" << loadNumber
+                    << " is currently " << selectedLoad->GetStatus()
+                    << " and cannot be assigned.\n";
+                break;
+            }
+
             int driverID = ReadPositiveInt(
                 "Enter Driver ID: ",
                 "Driver ID"
             );
 
+            const Driver* selectedDriver = FindDriver(*company, driverID);
+
+            if (selectedDriver == nullptr)
+            {
+                std::cout << "Driver ID " << driverID << " does not exist.\n";
+                break;
+            }
+
+            if (selectedDriver->GetStatus() != "Available")
+            {
+                std::cout << "Driver ID " << driverID
+                    << " is currently " << selectedDriver->GetStatus()
+                    << " and cannot be assigned.\n";
+                break;
+            }
+
             int truckUnitNumber = ReadPositiveInt(
                 "Enter Truck Unit Number: ",
                 "Truck Unit Number"
             );
+
+            const Truck* selectedTruck = FindTruck(*company, truckUnitNumber);
+
+            if (selectedTruck == nullptr)
+            {
+                std::cout << "Truck #" << truckUnitNumber << " does not exist.\n";
+                break;
+            }
+
+            if (selectedTruck->GetStatus() != "Available")
+            {
+                std::cout << "Truck #" << truckUnitNumber
+                    << " is currently " << selectedTruck->GetStatus()
+                    << " and cannot be assigned.\n";
+                break;
+            }
 
             bool assigned = dispatchManager.AssignLoad(
                 loadNumber,
@@ -514,15 +759,29 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
             if (assigned)
             {
                 std::cout << "\nLoad #" << loadNumber
-                    << " assigned successfully.\n";
+                    << " assigned successfully to Driver ID "
+                    << driverID << " using Truck #"
+                    << truckUnitNumber << ".\n";
             }
             else
             {
                 std::cout
-                    << "\nUnable to assign load. Check that the load, "
-                    << "driver, and truck exist and are available.\n";
+                    << "\nUnable to assign load. The dispatch state changed "
+                    << "before the assignment could be completed.\n";
             }
 
+            break;
+        }
+
+        case 2:
+        {
+            if (!dispatchManager.HasCompany())
+            {
+                std::cout << "\nDispatch Center is not connected to a company.\n";
+                break;
+            }
+
+            DisplayAvailableDispatchResources(*dispatchManager.GetCompany());
             break;
         }
 
@@ -530,7 +789,7 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
             break;
 
         default:
-            std::cout << "\nInvalid selection. Please choose 0 or 1.\n";
+            std::cout << "\nInvalid selection. Please choose 0, 1, or 2.\n";
             break;
         }
     }
