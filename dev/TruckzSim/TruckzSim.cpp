@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <limits>
 #include <iomanip>
 
 #include "Truck.h"
@@ -8,6 +7,144 @@
 #include "Load.h"
 #include "Company.h"
 #include "DispatchManager.h"
+
+
+bool TryParseInt(const std::string& input, int& value)
+{
+    try
+    {
+        std::size_t charactersProcessed = 0;
+        value = std::stoi(input, &charactersProcessed);
+
+        return charactersProcessed == input.length();
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+
+bool TryParseDouble(const std::string& input, double& value)
+{
+    try
+    {
+        std::size_t charactersProcessed = 0;
+        value = std::stod(input, &charactersProcessed);
+
+        return charactersProcessed == input.length();
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+
+int ReadInt(const std::string& prompt)
+{
+    while (true)
+    {
+        std::string input;
+        int value = 0;
+
+        std::cout << prompt;
+        std::getline(std::cin, input);
+
+        if (TryParseInt(input, value))
+        {
+            return value;
+        }
+
+        std::cout << "Invalid input. Please enter a whole number.\n";
+    }
+}
+
+
+int ReadPositiveInt(const std::string& prompt, const std::string& fieldName)
+{
+    while (true)
+    {
+        int value = ReadInt(prompt);
+
+        if (value > 0)
+        {
+            return value;
+        }
+
+        std::cout << "Invalid " << fieldName
+            << ". Please enter a number greater than 0.\n";
+    }
+}
+
+
+double ReadNonNegativeDouble(const std::string& prompt, const std::string& fieldName)
+{
+    while (true)
+    {
+        std::string input;
+        double value = 0.0;
+
+        std::cout << prompt;
+        std::getline(std::cin, input);
+
+        if (TryParseDouble(input, value) && value >= 0.0)
+        {
+            return value;
+        }
+
+        std::cout << "Invalid " << fieldName
+            << ". Please enter a number that is 0 or greater.\n";
+    }
+}
+
+
+std::string ReadRequiredText(const std::string& prompt, const std::string& fieldName)
+{
+    while (true)
+    {
+        std::string input;
+
+        std::cout << prompt;
+        std::getline(std::cin, input);
+
+        if (!input.empty())
+        {
+            return input;
+        }
+
+        std::cout << fieldName << " cannot be empty. Please try again.\n";
+    }
+}
+
+
+double ReadCurrency(const std::string& prompt)
+{
+    while (true)
+    {
+        std::string payInput;
+        std::string cleanedPay;
+        double pay = 0.0;
+
+        std::cout << prompt;
+        std::getline(std::cin, payInput);
+
+        for (char character : payInput)
+        {
+            if (character != ',' && character != '$')
+            {
+                cleanedPay += character;
+            }
+        }
+
+        if (TryParseDouble(cleanedPay, pay) && pay >= 0.0)
+        {
+            return pay;
+        }
+
+        std::cout << "Invalid load pay. Please enter a valid amount.\n";
+    }
+}
 
 
 void ShowMainMenu()
@@ -26,8 +163,8 @@ void ShowMainMenu()
     std::cout << "7. Maintenance\n";
     std::cout << "0. Exit\n";
     std::cout << "---------------------------------------------\n";
-    std::cout << "Select an option: ";
 }
+
 
 void ShowFleetMenu()
 {
@@ -37,8 +174,8 @@ void ShowFleetMenu()
     std::cout << "2. View Trucks\n";
     std::cout << "0. Return to Main Menu\n";
     std::cout << "======================================\n";
-    std::cout << "Select an option: ";
 }
+
 
 void ShowDriverMenu()
 {
@@ -48,8 +185,8 @@ void ShowDriverMenu()
     std::cout << "2. View Drivers\n";
     std::cout << "0. Return to Main Menu\n";
     std::cout << "=======================================\n";
-    std::cout << "Select an option: ";
 }
+
 
 void ShowFreightMarketMenu()
 {
@@ -59,8 +196,8 @@ void ShowFreightMarketMenu()
     std::cout << "2. View Loads\n";
     std::cout << "0. Return to Main Menu\n";
     std::cout << "====================================\n";
-    std::cout << "Select an option: ";
 }
+
 
 void ShowDispatchMenu()
 {
@@ -69,43 +206,24 @@ void ShowDispatchMenu()
     std::cout << "1. Assign Load\n";
     std::cout << "0. Return to Main Menu\n";
     std::cout << "=====================================\n";
-    std::cout << "Select an option: ";
 }
+
 
 void AddTruck(Company& company)
 {
     Truck newTruck;
 
-    int unitNumber = 0;
-    double mileage = 0.0;
-
     std::cout << "\n========== ADD TRUCK ==========\n";
 
-    std::cout << "Enter unit number: ";
-    std::cin >> unitNumber;
+    int unitNumber = ReadPositiveInt(
+        "Enter unit number: ",
+        "unit number"
+    );
 
-    if (std::cin.fail())
-    {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        std::cout << "Invalid unit number.\n";
-        return;
-
-    }
-
-    std::cout << "Enter current mileage: ";
-    std::cin >> mileage;
-
-    if (std::cin.fail())
-    {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        std::cout << "Invalid mileage.\n";
-        return;
-    }
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    double mileage = ReadNonNegativeDouble(
+        "Enter current mileage: ",
+        "mileage"
+    );
 
     newTruck.SetUnitNumber(unitNumber);
     newTruck.SetMileage(mileage);
@@ -114,8 +232,8 @@ void AddTruck(Company& company)
     company.AddTruck(newTruck);
 
     std::cout << "\nTruck #" << unitNumber << " added successfully.\n";
-
 }
+
 
 void DisplayTrucks(const Company& company)
 {
@@ -140,6 +258,7 @@ void DisplayTrucks(const Company& company)
     std::cout << "==================================\n";
 }
 
+
 void RunFleetManagement(Company& company)
 {
     int choice = -1;
@@ -147,21 +266,7 @@ void RunFleetManagement(Company& company)
     while (choice != 0)
     {
         ShowFleetMenu();
-
-        std::cin >> choice;
-
-        if (std::cin.fail())
-        {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-            choice = -1;
-
-            std::cout << "\nInvalid input. Please enter a number.\n";
-            continue;
-        }
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        choice = ReadInt("Select an option: ");
 
         switch (choice)
         {
@@ -177,43 +282,28 @@ void RunFleetManagement(Company& company)
             break;
 
         default:
-            std::cout << "\nInvalid selection.\n";
+            std::cout << "\nInvalid selection. Please choose 0, 1, or 2.\n";
             break;
         }
     }
 }
 
+
 void AddDriver(Company& company)
 {
     Driver newDriver;
 
-    int driverID = 0;
-    std::string driverName;
-
     std::cout << "\n========== ADD DRIVER ==========\n";
 
-    std::cout << "Enter Driver ID: ";
-    std::cin >> driverID;
+    int driverID = ReadPositiveInt(
+        "Enter Driver ID: ",
+        "driver ID"
+    );
 
-    if (std::cin.fail() || driverID <= 0)
-    {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        
-        std::cout << "Invalid driver ID.\n";
-        return;
-    }
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    std::cout << "Enter driver name: ";
-    std::getline(std::cin, driverName);
-
-    if (driverName.empty())
-    {
-        std::cout << "Driver name cannot be empty.\n";
-        return;
-    }
+    std::string driverName = ReadRequiredText(
+        "Enter driver name: ",
+        "Driver name"
+    );
 
     newDriver.SetDriverID(driverID);
     newDriver.SetName(driverName);
@@ -223,6 +313,7 @@ void AddDriver(Company& company)
 
     std::cout << "\nDriver " << driverName << " added successfully.\n";
 }
+
 
 void DisplayDrivers(const Company& company)
 {
@@ -239,15 +330,14 @@ void DisplayDrivers(const Company& company)
         for (int i = 0; i < drivers.size(); i++)
         {
             std::cout << "\nDriver ID: " << drivers[i].GetDriverID() << "\n";
-
             std::cout << "Name: " << drivers[i].GetName() << "\n";
-
             std::cout << "Status: " << drivers[i].GetStatus() << "\n";
         }
     }
 
     std::cout << "===============================================\n";
 }
+
 
 void RunDriverManagement(Company& company)
 {
@@ -256,21 +346,7 @@ void RunDriverManagement(Company& company)
     while (choice != 0)
     {
         ShowDriverMenu();
-
-        std::cin >> choice;
-
-        if (std::cin.fail())
-        {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-            choice = -1;
-
-            std::cout << "\nInvalid input. Please enter a number.\n";
-            continue;
-        }
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        choice = ReadInt("Select an option: ");
 
         switch (choice)
         {
@@ -286,90 +362,35 @@ void RunDriverManagement(Company& company)
             break;
 
         default:
-            std::cout << "\nInvalid selection.\n";
+            std::cout << "\nInvalid selection. Please choose 0, 1, or 2.\n";
             break;
         }
     }
 }
 
+
 void AddLoad(Company& company)
 {
     Load newLoad;
 
-    int loadNumber = 0;
-    std::string origin;
-    std::string destination;
-    double pay = 0.0;
-
     std::cout << "\n========== ADD LOAD ==========\n";
 
-    std::cout << "Enter load number: ";
-    std::cin >> loadNumber;
-
-    if (std::cin.fail() || loadNumber <= 0)
-    {
-        std::cin.clear();
-        std::cin.ignore(
-            std::numeric_limits<std::streamsize>::max(),
-            '\n'
-        );
-
-        std::cout << "Invalid load number.\n";
-        return;
-    }
-
-    std::cin.ignore(
-        std::numeric_limits<std::streamsize>::max(),
-        '\n'
+    int loadNumber = ReadPositiveInt(
+        "Enter load number: ",
+        "load number"
     );
 
-    std::cout << "Enter origin: ";
-    std::getline(std::cin, origin);
+    std::string origin = ReadRequiredText(
+        "Enter origin: ",
+        "Origin"
+    );
 
-    if (origin.empty())
-    {
-        std::cout << "Origin cannot be empty.\n";
-        return;
-    }
+    std::string destination = ReadRequiredText(
+        "Enter destination: ",
+        "Destination"
+    );
 
-    std::cout << "Enter destination: ";
-    std::getline(std::cin, destination);
-
-    if (destination.empty())
-    {
-        std::cout << "Destination cannot be empty.\n";
-        return;
-    }
-
-    std::string payInput;
-    std::string cleanedPay;
-
-    std::cout << "Enter load pay: $";
-    std::getline(std::cin, payInput);
-
-    for (char character : payInput)
-    {
-        if (character != ',' && character != '$')
-        {
-            cleanedPay += character;
-        }
-    }
-
-    try
-    {
-        pay = std::stod(cleanedPay);
-    }
-    catch (...)
-    {
-        std::cout << "Invalid load pay.\n";
-        return;
-    }
-
-    if (pay < 0.0)
-    {
-        std::cout << "Invalid load pay.\n";
-        return;
-    }
+    double pay = ReadCurrency("Enter load pay: $");
 
     newLoad.SetLoadNumber(loadNumber);
     newLoad.SetOrigin(origin);
@@ -383,7 +404,8 @@ void AddLoad(Company& company)
         << " added successfully.\n";
 }
 
-void DisplayLoads(const Company & company)
+
+void DisplayLoads(const Company& company)
 {
     const std::vector<Load>& loads = company.GetLoads();
 
@@ -411,45 +433,26 @@ void DisplayLoads(const Company & company)
 
             if (loads[i].GetStatus() == "Assigned")
             {
-                std::cout << "Assigned Driver ID: " << loads[i].GetAssignedDriverID() << "\n";
-                std::cout << "Assigned Truck: " << loads[i].GetAssignedTruckUnitNumber() << "\n";
+                std::cout << "Assigned Driver ID: "
+                    << loads[i].GetAssignedDriverID() << "\n";
+                std::cout << "Assigned Truck: "
+                    << loads[i].GetAssignedTruckUnitNumber() << "\n";
             }
         }
-
-        
     }
 
     std::cout << "=====================================\n";
 }
 
-void RunFreightMarket(Company & company)
+
+void RunFreightMarket(Company& company)
 {
     int choice = -1;
 
     while (choice != 0)
     {
         ShowFreightMarketMenu();
-
-        std::cin >> choice;
-
-        if (std::cin.fail())
-        {
-            std::cin.clear();
-            std::cin.ignore(
-                std::numeric_limits<std::streamsize>::max(),
-                '\n'
-            );
-
-            choice = -1;
-
-            std::cout << "\nInvalid input. Please enter a number.\n";
-            continue;
-        }
-
-        std::cin.ignore(
-            std::numeric_limits<std::streamsize>::max(),
-            '\n'
-        );
+        choice = ReadInt("Select an option: ");
 
         switch (choice)
         {
@@ -465,11 +468,12 @@ void RunFreightMarket(Company & company)
             break;
 
         default:
-            std::cout << "\nInvalid selection.\n";
+            std::cout << "\nInvalid selection. Please choose 0, 1, or 2.\n";
             break;
         }
     }
 }
+
 
 void RunDispatchCenter(DispatchManager& dispatchManager)
 {
@@ -478,80 +482,47 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
     while (choice != 0)
     {
         ShowDispatchMenu();
-
-        std::cin >> choice;
-
-        if (std::cin.fail())
-        {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-            choice = -1;
-
-            std::cout << "\nInvalid input. Please enter a number.\n";
-            continue;
-        }
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        choice = ReadInt("Select an option: ");
 
         switch (choice)
         {
         case 1:
         {
-            int loadNumber = 0;
-            int driverID = 0;
-            int truckUnitNumber = 0;
-
             std::cout << "\n========== ASSIGN LOAD ==========\n";
 
-            std::cout << "Enter a load number: ";
-            std::cin >> loadNumber;
+            int loadNumber = ReadPositiveInt(
+                "Enter a load number: ",
+                "load number"
+            );
 
-            if (std::cin.fail())
-            {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            int driverID = ReadPositiveInt(
+                "Enter Driver ID: ",
+                "Driver ID"
+            );
 
-                std::cout << "Invalid load number.\n";
-                break;
-            }
+            int truckUnitNumber = ReadPositiveInt(
+                "Enter Truck Unit Number: ",
+                "Truck Unit Number"
+            );
 
-            std::cout << "Enter Driver ID: ";
-            std::cin >> driverID;
-
-            if (std::cin.fail())
-            {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-                std::cout << "Invalid Driver ID.\n";
-                break;
-            }
-
-            std::cout << "Enter Truck Unit Number: ";
-            std::cin >> truckUnitNumber;
-
-            if (std::cin.fail())
-            {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-                std::cout << "Invalid Truck Unit Number.\n";
-                break;
-            }
-
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-            bool assigned = dispatchManager.AssignLoad(loadNumber, driverID, truckUnitNumber);
+            bool assigned = dispatchManager.AssignLoad(
+                loadNumber,
+                driverID,
+                truckUnitNumber
+            );
 
             if (assigned)
             {
-                std::cout << "\nLoad #" << loadNumber << " assigned successfully.\n";
+                std::cout << "\nLoad #" << loadNumber
+                    << " assigned successfully.\n";
             }
             else
             {
-                std::cout << "\nUnable to assign load. Check that the load, " << "driver, and truck exist and are available.\n";
+                std::cout
+                    << "\nUnable to assign load. Check that the load, "
+                    << "driver, and truck exist and are available.\n";
             }
+
             break;
         }
 
@@ -559,11 +530,12 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
             break;
 
         default:
-            std::cout << "\nInvalid selection.\n";
+            std::cout << "\nInvalid selection. Please choose 0 or 1.\n";
             break;
         }
     }
 }
+
 
 int main()
 {
@@ -577,21 +549,7 @@ int main()
     while (choice != 0)
     {
         ShowMainMenu();
-
-        std::cin >> choice;
-
-        if (std::cin.fail())
-        {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits <std::streamsize>::max(), '\n');
-
-            choice = -1;
-
-            std::cout << "\nInvalid input. Please enter a number from 0 to 7.\n\n";
-            continue;
-        }
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        choice = ReadInt("Select an option: ");
 
         std::cout << "\n";
 
@@ -600,7 +558,6 @@ int main()
         case 1:
             RunDispatchCenter(dispatchManager);
             break;
-            
 
         case 2:
             RunFleetManagement(company);
@@ -636,7 +593,7 @@ int main()
             break;
 
         default:
-            std::cout << "Invalid selection. Please try again.\n";
+            std::cout << "Invalid selection. Please enter a number from 0 to 7.\n";
             break;
         }
 
