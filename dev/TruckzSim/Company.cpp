@@ -2,60 +2,74 @@
 
 Company::Company()
 {
-	companyName = "";
+    companyName = "";
+    revenue = 0.0;
 }
 
 std::string Company::GetCompanyName() const
 {
-	return companyName;
+    return companyName;
 }
 
 void Company::SetCompanyName(const std::string& newCompanyName)
 {
-	companyName = newCompanyName;
+    companyName = newCompanyName;
+}
+
+double Company::GetRevenue() const
+{
+    return revenue;
+}
+
+void Company::AddRevenue(double amount)
+{
+    if (amount > 0.0)
+    {
+        revenue += amount;
+    }
 }
 
 void Company::AddTruck(const Truck& newTruck)
 {
-	trucks.push_back(newTruck);
+    trucks.push_back(newTruck);
 }
 
 void Company::AddDriver(const Driver& newDriver)
 {
-	drivers.push_back(newDriver);
+    drivers.push_back(newDriver);
 }
 
 void Company::AddLoad(const Load& newLoad)
 {
-	loads.push_back(newLoad);
+    loads.push_back(newLoad);
 }
 
 const std::vector<Truck>& Company::GetTrucks() const
 {
-	return trucks;
+    return trucks;
 }
 
 const std::vector<Driver>& Company::GetDrivers() const
 {
-	return drivers;
+    return drivers;
 }
 
 const std::vector<Load>& Company::GetLoads() const
 {
-	return loads;
+    return loads;
 }
 
 std::vector<Truck>& Company::GetTrucks()
 {
-	return trucks;
+    return trucks;
 }
 
 std::vector<Driver>& Company::GetDrivers()
 {
-	return drivers;
+    return drivers;
 }
 
 std::vector<Load>& Company::GetLoads()
 {
-	return loads;
+    return loads;
 }

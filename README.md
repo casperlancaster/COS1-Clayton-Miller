@@ -40,7 +40,21 @@ For the next milestone, I plan to continue expanding the core TruckzSim systems 
 
 ### Week 2
 
-My next stand up will go here...
+#### ⚙️ Overview
+
+This week I focused on expanding TruckzSim’s Dispatch Center and improving the program’s usability. I refactored the input handling to use getline() with stoi() and stod() inside try/catch instead of relying on repeated cin.fail(), clear(), and ignore() logic. I also improved the Dispatch Center so it displays available loads, drivers, and trucks before assignment. In addition, I added load completion, equipment release, and company revenue tracking.
+
+#### 🌵 Challenges
+
+One of the main challenges this week was changing the input-handling system throughout the program without breaking functionality that was already working from Milestone 1. I also had to make sure completing a load correctly updated several connected objects at once, including the Load, Driver, Truck, and Company. I tested each change individually to make sure the program stayed stable.
+
+#### 🏆 Accomplishments
+
+I improved my understanding of input validation, exception handling, pointers, and how multiple classes can interact with each other. TruckzSim now has a more complete dispatch cycle where a load can be assigned, completed, and recorded as revenue while the driver and truck become available again. I also made the program easier to use by giving clearer prompts and showing available resources before assignment.
+
+#### 🔮 Next Steps
+
+Before Week 3, I plan to continue expanding the company and economy systems, improve code organization as the project grows, and add more depth to the simulation. I also want to continue improving testing and input validation while preparing additional systems such as banking and maintenance.
 
 ### Week 3
 

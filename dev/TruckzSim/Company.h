@@ -1,7 +1,7 @@
 #pragma once
 
-#include<string>
-#include<vector>
+#include <string>
+#include <vector>
 
 #include "Truck.h"
 #include "Driver.h"
@@ -10,29 +10,31 @@
 class Company
 {
 private:
-	std::string companyName;
+    std::string companyName;
+    double revenue;
 
-	std::vector<Truck> trucks;
-	std::vector<Driver> drivers;
-	std::vector<Load> loads;
-
+    std::vector<Truck> trucks;
+    std::vector<Driver> drivers;
+    std::vector<Load> loads;
 
 public:
-	Company();
+    Company();
 
-	std::string GetCompanyName() const;
-	void SetCompanyName(const std::string& newCompanyName);
+    std::string GetCompanyName() const;
+    void SetCompanyName(const std::string& newCompanyName);
 
-	void AddTruck(const Truck& newTruck);
-	void AddDriver(const Driver& newDriver);
-	void AddLoad(const Load& newLoad);
-	
-	std::vector<Truck>& GetTrucks();
-	std::vector<Driver>& GetDrivers();
-	std::vector<Load>& GetLoads();
+    double GetRevenue() const;
+    void AddRevenue(double amount);
 
-	const std::vector<Truck>& GetTrucks() const;
-	const std::vector<Driver>& GetDrivers() const;
-	const std::vector<Load>& GetLoads() const;
+    void AddTruck(const Truck& newTruck);
+    void AddDriver(const Driver& newDriver);
+    void AddLoad(const Load& newLoad);
 
+    std::vector<Truck>& GetTrucks();
+    std::vector<Driver>& GetDrivers();
+    std::vector<Load>& GetLoads();
+
+    const std::vector<Truck>& GetTrucks() const;
+    const std::vector<Driver>& GetDrivers() const;
+    const std::vector<Load>& GetLoads() const;
 };
