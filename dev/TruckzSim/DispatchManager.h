@@ -16,4 +16,5 @@ public:
 
 	bool HasCompany() const;
 	bool AssignLoad(int loadNumber, int driverID, int truckUnitNumber);
+	bool CompleteLoad(int loadNumber);
 };

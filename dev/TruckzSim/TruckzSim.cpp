@@ -205,6 +205,7 @@ void ShowDispatchMenu()
     std::cout << "========== DISPATCH CENTER ==========\n";
     std::cout << "1. Assign Load\n";
     std::cout << "2. View Available Resources\n";
+    std::cout << "3. Complete Load\n";
     std::cout << "0. Return to Main Menu\n";
     std::cout << "=====================================\n";
 }
@@ -410,7 +411,7 @@ void DisplayLoads(const Company& company)
 {
     const std::vector<Load>& loads = company.GetLoads();
 
-    std::cout << "\n========== AVAILABLE LOADS ==========\n";
+    std::cout << "\n========== COMPANY LOADS ==========\n";
 
     if (loads.empty())
     {
@@ -432,7 +433,8 @@ void DisplayLoads(const Company& company)
                 << "\n";
             std::cout << "Status: " << loads[i].GetStatus() << "\n";
 
-            if (loads[i].GetStatus() == "Assigned")
+            if (loads[i].GetAssignedDriverID() > 0 &&
+                loads[i].GetAssignedTruckUnitNumber() > 0)
             {
                 std::cout << "Assigned Driver ID: "
                     << loads[i].GetAssignedDriverID() << "\n";
@@ -636,6 +638,42 @@ void DisplayAvailableDispatchResources(const Company& company)
 }
 
 
+void DisplayAssignedLoads(const Company& company)
+{
+    std::cout << "\n========== ASSIGNED LOADS ==========\n";
+
+    bool foundAssignedLoad = false;
+
+    for (const Load& load : company.GetLoads())
+    {
+        if (load.GetStatus() == "Assigned")
+        {
+            foundAssignedLoad = true;
+
+            std::cout << "Load #" << load.GetLoadNumber()
+                << " | " << load.GetOrigin()
+                << " -> " << load.GetDestination()
+                << " | Driver ID " << load.GetAssignedDriverID()
+                << " | Truck #" << load.GetAssignedTruckUnitNumber()
+                << " | Pay: $"
+                << std::fixed
+                << std::setprecision(2)
+                << load.GetPay()
+                << std::defaultfloat
+                << std::setprecision(6)
+                << "\n";
+        }
+    }
+
+    if (!foundAssignedLoad)
+    {
+        std::cout << "No loads are currently assigned.\n";
+    }
+
+    std::cout << "====================================\n";
+}
+
+
 void RunDispatchCenter(DispatchManager& dispatchManager)
 {
     int choice = -1;
@@ -785,11 +823,85 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
             break;
         }
 
+        case 3:
+        {
+            if (!dispatchManager.HasCompany())
+            {
+                std::cout << "\nDispatch Center is not connected to a company.\n";
+                break;
+            }
+
+            Company* company = dispatchManager.GetCompany();
+
+            DisplayAssignedLoads(*company);
+
+            bool hasAssignedLoad = false;
+
+            for (const Load& load : company->GetLoads())
+            {
+                if (load.GetStatus() == "Assigned")
+                {
+                    hasAssignedLoad = true;
+                    break;
+                }
+            }
+
+            if (!hasAssignedLoad)
+            {
+                std::cout << "\nThere are no assigned loads to complete.\n";
+                break;
+            }
+
+            int loadNumber = ReadPositiveInt(
+                "\nEnter the load number to complete: ",
+                "load number"
+            );
+
+            const Load* selectedLoad = FindLoad(*company, loadNumber);
+
+            if (selectedLoad == nullptr)
+            {
+                std::cout << "Load #" << loadNumber << " does not exist.\n";
+                break;
+            }
+
+            if (selectedLoad->GetStatus() != "Assigned")
+            {
+                std::cout << "Load #" << loadNumber
+                    << " is currently " << selectedLoad->GetStatus()
+                    << " and cannot be completed.\n";
+                break;
+            }
+
+            int driverID = selectedLoad->GetAssignedDriverID();
+            int truckUnitNumber = selectedLoad->GetAssignedTruckUnitNumber();
+
+            bool completed = dispatchManager.CompleteLoad(loadNumber);
+
+            if (completed)
+            {
+                std::cout << "\nLoad #" << loadNumber
+                    << " completed successfully.\n";
+                std::cout << "Driver ID " << driverID
+                    << " is now Available.\n";
+                std::cout << "Truck #" << truckUnitNumber
+                    << " is now Available.\n";
+            }
+            else
+            {
+                std::cout
+                    << "\nUnable to complete load. Check the dispatch state "
+                    << "and try again.\n";
+            }
+
+            break;
+        }
+
         case 0:
             break;
 
         default:
-            std::cout << "\nInvalid selection. Please choose 0, 1, or 2.\n";
+            std::cout << "\nInvalid selection. Please choose 0, 1, 2, or 3.\n";
             break;
         }
     }

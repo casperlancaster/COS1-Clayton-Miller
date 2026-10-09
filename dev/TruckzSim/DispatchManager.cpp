@@ -86,3 +86,71 @@ bool DispatchManager::AssignLoad(int loadNumber, int driverID, int truckUnitNumb
 
 	return true;
 }
+
+bool DispatchManager::CompleteLoad(int loadNumber)
+{
+	if (company == nullptr)
+	{
+		return false;
+	}
+
+	std::vector<Driver>& drivers = company->GetDrivers();
+	std::vector<Truck>& trucks = company->GetTrucks();
+	std::vector<Load>& loads = company->GetLoads();
+
+	Load* selectedLoad = nullptr;
+
+	for (Load& load : loads)
+	{
+		if (load.GetLoadNumber() == loadNumber)
+		{
+			selectedLoad = &load;
+			break;
+		}
+	}
+
+	if (selectedLoad == nullptr || selectedLoad->GetStatus() != "Assigned")
+	{
+		return false;
+	}
+
+	int assignedDriverID = selectedLoad->GetAssignedDriverID();
+	int assignedTruckUnitNumber = selectedLoad->GetAssignedTruckUnitNumber();
+
+	Driver* selectedDriver = nullptr;
+	Truck* selectedTruck = nullptr;
+
+	for (Driver& driver : drivers)
+	{
+		if (driver.GetDriverID() == assignedDriverID)
+		{
+			selectedDriver = &driver;
+			break;
+		}
+	}
+
+	for (Truck& truck : trucks)
+	{
+		if (truck.GetUnitNumber() == assignedTruckUnitNumber)
+		{
+			selectedTruck = &truck;
+			break;
+		}
+	}
+
+	if (selectedDriver == nullptr || selectedTruck == nullptr)
+	{
+		return false;
+	}
+
+	if (selectedDriver->GetStatus() != "Dispatched" || selectedTruck->GetStatus() != "Dispatched")
+	{
+		return false;
+	}
+
+	selectedLoad->SetStatus("Completed");
+	selectedDriver->SetStatus("Available");
+	selectedTruck->SetStatus("Available");
+
+	return true;
+}
