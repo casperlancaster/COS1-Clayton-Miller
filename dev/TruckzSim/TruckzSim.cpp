@@ -886,6 +886,13 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
                     << " is now Available.\n";
                 std::cout << "Truck #" << truckUnitNumber
                     << " is now Available.\n";
+                std::cout << "Company revenue is now $"
+                    << std::fixed
+                    << std::setprecision(2)
+                    << company->GetRevenue()
+                    << std::defaultfloat
+                    << std::setprecision(6)
+                    << ".\n";
             }
             else
             {
@@ -948,6 +955,13 @@ int main()
             std::cout << "Trucks: " << company.GetTrucks().size() << "\n";
             std::cout << "Drivers: " << company.GetDrivers().size() << "\n";
             std::cout << "Loads: " << company.GetLoads().size() << "\n";
+            std::cout << "Revenue: $"
+                << std::fixed
+                << std::setprecision(2)
+                << company.GetRevenue()
+                << std::defaultfloat
+                << std::setprecision(6)
+                << "\n";
             std::cout << "========================================\n";
             break;
 
