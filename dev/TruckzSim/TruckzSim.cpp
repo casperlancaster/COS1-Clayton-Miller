@@ -8,6 +8,8 @@
 #include "Company.h"
 #include "DispatchManager.h"
 #include "InputManager.h"
+#include "FleetManager.h"
+#include "DriverManager.h"
 
 
 void ShowMainMenu()
@@ -26,28 +28,6 @@ void ShowMainMenu()
     std::cout << "7. Maintenance\n";
     std::cout << "0. Exit\n";
     std::cout << "---------------------------------------------\n";
-}
-
-
-void ShowFleetMenu()
-{
-    std::cout << "\n";
-    std::cout << "========== FLEET MANAGEMENT ==========\n";
-    std::cout << "1. Add Truck\n";
-    std::cout << "2. View Trucks\n";
-    std::cout << "0. Return to Main Menu\n";
-    std::cout << "======================================\n";
-}
-
-
-void ShowDriverMenu()
-{
-    std::cout << "\n";
-    std::cout << "========== DRIVER MANAGEMENT ==========\n";
-    std::cout << "1. Add Driver\n";
-    std::cout << "2. View Drivers\n";
-    std::cout << "0. Return to Main Menu\n";
-    std::cout << "=======================================\n";
 }
 
 
@@ -71,166 +51,6 @@ void ShowDispatchMenu()
     std::cout << "3. Complete Load\n";
     std::cout << "0. Return to Main Menu\n";
     std::cout << "=====================================\n";
-}
-
-
-void AddTruck(Company& company)
-{
-    Truck newTruck;
-
-    std::cout << "\n========== ADD TRUCK ==========\n";
-
-    int unitNumber = InputManager::ReadPositiveInt(
-        "Enter unit number: ",
-        "unit number"
-    );
-
-    double mileage = InputManager::ReadNonNegativeDouble(
-        "Enter current mileage: ",
-        "mileage"
-    );
-
-    newTruck.SetUnitNumber(unitNumber);
-    newTruck.SetMileage(mileage);
-    newTruck.SetStatus("Available");
-
-    company.AddTruck(newTruck);
-
-    std::cout << "\nTruck #" << unitNumber << " added successfully.\n";
-}
-
-
-void DisplayTrucks(const Company& company)
-{
-    const std::vector<Truck>& trucks = company.GetTrucks();
-
-    std::cout << "\n========== COMPANY FLEET ==========\n";
-
-    if (trucks.empty())
-    {
-        std::cout << "No trucks have been added yet.\n";
-    }
-    else
-    {
-        for (int i = 0; i < trucks.size(); i++)
-        {
-            std::cout << "\nTruck #" << trucks[i].GetUnitNumber() << "\n";
-            std::cout << "Mileage: " << trucks[i].GetMileage() << "\n";
-            std::cout << "Status: " << trucks[i].GetStatus() << "\n";
-        }
-    }
-
-    std::cout << "==================================\n";
-}
-
-
-void RunFleetManagement(Company& company)
-{
-    int choice = -1;
-
-    while (choice != 0)
-    {
-        ShowFleetMenu();
-        choice = InputManager::ReadInt("Select an option: ");
-
-        switch (choice)
-        {
-        case 1:
-            AddTruck(company);
-            break;
-
-        case 2:
-            DisplayTrucks(company);
-            break;
-
-        case 0:
-            break;
-
-        default:
-            std::cout << "\nInvalid selection. Please choose 0, 1, or 2.\n";
-            break;
-        }
-    }
-}
-
-
-void AddDriver(Company& company)
-{
-    Driver newDriver;
-
-    std::cout << "\n========== ADD DRIVER ==========\n";
-
-    int driverID = InputManager::ReadPositiveInt(
-        "Enter Driver ID: ",
-        "driver ID"
-    );
-
-    std::string driverName = InputManager::ReadRequiredText(
-        "Enter driver name: ",
-        "Driver name"
-    );
-
-    newDriver.SetDriverID(driverID);
-    newDriver.SetName(driverName);
-    newDriver.SetStatus("Available");
-
-    company.AddDriver(newDriver);
-
-    std::cout << "\nDriver " << driverName << " added successfully.\n";
-}
-
-
-void DisplayDrivers(const Company& company)
-{
-    const std::vector<Driver>& drivers = company.GetDrivers();
-
-    std::cout << "\n========== COMPANY DRIVERS ==========\n";
-
-    if (drivers.empty())
-    {
-        std::cout << "No drivers have been added yet.\n";
-    }
-    else
-    {
-        for (int i = 0; i < drivers.size(); i++)
-        {
-            std::cout << "\nDriver ID: " << drivers[i].GetDriverID() << "\n";
-            std::cout << "Name: " << drivers[i].GetName() << "\n";
-            std::cout << "Status: " << drivers[i].GetStatus() << "\n";
-        }
-    }
-
-    std::cout << "===============================================\n";
-}
-
-
-void RunDriverManagement(Company& company)
-{
-    int choice = -1;
-
-    while (choice != 0)
-    {
-        ShowDriverMenu();
-        choice = InputManager::ReadInt("Select an option: ");
-
-        switch (choice)
-        {
-        case 1:
-            AddDriver(company);
-            break;
-
-        case 2:
-            DisplayDrivers(company);
-            break;
-
-        case 0:
-            break;
-
-        default:
-            std::cout << "\nInvalid selection. Please choose 0, 1, or 2.\n";
-            break;
-        }
-    }
 }
 
 
@@ -801,11 +621,11 @@ int main()
             break;
 
         case 2:
-            RunFleetManagement(company);
+            FleetManager::Run(company);
             break;
 
         case 3:
-            RunDriverManagement(company);
+            DriverManager::Run(company);
             break;
 
         case 4:
