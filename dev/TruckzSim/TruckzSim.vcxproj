@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Company.cpp" />
+    <ClCompile Include="DispatchCenter.cpp" />
     <ClCompile Include="DispatchManager.cpp" />
     <ClCompile Include="Driver.cpp" />
     <ClCompile Include="DriverManager.cpp" />
@@ -152,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Company.h" />
+    <ClInclude Include="DispatchCenter.h" />
     <ClInclude Include="DispatchManager.h" />
     <ClInclude Include="Driver.h" />
     <ClInclude Include="DriverManager.h" />
