@@ -10,6 +10,7 @@
 #include "InputManager.h"
 #include "FleetManager.h"
 #include "DriverManager.h"
+#include "FreightManager.h"
 
 
 void ShowMainMenu()
@@ -31,17 +32,6 @@ void ShowMainMenu()
 }
 
 
-void ShowFreightMarketMenu()
-{
-    std::cout << "\n";
-    std::cout << "========== FREIGHT MARKET ==========\n";
-    std::cout << "1. Add Load\n";
-    std::cout << "2. View Loads\n";
-    std::cout << "0. Return to Main Menu\n";
-    std::cout << "====================================\n";
-}
-
-
 void ShowDispatchMenu()
 {
     std::cout << "\n";
@@ -51,113 +41,6 @@ void ShowDispatchMenu()
     std::cout << "3. Complete Load\n";
     std::cout << "0. Return to Main Menu\n";
     std::cout << "=====================================\n";
-}
-
-
-void AddLoad(Company& company)
-{
-    Load newLoad;
-
-    std::cout << "\n========== ADD LOAD ==========\n";
-
-    int loadNumber = InputManager::ReadPositiveInt(
-        "Enter load number: ",
-        "load number"
-    );
-
-    std::string origin = InputManager::ReadRequiredText(
-        "Enter origin: ",
-        "Origin"
-    );
-
-    std::string destination = InputManager::ReadRequiredText(
-        "Enter destination: ",
-        "Destination"
-    );
-
-    double pay = InputManager::ReadCurrency("Enter load pay: $");
-
-    newLoad.SetLoadNumber(loadNumber);
-    newLoad.SetOrigin(origin);
-    newLoad.SetDestination(destination);
-    newLoad.SetPay(pay);
-    newLoad.SetStatus("Available");
-
-    company.AddLoad(newLoad);
-
-    std::cout << "\nLoad #" << loadNumber
-        << " added successfully.\n";
-}
-
-
-void DisplayLoads(const Company& company)
-{
-    const std::vector<Load>& loads = company.GetLoads();
-
-    std::cout << "\n========== COMPANY LOADS ==========\n";
-
-    if (loads.empty())
-    {
-        std::cout << "No loads have been added yet.\n";
-    }
-    else
-    {
-        for (int i = 0; i < loads.size(); i++)
-        {
-            std::cout << "\nLoad #" << loads[i].GetLoadNumber() << "\n";
-            std::cout << "Origin: " << loads[i].GetOrigin() << "\n";
-            std::cout << "Destination: " << loads[i].GetDestination() << "\n";
-            std::cout << "Pay: $"
-                << std::fixed
-                << std::setprecision(2)
-                << loads[i].GetPay()
-                << std::defaultfloat
-                << std::setprecision(6)
-                << "\n";
-            std::cout << "Status: " << loads[i].GetStatus() << "\n";
-
-            if (loads[i].GetAssignedDriverID() > 0 &&
-                loads[i].GetAssignedTruckUnitNumber() > 0)
-            {
-                std::cout << "Assigned Driver ID: "
-                    << loads[i].GetAssignedDriverID() << "\n";
-                std::cout << "Assigned Truck: "
-                    << loads[i].GetAssignedTruckUnitNumber() << "\n";
-            }
-        }
-    }
-
-    std::cout << "=====================================\n";
-}
-
-
-void RunFreightMarket(Company& company)
-{
-    int choice = -1;
-
-    while (choice != 0)
-    {
-        ShowFreightMarketMenu();
-        choice = InputManager::ReadInt("Select an option: ");
-
-        switch (choice)
-        {
-        case 1:
-            AddLoad(company);
-            break;
-
-        case 2:
-            DisplayLoads(company);
-            break;
-
-        case 0:
-            break;
-
-        default:
-            std::cout << "\nInvalid selection. Please choose 0, 1, or 2.\n";
-            break;
-        }
-    }
 }
 
 
@@ -629,7 +512,7 @@ int main()
             break;
 
         case 4:
-            RunFreightMarket(company);
+            FreightManager::Run(company);
             break;
 
         case 5:

@@ -144,6 +144,7 @@
     <ClCompile Include="Driver.cpp" />
     <ClCompile Include="DriverManager.cpp" />
     <ClCompile Include="FleetManager.cpp" />
+    <ClCompile Include="FreightManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Load.cpp" />
     <ClCompile Include="Truck.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Driver.h" />
     <ClInclude Include="DriverManager.h" />
     <ClInclude Include="FleetManager.h" />
+    <ClInclude Include="FreightManager.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Load.h" />
     <ClInclude Include="Truck.h" />
