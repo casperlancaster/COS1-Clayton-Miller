@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "BankingManager.h"
 #include "DispatchCenter.h"
 #include "DriverManager.h"
 #include "FleetManager.h"
@@ -57,13 +58,11 @@ void TruckzSimApp::ShowCompanyOverview() const
     std::cout << "Trucks: " << company.GetTrucks().size() << "\n";
     std::cout << "Drivers: " << company.GetDrivers().size() << "\n";
     std::cout << "Loads: " << company.GetLoads().size() << "\n";
-    std::cout << "Revenue: $"
-        << std::fixed
-        << std::setprecision(2)
-        << company.GetRevenue()
-        << std::defaultfloat
-        << std::setprecision(6)
-        << "\n";
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "Revenue: $" << company.GetRevenue() << "\n";
+    std::cout << "Expenses: $" << company.GetExpenses() << "\n";
+    std::cout << "Balance: $" << company.GetBalance() << "\n";
+    std::cout << std::defaultfloat << std::setprecision(6);
     std::cout << "========================================\n";
 }
 
@@ -103,7 +102,7 @@ void TruckzSimApp::Run()
             break;
 
         case 6:
-            std::cout << "Banking is under development.\n";
+            BankingManager::Run(company);
             break;
 
         case 7:
