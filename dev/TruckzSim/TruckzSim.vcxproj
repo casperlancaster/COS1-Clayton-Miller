@@ -139,6 +139,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BankingManager.cpp" />
     <ClCompile Include="Company.cpp" />
     <ClCompile Include="DispatchCenter.cpp" />
     <ClCompile Include="DispatchManager.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="FreightManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Load.cpp" />
+    <ClCompile Include="MaintenanceManager.cpp" />
     <ClCompile Include="Truck.cpp" />
     <ClCompile Include="TruckzSim.cpp" />
     <ClCompile Include="TruckzSimApp.cpp" />
@@ -160,8 +162,10 @@
     <ClInclude Include="DriverManager.h" />
     <ClInclude Include="FleetManager.h" />
     <ClInclude Include="FreightManager.h" />
+    <ClInclude Include="BankingManager.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Load.h" />
+    <ClInclude Include="MaintenanceManager.h" />
     <ClInclude Include="Truck.h" />
     <ClInclude Include="TruckzSimApp.h" />
   </ItemGroup>

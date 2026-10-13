@@ -4,6 +4,7 @@ Company::Company()
 {
     companyName = "";
     revenue = 0.0;
+    expenses = 0.0;
 }
 
 std::string Company::GetCompanyName() const
@@ -27,6 +28,24 @@ void Company::AddRevenue(double amount)
     {
         revenue += amount;
     }
+}
+
+double Company::GetExpenses() const
+{
+    return expenses;
+}
+
+void Company::AddExpense(double amount)
+{
+    if (amount > 0.0)
+    {
+        expenses += amount;
+    }
+}
+
+double Company::GetBalance() const
+{
+    return revenue - expenses;
 }
 
 void Company::AddTruck(const Truck& newTruck)

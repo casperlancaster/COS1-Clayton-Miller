@@ -46,6 +46,7 @@ void FleetManager::AddTruck(Company& company)
 
     newTruck.SetUnitNumber(unitNumber);
     newTruck.SetMileage(mileage);
+    newTruck.InitializeMaintenanceSchedule();
     newTruck.SetStatus("Available");
 
     company.AddTruck(newTruck);

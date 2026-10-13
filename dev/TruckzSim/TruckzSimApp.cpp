@@ -9,6 +9,7 @@
 #include "FleetManager.h"
 #include "FreightManager.h"
 #include "InputManager.h"
+#include "MaintenanceManager.h"
 
 TruckzSimApp::TruckzSimApp()
     : dispatchManager(&company)
@@ -106,7 +107,7 @@ void TruckzSimApp::Run()
             break;
 
         case 7:
-            std::cout << "Maintenance is under development.\n";
+            MaintenanceManager::Run(company);
             break;
 
         case 0:
