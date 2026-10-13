@@ -32,7 +32,19 @@ void ShowMainMenu()
 int main()
 {
     Company company;
-    company.SetCompanyName("TruckzSim Logistics");
+
+    std::cout << "========== COMPANY SETUP ==========\n";
+
+    std::string companyName = InputManager::ReadRequiredText(
+        "Enter your trucking company name: ",
+        "Company name"
+    );
+
+    company.SetCompanyName(companyName);
+
+    std::cout << "\nWelcome to " << company.GetCompanyName()
+        << "!\n";
+    std::cout << "===================================\n\n";
 
     DispatchManager dispatchManager(&company);
 
