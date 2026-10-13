@@ -50,11 +50,17 @@ void FreightManager::AddLoad(Company& company)
         "Destination"
     );
 
+    double distanceMiles = InputManager::ReadPositiveDouble(
+        "Enter load distance in miles: ",
+        "load distance"
+    );
+
     double pay = InputManager::ReadCurrency("Enter load pay: $");
 
     newLoad.SetLoadNumber(loadNumber);
     newLoad.SetOrigin(origin);
     newLoad.SetDestination(destination);
+    newLoad.SetDistanceMiles(distanceMiles);
     newLoad.SetPay(pay);
     newLoad.SetStatus("Available");
 
@@ -81,6 +87,8 @@ void FreightManager::DisplayLoads(const Company& company)
             std::cout << "\nLoad #" << load.GetLoadNumber() << "\n";
             std::cout << "Origin: " << load.GetOrigin() << "\n";
             std::cout << "Destination: " << load.GetDestination() << "\n";
+            std::cout << "Distance: "
+                << load.GetDistanceMiles() << " miles\n";
             std::cout << "Pay: $"
                 << std::fixed
                 << std::setprecision(2)

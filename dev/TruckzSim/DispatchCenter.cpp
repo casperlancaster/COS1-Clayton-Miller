@@ -114,6 +114,7 @@ void DispatchCenter::DisplayAvailableResources(const Company& company)
             std::cout << "Load #" << load.GetLoadNumber()
                 << " | " << load.GetOrigin()
                 << " -> " << load.GetDestination()
+                << " | " << load.GetDistanceMiles() << " miles"
                 << " | Pay: $"
                 << std::fixed
                 << std::setprecision(2)
@@ -189,6 +190,7 @@ void DispatchCenter::DisplayAssignedLoads(const Company& company)
             std::cout << "Load #" << load.GetLoadNumber()
                 << " | " << load.GetOrigin()
                 << " -> " << load.GetDestination()
+                << " | " << load.GetDistanceMiles() << " miles"
                 << " | Driver ID " << load.GetAssignedDriverID()
                 << " | Truck #" << load.GetAssignedTruckUnitNumber()
                 << " | Pay: $"
@@ -436,9 +438,21 @@ void DispatchCenter::Run(DispatchManager& dispatchManager)
                 std::cout
                     << "Driver ID " << driverID
                     << " is now Available.\n";
+                const Truck* completedTruck =
+                    FindTruck(*company, truckUnitNumber);
+
                 std::cout
                     << "Truck #" << truckUnitNumber
-                    << " is now Available.\n";
+                    << " is now Available";
+
+                if (completedTruck != nullptr)
+                {
+                    std::cout << " with "
+                        << completedTruck->GetMileage()
+                        << " miles";
+                }
+
+                std::cout << ".\n";
                 std::cout
                     << "Company revenue is now $"
                     << std::fixed

@@ -155,6 +155,10 @@ bool DispatchManager::CompleteLoad(int loadNumber)
 
     company->AddRevenue(selectedLoad->GetPay());
 
+    selectedTruck->SetMileage(
+        selectedTruck->GetMileage() + selectedLoad->GetDistanceMiles()
+    );
+
     selectedLoad->SetStatus("Completed");
     selectedDriver->SetStatus("Available");
     selectedTruck->SetStatus("Available");

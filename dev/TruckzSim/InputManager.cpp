@@ -91,6 +91,29 @@ double InputManager::ReadNonNegativeDouble(
     }
 }
 
+
+double InputManager::ReadPositiveDouble(
+    const std::string& prompt,
+    const std::string& fieldName)
+{
+    while (true)
+    {
+        std::string input;
+        double value = 0.0;
+
+        std::cout << prompt;
+        std::getline(std::cin, input);
+
+        if (TryParseDouble(input, value) && value > 0.0)
+        {
+            return value;
+        }
+
+        std::cout << "Invalid " << fieldName
+            << ". Please enter a number greater than 0.\n";
+    }
+}
+
 std::string InputManager::ReadRequiredText(
     const std::string& prompt,
     const std::string& fieldName)
