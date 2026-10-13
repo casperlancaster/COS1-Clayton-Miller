@@ -7,144 +7,7 @@
 #include "Load.h"
 #include "Company.h"
 #include "DispatchManager.h"
-
-
-bool TryParseInt(const std::string& input, int& value)
-{
-    try
-    {
-        std::size_t charactersProcessed = 0;
-        value = std::stoi(input, &charactersProcessed);
-
-        return charactersProcessed == input.length();
-    }
-    catch (...)
-    {
-        return false;
-    }
-}
-
-
-bool TryParseDouble(const std::string& input, double& value)
-{
-    try
-    {
-        std::size_t charactersProcessed = 0;
-        value = std::stod(input, &charactersProcessed);
-
-        return charactersProcessed == input.length();
-    }
-    catch (...)
-    {
-        return false;
-    }
-}
-
-
-int ReadInt(const std::string& prompt)
-{
-    while (true)
-    {
-        std::string input;
-        int value = 0;
-
-        std::cout << prompt;
-        std::getline(std::cin, input);
-
-        if (TryParseInt(input, value))
-        {
-            return value;
-        }
-
-        std::cout << "Invalid input. Please enter a whole number.\n";
-    }
-}
-
-
-int ReadPositiveInt(const std::string& prompt, const std::string& fieldName)
-{
-    while (true)
-    {
-        int value = ReadInt(prompt);
-
-        if (value > 0)
-        {
-            return value;
-        }
-
-        std::cout << "Invalid " << fieldName
-            << ". Please enter a number greater than 0.\n";
-    }
-}
-
-
-double ReadNonNegativeDouble(const std::string& prompt, const std::string& fieldName)
-{
-    while (true)
-    {
-        std::string input;
-        double value = 0.0;
-
-        std::cout << prompt;
-        std::getline(std::cin, input);
-
-        if (TryParseDouble(input, value) && value >= 0.0)
-        {
-            return value;
-        }
-
-        std::cout << "Invalid " << fieldName
-            << ". Please enter a number that is 0 or greater.\n";
-    }
-}
-
-
-std::string ReadRequiredText(const std::string& prompt, const std::string& fieldName)
-{
-    while (true)
-    {
-        std::string input;
-
-        std::cout << prompt;
-        std::getline(std::cin, input);
-
-        if (!input.empty())
-        {
-            return input;
-        }
-
-        std::cout << fieldName << " cannot be empty. Please try again.\n";
-    }
-}
-
-
-double ReadCurrency(const std::string& prompt)
-{
-    while (true)
-    {
-        std::string payInput;
-        std::string cleanedPay;
-        double pay = 0.0;
-
-        std::cout << prompt;
-        std::getline(std::cin, payInput);
-
-        for (char character : payInput)
-        {
-            if (character != ',' && character != '$')
-            {
-                cleanedPay += character;
-            }
-        }
-
-        if (TryParseDouble(cleanedPay, pay) && pay >= 0.0)
-        {
-            return pay;
-        }
-
-        std::cout << "Invalid load pay. Please enter a valid amount.\n";
-    }
-}
+#include "InputManager.h"
 
 
 void ShowMainMenu()
@@ -217,12 +80,12 @@ void AddTruck(Company& company)
 
     std::cout << "\n========== ADD TRUCK ==========\n";
 
-    int unitNumber = ReadPositiveInt(
+    int unitNumber = InputManager::ReadPositiveInt(
         "Enter unit number: ",
         "unit number"
     );
 
-    double mileage = ReadNonNegativeDouble(
+    double mileage = InputManager::ReadNonNegativeDouble(
         "Enter current mileage: ",
         "mileage"
     );
@@ -268,7 +131,7 @@ void RunFleetManagement(Company& company)
     while (choice != 0)
     {
         ShowFleetMenu();
-        choice = ReadInt("Select an option: ");
+        choice = InputManager::ReadInt("Select an option: ");
 
         switch (choice)
         {
@@ -297,12 +160,12 @@ void AddDriver(Company& company)
 
     std::cout << "\n========== ADD DRIVER ==========\n";
 
-    int driverID = ReadPositiveInt(
+    int driverID = InputManager::ReadPositiveInt(
         "Enter Driver ID: ",
         "driver ID"
     );
 
-    std::string driverName = ReadRequiredText(
+    std::string driverName = InputManager::ReadRequiredText(
         "Enter driver name: ",
         "Driver name"
     );
@@ -348,7 +211,7 @@ void RunDriverManagement(Company& company)
     while (choice != 0)
     {
         ShowDriverMenu();
-        choice = ReadInt("Select an option: ");
+        choice = InputManager::ReadInt("Select an option: ");
 
         switch (choice)
         {
@@ -377,22 +240,22 @@ void AddLoad(Company& company)
 
     std::cout << "\n========== ADD LOAD ==========\n";
 
-    int loadNumber = ReadPositiveInt(
+    int loadNumber = InputManager::ReadPositiveInt(
         "Enter load number: ",
         "load number"
     );
 
-    std::string origin = ReadRequiredText(
+    std::string origin = InputManager::ReadRequiredText(
         "Enter origin: ",
         "Origin"
     );
 
-    std::string destination = ReadRequiredText(
+    std::string destination = InputManager::ReadRequiredText(
         "Enter destination: ",
         "Destination"
     );
 
-    double pay = ReadCurrency("Enter load pay: $");
+    double pay = InputManager::ReadCurrency("Enter load pay: $");
 
     newLoad.SetLoadNumber(loadNumber);
     newLoad.SetOrigin(origin);
@@ -455,7 +318,7 @@ void RunFreightMarket(Company& company)
     while (choice != 0)
     {
         ShowFreightMarketMenu();
-        choice = ReadInt("Select an option: ");
+        choice = InputManager::ReadInt("Select an option: ");
 
         switch (choice)
         {
@@ -681,7 +544,7 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
     while (choice != 0)
     {
         ShowDispatchMenu();
-        choice = ReadInt("Select an option: ");
+        choice = InputManager::ReadInt("Select an option: ");
 
         switch (choice)
         {
@@ -725,7 +588,7 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
 
             std::cout << "\n========== ASSIGN LOAD ==========\n";
 
-            int loadNumber = ReadPositiveInt(
+            int loadNumber = InputManager::ReadPositiveInt(
                 "Enter a load number: ",
                 "load number"
             );
@@ -746,7 +609,7 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
                 break;
             }
 
-            int driverID = ReadPositiveInt(
+            int driverID = InputManager::ReadPositiveInt(
                 "Enter Driver ID: ",
                 "Driver ID"
             );
@@ -767,7 +630,7 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
                 break;
             }
 
-            int truckUnitNumber = ReadPositiveInt(
+            int truckUnitNumber = InputManager::ReadPositiveInt(
                 "Enter Truck Unit Number: ",
                 "Truck Unit Number"
             );
@@ -852,7 +715,7 @@ void RunDispatchCenter(DispatchManager& dispatchManager)
                 break;
             }
 
-            int loadNumber = ReadPositiveInt(
+            int loadNumber = InputManager::ReadPositiveInt(
                 "\nEnter the load number to complete: ",
                 "load number"
             );
@@ -927,7 +790,7 @@ int main()
     while (choice != 0)
     {
         ShowMainMenu();
-        choice = ReadInt("Select an option: ");
+        choice = InputManager::ReadInt("Select an option: ");
 
         std::cout << "\n";
 
