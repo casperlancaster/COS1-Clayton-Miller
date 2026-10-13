@@ -21,10 +21,23 @@ void FleetManager::AddTruck(Company& company)
 
     std::cout << "\n========== ADD TRUCK ==========\n";
 
-    int unitNumber = InputManager::ReadPositiveInt(
-        "Enter unit number: ",
-        "unit number"
-    );
+    int unitNumber = 0;
+
+    while (true)
+    {
+        unitNumber = InputManager::ReadPositiveInt(
+            "Enter unit number: ",
+            "unit number"
+        );
+
+        if (!company.HasTruckUnitNumber(unitNumber))
+        {
+            break;
+        }
+
+        std::cout << "Truck #" << unitNumber
+            << " already exists. Please enter a unique unit number.\n";
+    }
 
     double mileage = InputManager::ReadNonNegativeDouble(
         "Enter current mileage: ",

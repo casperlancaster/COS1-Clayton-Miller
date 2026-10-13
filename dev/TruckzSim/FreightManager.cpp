@@ -22,10 +22,23 @@ void FreightManager::AddLoad(Company& company)
 
     std::cout << "\n========== ADD LOAD ==========\n";
 
-    int loadNumber = InputManager::ReadPositiveInt(
-        "Enter load number: ",
-        "load number"
-    );
+    int loadNumber = 0;
+
+    while (true)
+    {
+        loadNumber = InputManager::ReadPositiveInt(
+            "Enter load number: ",
+            "load number"
+        );
+
+        if (!company.HasLoadNumber(loadNumber))
+        {
+            break;
+        }
+
+        std::cout << "Load #" << loadNumber
+            << " already exists. Please enter a unique load number.\n";
+    }
 
     std::string origin = InputManager::ReadRequiredText(
         "Enter origin: ",

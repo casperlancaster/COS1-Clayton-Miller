@@ -21,10 +21,23 @@ void DriverManager::AddDriver(Company& company)
 
     std::cout << "\n========== ADD DRIVER ==========\n";
 
-    int driverID = InputManager::ReadPositiveInt(
-        "Enter Driver ID: ",
-        "driver ID"
-    );
+    int driverID = 0;
+
+    while (true)
+    {
+        driverID = InputManager::ReadPositiveInt(
+            "Enter Driver ID: ",
+            "driver ID"
+        );
+
+        if (!company.HasDriverID(driverID))
+        {
+            break;
+        }
+
+        std::cout << "Driver ID " << driverID
+            << " already exists. Please enter a unique Driver ID.\n";
+    }
 
     std::string driverName = InputManager::ReadRequiredText(
         "Enter driver name: ",

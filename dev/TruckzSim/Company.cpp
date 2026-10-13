@@ -44,6 +44,45 @@ void Company::AddLoad(const Load& newLoad)
     loads.push_back(newLoad);
 }
 
+bool Company::HasTruckUnitNumber(int unitNumber) const
+{
+    for (const Truck& truck : trucks)
+    {
+        if (truck.GetUnitNumber() == unitNumber)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Company::HasDriverID(int driverID) const
+{
+    for (const Driver& driver : drivers)
+    {
+        if (driver.GetDriverID() == driverID)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Company::HasLoadNumber(int loadNumber) const
+{
+    for (const Load& load : loads)
+    {
+        if (load.GetLoadNumber() == loadNumber)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 const std::vector<Truck>& Company::GetTrucks() const
 {
     return trucks;

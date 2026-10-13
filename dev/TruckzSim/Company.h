@@ -30,6 +30,10 @@ public:
     void AddDriver(const Driver& newDriver);
     void AddLoad(const Load& newLoad);
 
+    bool HasTruckUnitNumber(int unitNumber) const;
+    bool HasDriverID(int driverID) const;
+    bool HasLoadNumber(int loadNumber) const;
+
     std::vector<Truck>& GetTrucks();
     std::vector<Driver>& GetDrivers();
     std::vector<Load>& GetLoads();
