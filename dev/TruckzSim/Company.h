@@ -12,6 +12,7 @@ class Company
 private:
     std::string companyName;
     double revenue;
+    double expenses;
 
     std::vector<Truck> trucks;
     std::vector<Driver> drivers;
@@ -26,9 +27,17 @@ public:
     double GetRevenue() const;
     void AddRevenue(double amount);
 
+    double GetExpenses() const;
+    void AddExpense(double amount);
+    double GetBalance() const;
+
     void AddTruck(const Truck& newTruck);
     void AddDriver(const Driver& newDriver);
     void AddLoad(const Load& newLoad);
+
+    bool HasTruckUnitNumber(int unitNumber) const;
+    bool HasDriverID(int driverID) const;
+    bool HasLoadNumber(int loadNumber) const;
 
     std::vector<Truck>& GetTrucks();
     std::vector<Driver>& GetDrivers();

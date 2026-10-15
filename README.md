@@ -58,7 +58,30 @@ Before Week 3, I plan to continue expanding the company and economy systems, imp
 
 ### Week 3
 
-Stay tuned, this stand up is coming soon...
+## Week 3 Project Stand-Up
+
+⚙️ **Overview**  
+This week I focused on refactoring TruckzSim and expanding the simulation systems. I separated the program into dedicated classes so the main file only handles startup, while the different systems manage their own responsibilities.
+
+🛠️ **Improvements**  
+I added duplicate protection for truck numbers, driver IDs, and load numbers, truck mileage tracking from completed loads, custom company naming, a maintenance system with service intervals and expenses, and a banking system that tracks revenue, expenses, and company balance.
+
+I also moved the remaining application flow into TruckzSimApp so TruckzSim.cpp is now only a few lines and is responsible for starting the application.
+
+🌵 **Challenges**  
+The biggest challenge was refactoring working code without breaking existing features. I handled this by moving one system at a time, rebuilding often, and testing each part before continuing.
+
+Keeping Dispatch, Maintenance, mileage, and Banking connected correctly also required additional testing.
+
+🏆 **Accomplishments**  
+One of my biggest improvements this week was learning how to separate responsibilities between classes instead of allowing one large file to control the entire program.
+
+TruckzSim.cpp was reduced from approximately 990 lines to only the main application entry point, while systems such as input, fleet management, drivers, freight, dispatch, maintenance, banking, and application flow now have clearer responsibilities.
+
+🔮 **Next Steps**  
+For Week 4, my main goal is to add save/load functionality so company progress can persist between sessions.
+
+I also plan to begin expanding the simulation with truck fuel usage, simplified driver Hours of Service rules, and truck breakdown events if time allows.
 
 ### Week 4
 

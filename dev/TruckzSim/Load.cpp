@@ -9,6 +9,7 @@ Load::Load()
     status = "Available";
     assignedDriverID = 0;
     assignedTruckUnitNumber = 0;
+    distanceMiles = 0.0;
 }
 
 int Load::GetLoadNumber() const
@@ -16,39 +17,14 @@ int Load::GetLoadNumber() const
     return loadNumber;
 }
 
-std::string Load::GetOrigin() const
-{
-    return origin;
-}
-
-std::string Load::GetDestination() const
-{
-    return destination;
-}
-
-double Load::GetPay() const
-{
-    return pay;
-}
-
-std::string Load::GetStatus() const
-{
-    return status;
-}
-
-int Load::GetAssignedDriverID() const
-{
-    return assignedDriverID;
-}
-
-int Load::GetAssignedTruckUnitNumber() const
-{
-    return assignedTruckUnitNumber;
-}
-
 void Load::SetLoadNumber(int newLoadNumber)
 {
     loadNumber = newLoadNumber;
+}
+
+std::string Load::GetOrigin() const
+{
+    return origin;
 }
 
 void Load::SetOrigin(const std::string& newOrigin)
@@ -56,9 +32,19 @@ void Load::SetOrigin(const std::string& newOrigin)
     origin = newOrigin;
 }
 
+std::string Load::GetDestination() const
+{
+    return destination;
+}
+
 void Load::SetDestination(const std::string& newDestination)
 {
     destination = newDestination;
+}
+
+double Load::GetPay() const
+{
+    return pay;
 }
 
 void Load::SetPay(double newPay)
@@ -66,17 +52,42 @@ void Load::SetPay(double newPay)
     pay = newPay;
 }
 
+std::string Load::GetStatus() const
+{
+    return status;
+}
+
 void Load::SetStatus(const std::string& newStatus)
 {
     status = newStatus;
 }
 
-void Load::SetAssignedDriverID(int newDriverID)
+int Load::GetAssignedDriverID() const
 {
-    assignedDriverID = newDriverID;
+    return assignedDriverID;
 }
 
-void Load::SetAssignedTruckUnitNumber(int newTruckUnitNumber)
+void Load::SetAssignedDriverID(int newAssignedDriverID)
 {
-    assignedTruckUnitNumber = newTruckUnitNumber;
+    assignedDriverID = newAssignedDriverID;
+}
+
+int Load::GetAssignedTruckUnitNumber() const
+{
+    return assignedTruckUnitNumber;
+}
+
+void Load::SetAssignedTruckUnitNumber(int newAssignedTruckUnitNumber)
+{
+    assignedTruckUnitNumber = newAssignedTruckUnitNumber;
+}
+
+double Load::GetDistanceMiles() const
+{
+    return distanceMiles;
+}
+
+void Load::SetDistanceMiles(double newDistanceMiles)
+{
+    distanceMiles = newDistanceMiles;
 }
