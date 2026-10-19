@@ -33,6 +33,9 @@ namespace
     const std::string SAVE_FILE_HEADER_V4 =
         "TRUCKZSIM_SAVE_V4";
 
+    const std::string SAVE_FILE_HEADER_V5 =
+        "TRUCKZSIM_SAVE_V5";
+
     constexpr std::size_t MAX_SAVE_RECORDS =
         10000;
 
@@ -128,14 +131,11 @@ SaveLoadManager::GetSavedCompanies()
             header
         );
 
-        if (header !=
-            SAVE_FILE_HEADER_V1 &&
-            header !=
-            SAVE_FILE_HEADER_V2 &&
-            header !=
-            SAVE_FILE_HEADER_V3 &&
-            header !=
-            SAVE_FILE_HEADER_V4)
+        if (header != SAVE_FILE_HEADER_V1 &&
+            header != SAVE_FILE_HEADER_V2 &&
+            header != SAVE_FILE_HEADER_V3 &&
+            header != SAVE_FILE_HEADER_V4 &&
+            header != SAVE_FILE_HEADER_V5)
         {
             continue;
         }
@@ -193,7 +193,7 @@ bool SaveLoadManager::SaveCompany(
     }
 
     file
-        << SAVE_FILE_HEADER_V4
+        << SAVE_FILE_HEADER_V5
         << "\n";
 
     file
@@ -245,6 +245,26 @@ bool SaveLoadManager::SaveCompany(
             << " "
             << truck.
             GetAvailableAtEpoch()
+            << " "
+            << (truck.HasBreakdown()
+                ? 1
+                : 0)
+            << " "
+            << std::quoted(
+                truck.GetBreakdownType()
+            )
+            << " "
+            << truck.
+            GetBreakdownPartsCost()
+            << " "
+            << truck.
+            GetBreakdownLaborCost()
+            << " "
+            << truck.
+            GetBreakdownServiceCallCharge()
+            << " "
+            << truck.
+            GetBreakdownRepairHours()
             << "\n";
     }
 
@@ -364,8 +384,17 @@ bool SaveLoadManager::LoadCompany(
     bool hasFuelData = false;
     bool hasHosData = false;
     bool hasAvailabilityData = false;
+    bool hasBreakdownData = false;
 
     if (fileHeader ==
+        SAVE_FILE_HEADER_V5)
+    {
+        hasFuelData = true;
+        hasHosData = true;
+        hasAvailabilityData = true;
+        hasBreakdownData = true;
+    }
+    else if (fileHeader ==
         SAVE_FILE_HEADER_V4)
     {
         hasFuelData = true;
@@ -468,6 +497,23 @@ bool SaveLoadManager::LoadCompany(
         long long availableAtEpoch =
             0;
 
+        int breakdownActiveValue =
+            0;
+
+        std::string breakdownType;
+
+        double breakdownPartsCost =
+            0.0;
+
+        double breakdownLaborCost =
+            0.0;
+
+        double breakdownServiceCallCharge =
+            0.0;
+
+        double breakdownRepairHours =
+            0.0;
+
         if (!(file
             >> unitNumber
             >> mileage
@@ -498,6 +544,21 @@ bool SaveLoadManager::LoadCompany(
             }
         }
 
+        if (hasBreakdownData)
+        {
+            if (!(file
+                >> breakdownActiveValue
+                >> std::quoted(
+                    breakdownType)
+                >> breakdownPartsCost
+                >> breakdownLaborCost
+                >> breakdownServiceCallCharge
+                >> breakdownRepairHours))
+            {
+                return false;
+            }
+        }
+
         if (unitNumber <= 0 ||
             mileage < 0.0 ||
             lastServiceMileage < 0.0 ||
@@ -519,6 +580,29 @@ bool SaveLoadManager::LoadCompany(
             milesPerGallon <= 0.0)
         {
             return false;
+        }
+
+        if (breakdownActiveValue != 0 &&
+            breakdownActiveValue != 1)
+        {
+            return false;
+        }
+
+        if (breakdownPartsCost < 0.0 ||
+            breakdownLaborCost < 0.0 ||
+            breakdownServiceCallCharge < 0.0 ||
+            breakdownRepairHours < 0.0)
+        {
+            return false;
+        }
+
+        if (breakdownActiveValue == 1)
+        {
+            if (breakdownType.empty() ||
+                breakdownRepairHours <= 0.0)
+            {
+                return false;
+            }
         }
 
         Truck truck;
@@ -549,6 +633,15 @@ bool SaveLoadManager::LoadCompany(
 
         truck.SetAvailableAtEpoch(
             availableAtEpoch
+        );
+
+        truck.RestoreBreakdownState(
+            breakdownActiveValue == 1,
+            breakdownType,
+            breakdownPartsCost,
+            breakdownLaborCost,
+            breakdownServiceCallCharge,
+            breakdownRepairHours
         );
 
         loadedCompany.AddTruck(

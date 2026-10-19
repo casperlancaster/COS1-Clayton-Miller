@@ -14,6 +14,14 @@ Truck::Truck()
     milesPerGallon = 7.0;
 
     availableAtEpoch = 0;
+
+    breakdownActive = false;
+    breakdownType = "";
+
+    breakdownPartsCost = 0.0;
+    breakdownLaborCost = 0.0;
+    breakdownServiceCallCharge = 0.0;
+    breakdownRepairHours = 0.0;
 }
 
 int Truck::GetUnitNumber() const
@@ -21,9 +29,11 @@ int Truck::GetUnitNumber() const
     return unitNumber;
 }
 
-void Truck::SetUnitNumber(int newUnitNumber)
+void Truck::SetUnitNumber(
+    int newUnitNumber)
 {
-    unitNumber = newUnitNumber;
+    unitNumber =
+        newUnitNumber;
 }
 
 std::string Truck::GetStatus() const
@@ -34,7 +44,8 @@ std::string Truck::GetStatus() const
 void Truck::SetStatus(
     const std::string& newStatus)
 {
-    status = newStatus;
+    status =
+        newStatus;
 }
 
 double Truck::GetMileage() const
@@ -42,9 +53,11 @@ double Truck::GetMileage() const
     return mileage;
 }
 
-void Truck::SetMileage(double newMileage)
+void Truck::SetMileage(
+    double newMileage)
 {
-    mileage = newMileage;
+    mileage =
+        newMileage;
 }
 
 double Truck::GetLastServiceMileage() const
@@ -223,7 +236,8 @@ void Truck::RestoreFuelState(
     }
 }
 
-double Truck::AddFuel(double gallons)
+double Truck::AddFuel(
+    double gallons)
 {
     if (gallons <= 0.0)
     {
@@ -389,4 +403,112 @@ void Truck::SetAvailableAtEpoch(
         availableAtEpoch =
             newAvailableAtEpoch;
     }
+}
+
+bool Truck::HasBreakdown() const
+{
+    return breakdownActive;
+}
+
+std::string Truck::GetBreakdownType() const
+{
+    return breakdownType;
+}
+
+double Truck::GetBreakdownPartsCost() const
+{
+    return breakdownPartsCost;
+}
+
+double Truck::GetBreakdownLaborCost() const
+{
+    return breakdownLaborCost;
+}
+
+double Truck::GetBreakdownServiceCallCharge()
+const
+{
+    return breakdownServiceCallCharge;
+}
+
+double Truck::GetBreakdownRepairHours() const
+{
+    return breakdownRepairHours;
+}
+
+double Truck::GetBreakdownTotalCost() const
+{
+    return breakdownPartsCost +
+        breakdownLaborCost +
+        breakdownServiceCallCharge;
+}
+
+void Truck::SetBreakdown(
+    const std::string& newBreakdownType,
+    double newPartsCost,
+    double newLaborCost,
+    double newServiceCallCharge,
+    double newRepairHours)
+{
+    breakdownActive = true;
+
+    breakdownType =
+        newBreakdownType;
+
+    breakdownPartsCost =
+        newPartsCost;
+
+    breakdownLaborCost =
+        newLaborCost;
+
+    breakdownServiceCallCharge =
+        newServiceCallCharge;
+
+    breakdownRepairHours =
+        newRepairHours;
+}
+
+void Truck::RestoreBreakdownState(
+    bool newBreakdownActive,
+    const std::string& newBreakdownType,
+    double newPartsCost,
+    double newLaborCost,
+    double newServiceCallCharge,
+    double newRepairHours)
+{
+    breakdownActive =
+        newBreakdownActive;
+
+    breakdownType =
+        newBreakdownType;
+
+    breakdownPartsCost =
+        newPartsCost;
+
+    breakdownLaborCost =
+        newLaborCost;
+
+    breakdownServiceCallCharge =
+        newServiceCallCharge;
+
+    breakdownRepairHours =
+        newRepairHours;
+
+    if (breakdownActive)
+    {
+        status =
+            "Breakdown";
+    }
+}
+
+void Truck::ClearBreakdown()
+{
+    breakdownActive = false;
+
+    breakdownType = "";
+
+    breakdownPartsCost = 0.0;
+    breakdownLaborCost = 0.0;
+    breakdownServiceCallCharge = 0.0;
+    breakdownRepairHours = 0.0;
 }

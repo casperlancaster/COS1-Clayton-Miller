@@ -1,6 +1,10 @@
 #include "DispatchManager.h"
 
+#include <iomanip>
+#include <iostream>
+
 #include "HOSManager.h"
+#include "RepairManager.h"
 
 namespace
 {
@@ -145,6 +149,11 @@ bool DispatchManager::AssignLoad(
         return false;
     }
 
+    if (selectedTruck->HasBreakdown())
+    {
+        return false;
+    }
+
     if (secondDriver != nullptr &&
         secondDriver->GetStatus() !=
         "Available")
@@ -236,19 +245,27 @@ bool DispatchManager::AssignLoad(
     }
 
     primaryDriver->
-        SetStatus("Dispatched");
+        SetStatus(
+            "Dispatched"
+        );
 
     if (secondDriver != nullptr)
     {
         secondDriver->
-            SetStatus("Dispatched");
+            SetStatus(
+                "Dispatched"
+            );
     }
 
     selectedTruck->
-        SetStatus("Dispatched");
+        SetStatus(
+            "Dispatched"
+        );
 
     selectedLoad->
-        SetStatus("Assigned");
+        SetStatus(
+            "Assigned"
+        );
 
     selectedLoad->
         SetAssignedDriverID(
@@ -526,19 +543,101 @@ bool DispatchManager::CompleteLoad(
         );
 
     selectedLoad->
-        SetStatus("Completed");
+        SetStatus(
+            "Completed"
+        );
 
     primaryDriver->
-        SetStatus("Available");
+        SetStatus(
+            "Available"
+        );
 
     if (secondDriver != nullptr)
     {
         secondDriver->
-            SetStatus("Available");
+            SetStatus(
+                "Available"
+            );
     }
 
     selectedTruck->
-        SetStatus("Available");
+        SetStatus(
+            "Available"
+        );
+
+    bool breakdownOccurred =
+        RepairManager::RollForBreakdown(
+            *selectedTruck,
+            selectedLoad->
+            GetDistanceMiles()
+        );
+
+    if (breakdownOccurred)
+    {
+        std::cout
+            << "\n";
+        std::cout
+            << "!!!!!!!!!! POST-TRIP BREAKDOWN !!!!!!!!!!\n";
+
+        std::cout
+            << "Truck #"
+            << selectedTruck->GetUnitNumber()
+            << " suffered a mechanical failure.\n";
+
+        std::cout
+            << "Breakdown: "
+            << selectedTruck->GetBreakdownType()
+            << "\n";
+
+        std::cout
+            << std::fixed
+            << std::setprecision(2);
+
+        std::cout
+            << "Parts Estimate: $"
+            << selectedTruck->
+            GetBreakdownPartsCost()
+            << "\n";
+
+        std::cout
+            << "Labor Estimate: $"
+            << selectedTruck->
+            GetBreakdownLaborCost()
+            << "\n";
+
+        std::cout
+            << "Service Call: $"
+            << selectedTruck->
+            GetBreakdownServiceCallCharge()
+            << "\n";
+
+        std::cout
+            << "Estimated Total Repair: $"
+            << selectedTruck->
+            GetBreakdownTotalCost()
+            << "\n";
+
+        std::cout
+            << "Estimated Repair Time: "
+            << selectedTruck->
+            GetBreakdownRepairHours()
+            << " hours\n";
+
+        std::cout
+            << std::defaultfloat
+            << std::setprecision(6);
+
+        std::cout
+            << "Truck status is now BREAKDOWN.\n";
+
+        std::cout
+            << "Use Fleet Management -> "
+            << "Breakdown / Repair Center "
+            << "before dispatching this truck again.\n";
+
+        std::cout
+            << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+    }
 
     return true;
 }

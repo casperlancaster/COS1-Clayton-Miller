@@ -18,6 +18,15 @@ private:
 
     long long availableAtEpoch;
 
+    bool breakdownActive;
+
+    std::string breakdownType;
+
+    double breakdownPartsCost;
+    double breakdownLaborCost;
+    double breakdownServiceCallCharge;
+    double breakdownRepairHours;
+
 public:
     Truck();
 
@@ -51,9 +60,13 @@ public:
 
     double GetFuelPercentage() const;
     double GetFuelRangeMiles() const;
-    double GetFuelNeededForDistance(double distanceMiles) const;
+    double GetFuelNeededForDistance(
+        double distanceMiles
+    ) const;
 
-    bool HasEnoughFuelForDistance(double distanceMiles) const;
+    bool HasEnoughFuelForDistance(
+        double distanceMiles
+    ) const;
 
     void InitializeFuelSystem(
         double newFuelTankCapacity,
@@ -67,7 +80,10 @@ public:
     );
 
     double AddFuel(double gallons);
-    bool UseFuelForDistance(double distanceMiles);
+
+    bool UseFuelForDistance(
+        double distanceMiles
+    );
 
     double GetMinimumArrivalFuelGallons() const;
 
@@ -85,4 +101,33 @@ public:
     void SetAvailableAtEpoch(
         long long newAvailableAtEpoch
     );
+
+    bool HasBreakdown() const;
+
+    std::string GetBreakdownType() const;
+
+    double GetBreakdownPartsCost() const;
+    double GetBreakdownLaborCost() const;
+    double GetBreakdownServiceCallCharge() const;
+    double GetBreakdownRepairHours() const;
+    double GetBreakdownTotalCost() const;
+
+    void SetBreakdown(
+        const std::string& newBreakdownType,
+        double newPartsCost,
+        double newLaborCost,
+        double newServiceCallCharge,
+        double newRepairHours
+    );
+
+    void RestoreBreakdownState(
+        bool newBreakdownActive,
+        const std::string& newBreakdownType,
+        double newPartsCost,
+        double newLaborCost,
+        double newServiceCallCharge,
+        double newRepairHours
+    );
+
+    void ClearBreakdown();
 };

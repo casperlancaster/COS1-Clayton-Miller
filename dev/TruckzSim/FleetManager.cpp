@@ -5,6 +5,7 @@
 
 #include "HOSManager.h"
 #include "InputManager.h"
+#include "RepairManager.h"
 #include "Truck.h"
 
 void FleetManager::ShowMenu()
@@ -13,6 +14,7 @@ void FleetManager::ShowMenu()
     std::cout << "========== FLEET MANAGEMENT ==========\n";
     std::cout << "1. Add Truck\n";
     std::cout << "2. View Trucks\n";
+    std::cout << "3. Breakdown / Repair Center\n";
     std::cout << "0. Return to Main Menu\n";
     std::cout << "======================================\n";
 }
@@ -192,6 +194,47 @@ void FleetManager::DisplayTrucks(
                 GetMinimumArrivalFuelGallons()
                 << " gallons\n";
 
+            if (truck.HasBreakdown())
+            {
+                std::cout
+                    << "\n*** ACTIVE BREAKDOWN ***\n";
+
+                std::cout
+                    << "Repair Required: "
+                    << truck.GetBreakdownType()
+                    << "\n";
+
+                std::cout
+                    << std::fixed
+                    << std::setprecision(2);
+
+                std::cout
+                    << "Parts: $"
+                    << truck.GetBreakdownPartsCost()
+                    << "\n";
+
+                std::cout
+                    << "Labor: $"
+                    << truck.GetBreakdownLaborCost()
+                    << "\n";
+
+                std::cout
+                    << "Service Call: $"
+                    << truck.
+                    GetBreakdownServiceCallCharge()
+                    << "\n";
+
+                std::cout
+                    << "Total Repair: $"
+                    << truck.GetBreakdownTotalCost()
+                    << "\n";
+
+                std::cout
+                    << "Repair Time: "
+                    << truck.GetBreakdownRepairHours()
+                    << " hours\n";
+            }
+
             std::cout
                 << std::defaultfloat
                 << std::setprecision(6);
@@ -219,11 +262,21 @@ void FleetManager::Run(
         switch (choice)
         {
         case 1:
-            AddTruck(company);
+            AddTruck(
+                company
+            );
             break;
 
         case 2:
-            DisplayTrucks(company);
+            DisplayTrucks(
+                company
+            );
+            break;
+
+        case 3:
+            RepairManager::Run(
+                company
+            );
             break;
 
         case 0:
@@ -232,7 +285,7 @@ void FleetManager::Run(
         default:
             std::cout
                 << "\nInvalid selection. "
-                << "Please choose 0, 1, or 2.\n";
+                << "Please choose 0, 1, 2, or 3.\n";
 
             break;
         }
