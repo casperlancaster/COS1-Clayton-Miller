@@ -150,6 +150,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Load.cpp" />
     <ClCompile Include="MaintenanceManager.cpp" />
+    <ClCompile Include="SaveLoadManager.cpp" />
     <ClCompile Include="Truck.cpp" />
     <ClCompile Include="TruckzSim.cpp" />
     <ClCompile Include="TruckzSimApp.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Load.h" />
     <ClInclude Include="MaintenanceManager.h" />
+    <ClInclude Include="SaveLoadManager.h" />
     <ClInclude Include="Truck.h" />
     <ClInclude Include="TruckzSimApp.h" />
   </ItemGroup>

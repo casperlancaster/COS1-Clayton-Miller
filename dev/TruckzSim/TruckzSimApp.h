@@ -9,11 +9,14 @@ private:
     Company company;
     DispatchManager dispatchManager;
 
+    bool RunStartupMenu();
     void SetupCompany();
+
     void ShowMainMenu() const;
     void ShowCompanyOverview() const;
 
 public:
     TruckzSimApp();
+
     void Run();
 };

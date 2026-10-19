@@ -82,3 +82,11 @@ void Truck::CompleteMaintenance()
     lastServiceMileage = mileage;
     status = "Available";
 }
+
+void Truck::RestoreMaintenanceSchedule(
+    double newLastServiceMileage,
+    double newServiceIntervalMiles)
+{
+    lastServiceMileage = newLastServiceMileage;
+    serviceIntervalMiles = newServiceIntervalMiles;
+}

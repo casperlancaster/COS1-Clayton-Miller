@@ -1,0 +1,15 @@
+TRUCKZSIM_SAVE_V1
+"ABC Miller Transport INC."
+14912.939999999999 0
+3
+1 3233 "Available" 0 10000
+2 865 "Available" 25 10000
+3 239 "Available" 54 10000
+3
+1 "Clayton" "Available"
+2 "Dylan" "Available"
+3 "Easton" "Available"
+3
+1 "Grinnell, IA" "Omaha, NE" 185 942.48000000000002 "Completed" 3 3
+2 "Des Moines, IA" "Dallas, TX" 840 3734.23 "Completed" 2 2
+3 "Portland, ME" "San Diego, CA" 3233 10236.23 "Completed" 1 1

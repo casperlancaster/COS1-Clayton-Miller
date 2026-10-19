@@ -33,4 +33,9 @@ public:
 
     void InitializeMaintenanceSchedule();
     void CompleteMaintenance();
+
+    void RestoreMaintenanceSchedule(
+        double newLastServiceMileage,
+        double newServiceIntervalMiles
+    );
 };
