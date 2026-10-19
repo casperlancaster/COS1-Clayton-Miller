@@ -14,10 +14,14 @@
 #include "InputManager.h"
 #include "MaintenanceManager.h"
 #include "SaveLoadManager.h"
+#include "SettingsManager.h"
 
 TruckzSimApp::TruckzSimApp()
     : dispatchManager(&company)
 {
+    SettingsManager::ApplyDateTimeSettings(
+        company
+    );
 }
 
 bool TruckzSimApp::RunStartupMenu()
@@ -26,29 +30,54 @@ bool TruckzSimApp::RunStartupMenu()
 
     while (true)
     {
-        std::cout << "=============================================\n";
-        std::cout << "               T R U C K Z S I M             \n";
-        std::cout << "=============================================\n";
-        std::cout << "               COMPANY STARTUP                \n";
-        std::cout << "---------------------------------------------\n";
-        std::cout << "1. Create New Company\n";
-        std::cout << "2. Load Saved Company\n";
-        std::cout << "0. Exit\n";
-        std::cout << "---------------------------------------------\n";
+        std::cout
+            << "=============================================\n";
 
-        choice = InputManager::ReadInt(
-            "Select an option: "
-        );
+        std::cout
+            << "               T R U C K Z S I M             \n";
+
+        std::cout
+            << "=============================================\n";
+
+        std::cout
+            << "               COMPANY STARTUP                \n";
+
+        std::cout
+            << "---------------------------------------------\n";
+
+        std::cout
+            << "1. Create New Company\n";
+
+        std::cout
+            << "2. Load Saved Company\n";
+
+        std::cout
+            << "0. Exit\n";
+
+        std::cout
+            << "---------------------------------------------\n";
+
+        choice =
+            InputManager::ReadMenuChoice(
+                "Select an option: ",
+                0,
+                2
+            );
 
         std::cout << "\n";
 
         switch (choice)
         {
         case 1:
-            company = Company();
+            company =
+                Company();
 
             dispatchManager.SetCompany(
                 &company
+            );
+
+            SettingsManager::ApplyDateTimeSettings(
+                company
             );
 
             SetupCompany();
@@ -57,8 +86,10 @@ bool TruckzSimApp::RunStartupMenu()
 
         case 2:
         {
-            std::vector<std::string> savedCompanies =
-                SaveLoadManager::GetSavedCompanies();
+            std::vector<std::string>
+                savedCompanies =
+                SaveLoadManager::
+                GetSavedCompanies();
 
             if (savedCompanies.empty())
             {
@@ -88,24 +119,17 @@ bool TruckzSimApp::RunStartupMenu()
                 << "=====================================\n";
 
             int saveChoice =
-                InputManager::ReadInt(
-                    "Select a company: "
+                InputManager::ReadMenuChoice(
+                    "Select a company: ",
+                    0,
+                    static_cast<int>(
+                        savedCompanies.size()
+                        )
                 );
 
             if (saveChoice == 0)
             {
                 std::cout << "\n";
-                break;
-            }
-
-            if (saveChoice < 1 ||
-                saveChoice >
-                static_cast<int>(
-                    savedCompanies.size()))
-            {
-                std::cout
-                    << "\nInvalid saved company selection.\n\n";
-
                 break;
             }
 
@@ -120,6 +144,10 @@ bool TruckzSimApp::RunStartupMenu()
             {
                 dispatchManager.SetCompany(
                     &company
+                );
+
+                SettingsManager::ApplyDateTimeSettings(
+                    company
                 );
 
                 std::cout
@@ -145,13 +173,6 @@ bool TruckzSimApp::RunStartupMenu()
                 << "Exiting TruckzSim...\n";
 
             return false;
-
-        default:
-            std::cout
-                << "Invalid selection. "
-                << "Please enter 0, 1, or 2.\n\n";
-
-            break;
         }
     }
 }
@@ -182,11 +203,21 @@ void TruckzSimApp::SetupCompany()
 
 void TruckzSimApp::ShowMainMenu() const
 {
-    std::cout << "=============================================\n";
-    std::cout << "               T R U C K Z S I M             \n";
-    std::cout << "=============================================\n";
-    std::cout << "         Trucking Company Simulator           \n";
-    std::cout << "---------------------------------------------\n";
+    std::cout
+        << "=============================================\n";
+
+    std::cout
+        << "               T R U C K Z S I M             \n";
+
+    std::cout
+        << "=============================================\n";
+
+    std::cout
+        << "         Trucking Company Simulator           \n";
+
+    std::cout
+        << "---------------------------------------------\n";
+
     std::cout << "1. Dispatch Center\n";
     std::cout << "2. Fleet Management\n";
     std::cout << "3. Driver Management\n";
@@ -196,8 +227,11 @@ void TruckzSimApp::ShowMainMenu() const
     std::cout << "7. Maintenance\n";
     std::cout << "8. Fuel Management\n";
     std::cout << "9. Save Company\n";
+    std::cout << "10. Settings\n";
     std::cout << "0. Exit\n";
-    std::cout << "---------------------------------------------\n";
+
+    std::cout
+        << "---------------------------------------------\n";
 }
 
 void TruckzSimApp::ShowCompanyOverview() const
@@ -272,8 +306,10 @@ void TruckzSimApp::Run()
         ShowMainMenu();
 
         choice =
-            InputManager::ReadInt(
-                "Select an option: "
+            InputManager::ReadMenuChoice(
+                "Select an option: ",
+                0,
+                10
             );
 
         std::cout << "\n";
@@ -341,16 +377,15 @@ void TruckzSimApp::Run()
 
             break;
 
+        case 10:
+            SettingsManager::Run(
+                company
+            );
+            break;
+
         case 0:
             std::cout
                 << "Exiting TruckzSim...\n";
-            break;
-
-        default:
-            std::cout
-                << "Invalid selection. "
-                << "Please enter a number from 0 to 9.\n";
-
             break;
         }
 

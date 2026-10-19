@@ -255,8 +255,10 @@ void FleetManager::Run(
         ShowMenu();
 
         choice =
-            InputManager::ReadInt(
-                "Select an option: "
+            InputManager::ReadMenuChoice(
+                "Select an option: ",
+                0,
+                3
             );
 
         switch (choice)
@@ -284,9 +286,7 @@ void FleetManager::Run(
 
         default:
             std::cout
-                << "\nInvalid selection. "
-                << "Please choose 0, 1, 2, or 3.\n";
-
+                << "\nInvalid selection.\n";
             break;
         }
     }

@@ -31,6 +31,20 @@ public:
 
     static long long GetCurrentEpoch();
 
+    static void SetDateFormat(
+        const std::string& newDateFormat
+    );
+
+    static void SetTimeFormat(
+        const std::string& newTimeFormat
+    );
+
+    static std::string GetDateFormat();
+    static std::string GetTimeFormat();
+
+    static std::string GetDateInputExample();
+    static std::string GetTimeInputExample();
+
     static bool ParseDateTime(
         const std::string& dateText,
         const std::string& timeText,

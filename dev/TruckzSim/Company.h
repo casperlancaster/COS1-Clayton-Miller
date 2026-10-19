@@ -15,6 +15,9 @@ private:
     double revenue;
     double expenses;
 
+    std::string dateFormat;
+    std::string timeFormat;
+
     std::vector<Truck> trucks;
     std::vector<Driver> drivers;
     std::vector<Load> loads;
@@ -32,6 +35,12 @@ public:
     double GetExpenses() const;
     void AddExpense(double amount);
     double GetBalance() const;
+
+    std::string GetDateFormat() const;
+    void SetDateFormat(const std::string& newDateFormat);
+
+    std::string GetTimeFormat() const;
+    void SetTimeFormat(const std::string& newTimeFormat);
 
     void RecordIncomeTransaction(
         const FinancialTransaction& transaction
@@ -52,6 +61,21 @@ public:
     bool HasTruckUnitNumber(int unitNumber) const;
     bool HasDriverID(int driverID) const;
     bool HasLoadNumber(int loadNumber) const;
+
+    bool ChangeTruckUnitNumber(
+        int oldUnitNumber,
+        int newUnitNumber
+    );
+
+    bool ChangeDriverID(
+        int oldDriverID,
+        int newDriverID
+    );
+
+    bool ChangeLoadNumber(
+        int oldLoadNumber,
+        int newLoadNumber
+    );
 
     std::vector<Truck>& GetTrucks();
     std::vector<Driver>& GetDrivers();

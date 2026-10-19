@@ -205,18 +205,24 @@ void DriverManager::Run(
         ShowMenu();
 
         choice =
-            InputManager::ReadInt(
-                "Select an option: "
+            InputManager::ReadMenuChoice(
+                "Select an option: ",
+                0,
+                2
             );
 
         switch (choice)
         {
         case 1:
-            AddDriver(company);
+            AddDriver(
+                company
+            );
             break;
 
         case 2:
-            DisplayDrivers(company);
+            DisplayDrivers(
+                company
+            );
             break;
 
         case 0:
@@ -224,9 +230,7 @@ void DriverManager::Run(
 
         default:
             std::cout
-                << "\nInvalid selection. "
-                << "Please choose 0, 1, or 2.\n";
-
+                << "\nInvalid selection.\n";
             break;
         }
     }

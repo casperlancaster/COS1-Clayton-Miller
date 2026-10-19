@@ -154,6 +154,7 @@
     <ClCompile Include="MaintenanceManager.cpp" />
     <ClCompile Include="RepairManager.cpp" />
     <ClCompile Include="SaveLoadManager.cpp" />
+    <ClCompile Include="SettingsManager.cpp" />
     <ClCompile Include="Truck.cpp" />
     <ClCompile Include="TruckzSim.cpp" />
     <ClCompile Include="TruckzSimApp.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="MaintenanceManager.h" />
     <ClInclude Include="RepairManager.h" />
     <ClInclude Include="SaveLoadManager.h" />
+    <ClInclude Include="SettingsManager.h" />
     <ClInclude Include="Truck.h" />
     <ClInclude Include="TruckzSimApp.h" />
   </ItemGroup>

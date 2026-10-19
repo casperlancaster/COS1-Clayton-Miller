@@ -76,18 +76,35 @@ void FreightManager::AddLoad(
     while (true)
     {
         std::cout
-            << "\nEnter the delivery deadline "
-            << "using local time.\n";
+            << "\nEnter the delivery deadline using local time.\n";
+
+        std::cout
+            << "Preferred Date Format: "
+            << HOSManager::GetDateFormat()
+            << " | Example: "
+            << HOSManager::GetDateInputExample()
+            << "\n";
+
+        std::cout
+            << "Preferred Time Format: "
+            << HOSManager::GetTimeFormat()
+            << " | Example: "
+            << HOSManager::GetTimeInputExample()
+            << "\n";
+
+        std::cout
+            << "Separators are optional, so entries like "
+            << "10222026 and 830 PM also work.\n";
 
         std::string dueDate =
             InputManager::ReadRequiredText(
-                "Due date (YYYY-MM-DD): ",
+                "Due date: ",
                 "Due date"
             );
 
         std::string dueTime =
             InputManager::ReadRequiredText(
-                "Due time (HH:MM, 24-hour): ",
+                "Due time: ",
                 "Due time"
             );
 
@@ -97,8 +114,7 @@ void FreightManager::AddLoad(
             deadlineEpoch))
         {
             std::cout
-                << "Invalid date or time. "
-                << "Example: 2026-10-22 and 18:30.\n";
+                << "Invalid date or time. Please try again.\n";
 
             continue;
         }
@@ -107,8 +123,7 @@ void FreightManager::AddLoad(
             HOSManager::GetCurrentEpoch())
         {
             std::cout
-                << "The delivery deadline must "
-                << "be in the future.\n";
+                << "The delivery deadline must be in the future.\n";
 
             continue;
         }
@@ -216,8 +231,7 @@ void FreightManager::DisplayLoads(
             std::cout
                 << "Deadline: "
                 << HOSManager::FormatDateTime(
-                    load.
-                    GetDeliveryDeadlineEpoch()
+                    load.GetDeliveryDeadlineEpoch()
                 )
                 << "\n";
 
@@ -226,47 +240,36 @@ void FreightManager::DisplayLoads(
                 << load.GetStatus()
                 << "\n";
 
-            if (load.GetAssignedDriverID() >
-                0)
+            if (load.GetAssignedDriverID() > 0)
             {
                 std::cout
                     << "Primary Driver ID: "
-                    << load.
-                    GetAssignedDriverID()
+                    << load.GetAssignedDriverID()
                     << "\n";
             }
 
-            if (load.
-                GetAssignedSecondDriverID() >
-                0)
+            if (load.GetAssignedSecondDriverID() > 0)
             {
                 std::cout
                     << "Team Driver ID: "
-                    << load.
-                    GetAssignedSecondDriverID()
+                    << load.GetAssignedSecondDriverID()
                     << "\n";
             }
 
-            if (load.
-                GetAssignedTruckUnitNumber() >
-                0)
+            if (load.GetAssignedTruckUnitNumber() > 0)
             {
                 std::cout
                     << "Assigned Truck: "
-                    << load.
-                    GetAssignedTruckUnitNumber()
+                    << load.GetAssignedTruckUnitNumber()
                     << "\n";
             }
 
-            if (load.
-                GetEstimatedDeliveryEpoch() >
-                0)
+            if (load.GetEstimatedDeliveryEpoch() > 0)
             {
                 std::cout
                     << "Planned Delivery: "
                     << HOSManager::FormatDateTime(
-                        load.
-                        GetEstimatedDeliveryEpoch()
+                        load.GetEstimatedDeliveryEpoch()
                     )
                     << "\n";
             }
@@ -276,8 +279,7 @@ void FreightManager::DisplayLoads(
                 std::cout
                     << "Operation: TEAM\n";
             }
-            else if (load.
-                GetAssignedDriverID() > 0)
+            else if (load.GetAssignedDriverID() > 0)
             {
                 std::cout
                     << "Operation: SOLO\n";
@@ -299,28 +301,27 @@ void FreightManager::Run(
         ShowMenu();
 
         choice =
-            InputManager::ReadInt(
-                "Select an option: "
+            InputManager::ReadMenuChoice(
+                "Select an option: ",
+                0,
+                2
             );
 
         switch (choice)
         {
         case 1:
-            AddLoad(company);
+            AddLoad(
+                company
+            );
             break;
 
         case 2:
-            DisplayLoads(company);
+            DisplayLoads(
+                company
+            );
             break;
 
         case 0:
-            break;
-
-        default:
-            std::cout
-                << "\nInvalid selection. "
-                << "Please choose 0, 1, or 2.\n";
-
             break;
         }
     }

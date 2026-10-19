@@ -41,6 +41,9 @@ namespace
     const std::string SAVE_FILE_HEADER_V6 =
         "TRUCKZSIM_SAVE_V6";
 
+    const std::string SAVE_FILE_HEADER_V7 =
+        "TRUCKZSIM_SAVE_V7";
+
     constexpr std::size_t MAX_SAVE_RECORDS =
         10000;
 
@@ -141,7 +144,8 @@ SaveLoadManager::GetSavedCompanies()
             header != SAVE_FILE_HEADER_V3 &&
             header != SAVE_FILE_HEADER_V4 &&
             header != SAVE_FILE_HEADER_V5 &&
-            header != SAVE_FILE_HEADER_V6)
+            header != SAVE_FILE_HEADER_V6 &&
+            header != SAVE_FILE_HEADER_V7)
         {
             continue;
         }
@@ -199,7 +203,7 @@ bool SaveLoadManager::SaveCompany(
     }
 
     file
-        << SAVE_FILE_HEADER_V6
+        << SAVE_FILE_HEADER_V7
         << "\n";
 
     file
@@ -213,6 +217,16 @@ bool SaveLoadManager::SaveCompany(
         << company.GetRevenue()
         << " "
         << company.GetExpenses()
+        << "\n";
+
+    file
+        << std::quoted(
+            company.GetDateFormat()
+        )
+        << " "
+        << std::quoted(
+            company.GetTimeFormat()
+        )
         << "\n";
 
     const std::vector<Truck>& trucks =
@@ -434,8 +448,19 @@ bool SaveLoadManager::LoadCompany(
     bool hasAvailabilityData = false;
     bool hasBreakdownData = false;
     bool hasTransactionData = false;
+    bool hasSettingsData = false;
 
     if (fileHeader ==
+        SAVE_FILE_HEADER_V7)
+    {
+        hasFuelData = true;
+        hasHosData = true;
+        hasAvailabilityData = true;
+        hasBreakdownData = true;
+        hasTransactionData = true;
+        hasSettingsData = true;
+    }
+    else if (fileHeader ==
         SAVE_FILE_HEADER_V6)
     {
         hasFuelData = true;
@@ -509,6 +534,35 @@ bool SaveLoadManager::LoadCompany(
     loadedCompany.SetCompanyName(
         loadedCompanyName
     );
+
+    if (hasSettingsData)
+    {
+        std::string savedDateFormat;
+        std::string savedTimeFormat;
+
+        if (!(file
+            >> std::quoted(savedDateFormat)
+            >> std::quoted(savedTimeFormat)))
+        {
+            return false;
+        }
+
+        if ((savedDateFormat != "MM/DD/YYYY" &&
+            savedDateFormat != "YYYY-MM-DD") ||
+            (savedTimeFormat != "12-hour" &&
+                savedTimeFormat != "24-hour"))
+        {
+            return false;
+        }
+
+        loadedCompany.SetDateFormat(
+            savedDateFormat
+        );
+
+        loadedCompany.SetTimeFormat(
+            savedTimeFormat
+        );
+    }
 
     loadedCompany.AddRevenue(
         revenue

@@ -1,10 +1,13 @@
 #include "HOSManager.h"
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <string>
+#include <vector>
 
 namespace
 {
@@ -12,6 +15,9 @@ namespace
     constexpr double REQUIRED_REST_HOURS = 10.0;
     constexpr double AVERAGE_SPEED_MPH = 55.0;
     constexpr double EPSILON = 0.000001;
+
+    std::string currentDateFormat = "MM/DD/YYYY";
+    std::string currentTimeFormat = "12-hour";
 
     double ClampDrivingHours(double hours)
     {
@@ -43,10 +49,350 @@ namespace
         return hours;
     }
 
-    bool IsDigit(char character)
+    std::string Trim(const std::string& input)
     {
-        return character >= '0' &&
-            character <= '9';
+        std::size_t start = 0;
+
+        while (start < input.size() &&
+            std::isspace(
+                static_cast<unsigned char>(
+                    input[start])))
+        {
+            start++;
+        }
+
+        std::size_t end = input.size();
+
+        while (end > start &&
+            std::isspace(
+                static_cast<unsigned char>(
+                    input[end - 1])))
+        {
+            end--;
+        }
+
+        return input.substr(
+            start,
+            end - start
+        );
+    }
+
+    std::string ToUpper(std::string text)
+    {
+        for (char& character : text)
+        {
+            character = static_cast<char>(
+                std::toupper(
+                    static_cast<unsigned char>(
+                        character))
+                );
+        }
+
+        return text;
+    }
+
+    bool ContainsOnlyDigits(
+        const std::string& text)
+    {
+        if (text.empty())
+        {
+            return false;
+        }
+
+        for (char character : text)
+        {
+            if (!std::isdigit(
+                static_cast<unsigned char>(
+                    character)))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool ParseDateText(
+        const std::string& dateText,
+        int& year,
+        int& month,
+        int& day)
+    {
+        std::string cleaned = Trim(dateText);
+
+        if (cleaned.empty())
+        {
+            return false;
+        }
+
+        std::string digitsOnly;
+
+        for (char character : cleaned)
+        {
+            if (std::isdigit(
+                static_cast<unsigned char>(
+                    character)))
+            {
+                digitsOnly += character;
+            }
+        }
+
+        if (digitsOnly.size() != 8)
+        {
+            return false;
+        }
+
+        bool hadSeparator =
+            cleaned.find('/') != std::string::npos ||
+            cleaned.find('-') != std::string::npos ||
+            cleaned.find(' ') != std::string::npos;
+
+        if (hadSeparator)
+        {
+            std::string normalized = cleaned;
+
+            for (char& character : normalized)
+            {
+                if (character == '/' ||
+                    character == '-')
+                {
+                    character = ' ';
+                }
+            }
+
+            std::istringstream stream(normalized);
+            std::vector<std::string> parts;
+            std::string part;
+
+            while (stream >> part)
+            {
+                parts.push_back(part);
+            }
+
+            if (parts.size() != 3 ||
+                !ContainsOnlyDigits(parts[0]) ||
+                !ContainsOnlyDigits(parts[1]) ||
+                !ContainsOnlyDigits(parts[2]))
+            {
+                return false;
+            }
+
+            if (parts[0].size() == 4)
+            {
+                year = std::stoi(parts[0]);
+                month = std::stoi(parts[1]);
+                day = std::stoi(parts[2]);
+            }
+            else if (parts[2].size() == 4)
+            {
+                month = std::stoi(parts[0]);
+                day = std::stoi(parts[1]);
+                year = std::stoi(parts[2]);
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            int firstFour =
+                std::stoi(
+                    digitsOnly.substr(0, 4)
+                );
+
+            if (firstFour >= 1900 &&
+                firstFour <= 9999)
+            {
+                year = firstFour;
+                month = std::stoi(
+                    digitsOnly.substr(4, 2)
+                );
+                day = std::stoi(
+                    digitsOnly.substr(6, 2)
+                );
+            }
+            else
+            {
+                month = std::stoi(
+                    digitsOnly.substr(0, 2)
+                );
+                day = std::stoi(
+                    digitsOnly.substr(2, 2)
+                );
+                year = std::stoi(
+                    digitsOnly.substr(4, 4)
+                );
+            }
+        }
+
+        return true;
+    }
+
+    bool ParseTimeText(
+        const std::string& timeText,
+        int& hour,
+        int& minute)
+    {
+        std::string cleaned =
+            ToUpper(
+                Trim(timeText)
+            );
+
+        if (cleaned.empty())
+        {
+            return false;
+        }
+
+        bool hasAM = false;
+        bool hasPM = false;
+
+        std::string compact;
+
+        for (char character : cleaned)
+        {
+            if (!std::isspace(
+                static_cast<unsigned char>(
+                    character)))
+            {
+                compact += character;
+            }
+        }
+
+        if (compact.size() >= 2)
+        {
+            std::string suffix =
+                compact.substr(
+                    compact.size() - 2
+                );
+
+            if (suffix == "AM")
+            {
+                hasAM = true;
+                compact.erase(
+                    compact.size() - 2
+                );
+            }
+            else if (suffix == "PM")
+            {
+                hasPM = true;
+                compact.erase(
+                    compact.size() - 2
+                );
+            }
+        }
+
+        if (compact.empty())
+        {
+            return false;
+        }
+
+        std::size_t colonPosition =
+            compact.find(':');
+
+        if (colonPosition != std::string::npos)
+        {
+            if (compact.find(
+                ':',
+                colonPosition + 1) !=
+                std::string::npos)
+            {
+                return false;
+            }
+
+            std::string hourText =
+                compact.substr(
+                    0,
+                    colonPosition
+                );
+
+            std::string minuteText =
+                compact.substr(
+                    colonPosition + 1
+                );
+
+            if (!ContainsOnlyDigits(hourText) ||
+                !ContainsOnlyDigits(minuteText) ||
+                minuteText.size() != 2)
+            {
+                return false;
+            }
+
+            hour = std::stoi(hourText);
+            minute = std::stoi(minuteText);
+        }
+        else
+        {
+            if (!ContainsOnlyDigits(compact) ||
+                compact.size() > 4)
+            {
+                return false;
+            }
+
+            if (compact.size() <= 2)
+            {
+                hour = std::stoi(compact);
+                minute = 0;
+            }
+            else if (compact.size() == 3)
+            {
+                hour = std::stoi(
+                    compact.substr(0, 1)
+                );
+                minute = std::stoi(
+                    compact.substr(1, 2)
+                );
+            }
+            else
+            {
+                hour = std::stoi(
+                    compact.substr(0, 2)
+                );
+                minute = std::stoi(
+                    compact.substr(2, 2)
+                );
+            }
+        }
+
+        if (minute < 0 ||
+            minute > 59)
+        {
+            return false;
+        }
+
+        if (hasAM || hasPM)
+        {
+            if (hour < 1 ||
+                hour > 12)
+            {
+                return false;
+            }
+
+            if (hasAM)
+            {
+                if (hour == 12)
+                {
+                    hour = 0;
+                }
+            }
+            else
+            {
+                if (hour != 12)
+                {
+                    hour += 12;
+                }
+            }
+        }
+        else
+        {
+            if (hour < 0 ||
+                hour > 23)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 
@@ -72,6 +418,58 @@ long long HOSManager::GetCurrentEpoch()
         );
 }
 
+void HOSManager::SetDateFormat(
+    const std::string& newDateFormat)
+{
+    if (newDateFormat == "MM/DD/YYYY" ||
+        newDateFormat == "YYYY-MM-DD")
+    {
+        currentDateFormat =
+            newDateFormat;
+    }
+}
+
+void HOSManager::SetTimeFormat(
+    const std::string& newTimeFormat)
+{
+    if (newTimeFormat == "12-hour" ||
+        newTimeFormat == "24-hour")
+    {
+        currentTimeFormat =
+            newTimeFormat;
+    }
+}
+
+std::string HOSManager::GetDateFormat()
+{
+    return currentDateFormat;
+}
+
+std::string HOSManager::GetTimeFormat()
+{
+    return currentTimeFormat;
+}
+
+std::string HOSManager::GetDateInputExample()
+{
+    if (currentDateFormat == "YYYY-MM-DD")
+    {
+        return "2026-10-22";
+    }
+
+    return "10/22/2026";
+}
+
+std::string HOSManager::GetTimeInputExample()
+{
+    if (currentTimeFormat == "24-hour")
+    {
+        return "20:30 or 2030";
+    }
+
+    return "8:30 PM or 830 PM";
+}
+
 bool HOSManager::ParseDateTime(
     const std::string& dateText,
     const std::string& timeText,
@@ -79,68 +477,34 @@ bool HOSManager::ParseDateTime(
 {
     epochResult = 0;
 
-    if (dateText.size() != 10 ||
-        timeText.size() != 5)
+    int year = 0;
+    int month = 0;
+    int day = 0;
+    int hour = 0;
+    int minute = 0;
+
+    if (!ParseDateText(
+        dateText,
+        year,
+        month,
+        day))
     {
         return false;
     }
 
-    if (dateText[4] != '-' ||
-        dateText[7] != '-' ||
-        timeText[2] != ':')
+    if (!ParseTimeText(
+        timeText,
+        hour,
+        minute))
     {
         return false;
     }
 
-    for (int i = 0; i < 10; i++)
-    {
-        if (i == 4 || i == 7)
-        {
-            continue;
-        }
-
-        if (!IsDigit(dateText[i]))
-        {
-            return false;
-        }
-    }
-
-    for (int i = 0; i < 5; i++)
-    {
-        if (i == 2)
-        {
-            continue;
-        }
-
-        if (!IsDigit(timeText[i]))
-        {
-            return false;
-        }
-    }
-
-    int year =
-        std::stoi(dateText.substr(0, 4));
-
-    int month =
-        std::stoi(dateText.substr(5, 2));
-
-    int day =
-        std::stoi(dateText.substr(8, 2));
-
-    int hour =
-        std::stoi(timeText.substr(0, 2));
-
-    int minute =
-        std::stoi(timeText.substr(3, 2));
-
-    if (month < 1 ||
+    if (year < 1900 ||
+        month < 1 ||
         month > 12 ||
         day < 1 ||
-        day > 31 ||
-        hour < 0 ||
-        hour > 23 ||
-        minute < 0 ||
-        minute > 59)
+        day > 31)
     {
         return false;
     }
@@ -212,18 +576,51 @@ std::string HOSManager::FormatDateTime(
     }
 #endif
 
-    char buffer[80];
+    char dateBuffer[32];
+    char timeBuffer[32];
+
+    const char* datePattern =
+        currentDateFormat == "YYYY-MM-DD"
+        ? "%Y-%m-%d"
+        : "%m/%d/%Y";
+
+    const char* timePattern =
+        currentTimeFormat == "24-hour"
+        ? "%H:%M"
+        : "%I:%M %p";
 
     if (std::strftime(
-        buffer,
-        sizeof(buffer),
-        "%b %d, %Y - %I:%M %p",
+        dateBuffer,
+        sizeof(dateBuffer),
+        datePattern,
         &localTime) == 0)
     {
         return "Invalid date/time";
     }
 
-    return std::string(buffer);
+    if (std::strftime(
+        timeBuffer,
+        sizeof(timeBuffer),
+        timePattern,
+        &localTime) == 0)
+    {
+        return "Invalid date/time";
+    }
+
+    std::string timeString(
+        timeBuffer
+    );
+
+    if (currentTimeFormat == "12-hour" &&
+        !timeString.empty() &&
+        timeString[0] == '0')
+    {
+        timeString.erase(0, 1);
+    }
+
+    return std::string(dateBuffer) +
+        " - " +
+        timeString;
 }
 
 HOSPlan HOSManager::CreateSoloPlan(
