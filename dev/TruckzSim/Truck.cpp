@@ -12,6 +12,8 @@ Truck::Truck()
     fuelTankCapacity = 200.0;
     fuelGallons = 200.0;
     milesPerGallon = 7.0;
+
+    availableAtEpoch = 0;
 }
 
 int Truck::GetUnitNumber() const
@@ -29,7 +31,8 @@ std::string Truck::GetStatus() const
     return status;
 }
 
-void Truck::SetStatus(const std::string& newStatus)
+void Truck::SetStatus(
+    const std::string& newStatus)
 {
     status = newStatus;
 }
@@ -56,13 +59,15 @@ double Truck::GetServiceIntervalMiles() const
 
 double Truck::GetNextServiceMileage() const
 {
-    return lastServiceMileage + serviceIntervalMiles;
+    return lastServiceMileage +
+        serviceIntervalMiles;
 }
 
 double Truck::GetMilesUntilService() const
 {
     double milesRemaining =
-        GetNextServiceMileage() - mileage;
+        GetNextServiceMileage() -
+        mileage;
 
     if (milesRemaining < 0.0)
     {
@@ -74,18 +79,23 @@ double Truck::GetMilesUntilService() const
 
 bool Truck::IsMaintenanceDue() const
 {
-    return mileage >= GetNextServiceMileage();
+    return mileage >=
+        GetNextServiceMileage();
 }
 
 void Truck::InitializeMaintenanceSchedule()
 {
-    lastServiceMileage = mileage;
+    lastServiceMileage =
+        mileage;
 }
 
 void Truck::CompleteMaintenance()
 {
-    lastServiceMileage = mileage;
-    status = "Available";
+    lastServiceMileage =
+        mileage;
+
+    status =
+        "Available";
 }
 
 void Truck::RestoreMaintenanceSchedule(
@@ -122,13 +132,15 @@ double Truck::GetFuelPercentage() const
     }
 
     return
-        (fuelGallons / fuelTankCapacity)
-        * 100.0;
+        (fuelGallons /
+            fuelTankCapacity) *
+        100.0;
 }
 
 double Truck::GetFuelRangeMiles() const
 {
-    return fuelGallons * milesPerGallon;
+    return fuelGallons *
+        milesPerGallon;
 }
 
 double Truck::GetFuelNeededForDistance(
@@ -140,7 +152,8 @@ double Truck::GetFuelNeededForDistance(
         return 0.0;
     }
 
-    return distanceMiles / milesPerGallon;
+    return distanceMiles /
+        milesPerGallon;
 }
 
 bool Truck::HasEnoughFuelForDistance(
@@ -151,7 +164,8 @@ bool Truck::HasEnoughFuelForDistance(
             distanceMiles
         );
 
-    return fuelGallons + 0.000001 >=
+    return fuelGallons +
+        0.000001 >=
         fuelNeeded;
 }
 
@@ -217,22 +231,26 @@ double Truck::AddFuel(double gallons)
     }
 
     double availableSpace =
-        fuelTankCapacity - fuelGallons;
+        fuelTankCapacity -
+        fuelGallons;
 
     if (availableSpace <= 0.0)
     {
         return 0.0;
     }
 
-    double gallonsAdded = gallons;
+    double gallonsAdded =
+        gallons;
 
-    if (gallonsAdded > availableSpace)
+    if (gallonsAdded >
+        availableSpace)
     {
         gallonsAdded =
             availableSpace;
     }
 
-    fuelGallons += gallonsAdded;
+    fuelGallons +=
+        gallonsAdded;
 
     return gallonsAdded;
 }
@@ -251,7 +269,8 @@ bool Truck::UseFuelForDistance(
             distanceMiles
         );
 
-    fuelGallons -= fuelUsed;
+    fuelGallons -=
+        fuelUsed;
 
     if (fuelGallons < 0.0)
     {
@@ -261,9 +280,11 @@ bool Truck::UseFuelForDistance(
     return true;
 }
 
-double Truck::GetMinimumArrivalFuelGallons() const
+double Truck::GetMinimumArrivalFuelGallons()
+const
 {
-    return fuelTankCapacity * 0.50;
+    return fuelTankCapacity *
+        0.50;
 }
 
 double Truck::GetFuelPurchaseNeededForTrip(
@@ -345,7 +366,27 @@ bool Truck::CompleteTripFuel(
             fuelTankCapacity;
     }
 
-    fuelGallons = finalFuel;
+    fuelGallons =
+        finalFuel;
 
     return true;
+}
+
+long long Truck::GetAvailableAtEpoch() const
+{
+    return availableAtEpoch;
+}
+
+void Truck::SetAvailableAtEpoch(
+    long long newAvailableAtEpoch)
+{
+    if (newAvailableAtEpoch < 0)
+    {
+        availableAtEpoch = 0;
+    }
+    else
+    {
+        availableAtEpoch =
+            newAvailableAtEpoch;
+    }
 }

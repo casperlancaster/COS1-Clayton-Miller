@@ -1,9 +1,11 @@
 #include "DispatchCenter.h"
 
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
 
 #include "Driver.h"
+#include "HOSManager.h"
 #include "InputManager.h"
 #include "Load.h"
 #include "Truck.h"
@@ -12,6 +14,274 @@ namespace
 {
     constexpr double FUEL_PRICE_PER_GALLON =
         4.00;
+
+    long long GetResourceStartTime(
+        const Driver& driver,
+        const Truck& truck)
+    {
+        long long startTime =
+            HOSManager::GetCurrentEpoch();
+
+        startTime =
+            std::max(
+                startTime,
+                driver.
+                GetAvailableAtEpoch()
+            );
+
+        startTime =
+            std::max(
+                startTime,
+                truck.
+                GetAvailableAtEpoch()
+            );
+
+        return startTime;
+    }
+
+    long long GetTeamStartTime(
+        const Driver& primaryDriver,
+        const Driver& secondDriver,
+        const Truck& truck)
+    {
+        long long startTime =
+            GetResourceStartTime(
+                primaryDriver,
+                truck
+            );
+
+        startTime =
+            std::max(
+                startTime,
+                secondDriver.
+                GetAvailableAtEpoch()
+            );
+
+        return startTime;
+    }
+
+    bool HasSecondAvailableDriver(
+        const Company& company,
+        int primaryDriverID)
+    {
+        for (const Driver& driver :
+            company.GetDrivers())
+        {
+            if (driver.GetDriverID() !=
+                primaryDriverID &&
+                driver.GetStatus() ==
+                "Available")
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    void DisplayHOSPlan(
+        const HOSPlan& plan,
+        const Driver& primaryDriver,
+        const Driver* secondDriver,
+        const Load& load,
+        long long dispatchStart)
+    {
+        double primaryHours =
+            primaryDriver.
+            GetProjectedDrivingHoursAt(
+                dispatchStart
+            );
+
+        double primaryRest =
+            primaryDriver.
+            GetProjectedRestHoursAt(
+                dispatchStart
+            );
+
+        std::cout
+            << std::fixed
+            << std::setprecision(2);
+
+        std::cout
+            << "\n========== HOS TRIP PLAN ==========\n";
+
+        std::cout
+            << "Operation: "
+            << (plan.teamOperation
+                ? "TEAM"
+                : "SOLO")
+            << "\n";
+
+        std::cout
+            << "Scheduled Start: "
+            << HOSManager::
+            FormatDateTime(
+                dispatchStart
+            )
+            << "\n";
+
+        std::cout
+            << "Primary Driver: #"
+            << primaryDriver.
+            GetDriverID()
+            << " - "
+            << primaryDriver.GetName()
+            << "\n";
+
+        std::cout
+            << "Primary HOS at Start: "
+            << primaryHours
+            << " hours\n";
+
+        std::cout
+            << "Primary Rest Progress at Start: "
+            << primaryRest
+            << " / "
+            << HOSManager::
+            GetRequiredRestHours()
+            << " hours\n";
+
+        if (secondDriver != nullptr)
+        {
+            std::cout
+                << "Team Driver: #"
+                << secondDriver->
+                GetDriverID()
+                << " - "
+                << secondDriver->
+                GetName()
+                << "\n";
+
+            std::cout
+                << "Team HOS at Start: "
+                << secondDriver->
+                GetProjectedDrivingHoursAt(
+                    dispatchStart
+                )
+                << " hours\n";
+
+            std::cout
+                << "Team Rest Progress at Start: "
+                << secondDriver->
+                GetProjectedRestHoursAt(
+                    dispatchStart
+                )
+                << " / "
+                << HOSManager::
+                GetRequiredRestHours()
+                << " hours\n";
+        }
+
+        std::cout
+            << "Average Planning Speed: "
+            << HOSManager::
+            GetAveragePlanningSpeedMph()
+            << " MPH\n";
+
+        std::cout
+            << "Driving Time Required: "
+            << plan.
+            drivingHoursRequired
+            << " hours\n";
+
+        if (!plan.teamOperation)
+        {
+            std::cout
+                << "Mandatory Rest Periods: "
+                << plan.soloRestPeriods
+                << "\n";
+
+            std::cout
+                << "Stopped Rest Time Required: "
+                << plan.stoppedRestHours
+                << " hours\n";
+        }
+        else
+        {
+            std::cout
+                << "Stopped Rest Time Required: "
+                << plan.stoppedRestHours
+                << " hours\n";
+
+            std::cout
+                << "Drivers alternate while "
+                << "the off-duty driver rests.\n";
+        }
+
+        std::cout
+            << "Total Estimated Trip Time: "
+            << plan.totalTripHours
+            << " hours\n";
+
+        std::cout
+            << std::defaultfloat
+            << std::setprecision(6);
+
+        std::cout
+            << "Estimated Delivery: "
+            << HOSManager::
+            FormatDateTime(
+                plan.
+                estimatedDeliveryEpoch
+            )
+            << "\n";
+
+        std::cout
+            << "Delivery Deadline: "
+            << HOSManager::
+            FormatDateTime(
+                load.
+                GetDeliveryDeadlineEpoch()
+            )
+            << "\n";
+
+        if (load.
+            GetDeliveryDeadlineEpoch() <= 0)
+        {
+            std::cout
+                << "STATUS: LEGACY LOAD - "
+                << "NO DEADLINE\n";
+        }
+        else if (plan.meetsDeadline)
+        {
+            std::cout
+                << "STATUS: ON TIME\n";
+        }
+        else
+        {
+            long long lateSeconds =
+                plan.
+                estimatedDeliveryEpoch -
+                load.
+                GetDeliveryDeadlineEpoch();
+
+            double lateHours =
+                static_cast<double>(
+                    lateSeconds
+                    ) /
+                3600.0;
+
+            std::cout
+                << std::fixed
+                << std::setprecision(2);
+
+            std::cout
+                << "STATUS: DEADLINE "
+                << "CANNOT BE MET\n";
+
+            std::cout
+                << "Estimated Late By: "
+                << lateHours
+                << " hours\n";
+
+            std::cout
+                << std::defaultfloat
+                << std::setprecision(6);
+        }
+
+        std::cout
+            << "===================================\n";
+    }
 }
 
 void DispatchCenter::ShowMenu()
@@ -127,6 +397,9 @@ bool DispatchCenter::HasAvailableTruck(
 void DispatchCenter::DisplayAvailableResources(
     const Company& company)
 {
+    long long now =
+        HOSManager::GetCurrentEpoch();
+
     std::cout
         << "\n========== AVAILABLE LOADS ==========\n";
 
@@ -157,6 +430,15 @@ void DispatchCenter::DisplayAvailableResources(
                 << std::defaultfloat
                 << std::setprecision(6)
                 << "\n";
+
+            std::cout
+                << "Deadline: "
+                << HOSManager::
+                FormatDateTime(
+                    load.
+                    GetDeliveryDeadlineEpoch()
+                )
+                << "\n";
         }
     }
 
@@ -167,7 +449,7 @@ void DispatchCenter::DisplayAvailableResources(
     }
 
     std::cout
-        << "\n========== AVAILABLE DRIVERS ==========\n";
+        << "\n========== SCHEDULABLE DRIVERS ==========\n";
 
     bool foundDriver = false;
 
@@ -179,23 +461,67 @@ void DispatchCenter::DisplayAvailableResources(
         {
             foundDriver = true;
 
+            long long planningTime =
+                std::max(
+                    now,
+                    driver.
+                    GetAvailableAtEpoch()
+                );
+
+            std::cout
+                << std::fixed
+                << std::setprecision(2);
+
             std::cout
                 << "Driver ID "
                 << driver.GetDriverID()
                 << " | "
                 << driver.GetName()
-                << "\n";
+                << " | HOS at availability: "
+                << driver.
+                GetProjectedDrivingHoursAt(
+                    planningTime
+                )
+                << " hours"
+                << " | Rest: "
+                << driver.
+                GetProjectedRestHoursAt(
+                    planningTime
+                )
+                << " hours\n";
+
+            std::cout
+                << std::defaultfloat
+                << std::setprecision(6);
+
+            if (driver.GetAvailableAtEpoch() >
+                now)
+            {
+                std::cout
+                    << "Scheduled Available: "
+                    << HOSManager::
+                    FormatDateTime(
+                        driver.
+                        GetAvailableAtEpoch()
+                    )
+                    << "\n";
+            }
+            else
+            {
+                std::cout
+                    << "Scheduled Available: Now\n";
+            }
         }
     }
 
     if (!foundDriver)
     {
         std::cout
-            << "No available drivers.\n";
+            << "No schedulable drivers.\n";
     }
 
     std::cout
-        << "\n========== AVAILABLE TRUCKS ==========\n";
+        << "\n========== SCHEDULABLE TRUCKS ==========\n";
 
     bool foundTruck = false;
 
@@ -228,13 +554,31 @@ void DispatchCenter::DisplayAvailableResources(
             std::cout
                 << std::defaultfloat
                 << std::setprecision(6);
+
+            if (truck.GetAvailableAtEpoch() >
+                now)
+            {
+                std::cout
+                    << "Scheduled Available: "
+                    << HOSManager::
+                    FormatDateTime(
+                        truck.
+                        GetAvailableAtEpoch()
+                    )
+                    << "\n";
+            }
+            else
+            {
+                std::cout
+                    << "Scheduled Available: Now\n";
+            }
         }
     }
 
     if (!foundTruck)
     {
         std::cout
-            << "No available trucks.\n";
+            << "No schedulable trucks.\n";
     }
 
     std::cout
@@ -258,25 +602,73 @@ void DispatchCenter::DisplayAssignedLoads(
             foundAssignedLoad = true;
 
             std::cout
-                << "Load #"
+                << "\nLoad #"
                 << load.GetLoadNumber()
-                << " | "
+                << "\n";
+
+            std::cout
                 << load.GetOrigin()
                 << " -> "
                 << load.GetDestination()
-                << " | "
+                << "\n";
+
+            std::cout
+                << "Distance: "
                 << load.GetDistanceMiles()
-                << " miles"
-                << " | Driver ID "
+                << " miles\n";
+
+            std::cout
+                << "Primary Driver ID: "
                 << load.GetAssignedDriverID()
-                << " | Truck #"
-                << load.GetAssignedTruckUnitNumber()
-                << " | Pay: $"
-                << std::fixed
-                << std::setprecision(2)
-                << load.GetPay()
-                << std::defaultfloat
-                << std::setprecision(6)
+                << "\n";
+
+            if (load.IsTeamLoad())
+            {
+                std::cout
+                    << "Team Driver ID: "
+                    << load.
+                    GetAssignedSecondDriverID()
+                    << "\n";
+            }
+
+            std::cout
+                << "Truck #"
+                << load.
+                GetAssignedTruckUnitNumber()
+                << "\n";
+
+            std::cout
+                << "Operation: "
+                << (load.IsTeamLoad()
+                    ? "TEAM"
+                    : "SOLO")
+                << "\n";
+
+            std::cout
+                << "Scheduled Start: "
+                << HOSManager::
+                FormatDateTime(
+                    load.
+                    GetDispatchStartEpoch()
+                )
+                << "\n";
+
+            std::cout
+                << "Estimated Delivery: "
+                << HOSManager::
+                FormatDateTime(
+                    load.
+                    GetEstimatedDeliveryEpoch()
+                )
+                << "\n";
+
+            std::cout
+                << "Deadline: "
+                << HOSManager::
+                FormatDateTime(
+                    load.
+                    GetDeliveryDeadlineEpoch()
+                )
                 << "\n";
         }
     }
@@ -309,58 +701,35 @@ void DispatchCenter::Run(
         {
         case 1:
         {
-            if (!dispatchManager.HasCompany())
+            if (!dispatchManager.
+                HasCompany())
             {
                 std::cout
-                    << "\nDispatch Center is not connected to a company.\n";
+                    << "\nDispatch Center is not "
+                    << "connected to a company.\n";
 
                 break;
             }
 
             Company* company =
-                dispatchManager.GetCompany();
+                dispatchManager.
+                GetCompany();
 
             DisplayAvailableResources(
                 *company
             );
 
-            bool canDispatch = true;
-
             if (!HasAvailableLoad(
-                *company))
+                *company) ||
+                !HasAvailableDriver(
+                    *company) ||
+                !HasAvailableTruck(
+                    *company))
             {
                 std::cout
-                    << "\nA load cannot be assigned because "
-                    << "there are no available loads.\n";
-
-                canDispatch = false;
-            }
-
-            if (!HasAvailableDriver(
-                *company))
-            {
-                std::cout
-                    << "A load cannot be assigned because "
-                    << "there are no available drivers.\n";
-
-                canDispatch = false;
-            }
-
-            if (!HasAvailableTruck(
-                *company))
-            {
-                std::cout
-                    << "A load cannot be assigned because "
-                    << "there are no available trucks.\n";
-
-                canDispatch = false;
-            }
-
-            if (!canDispatch)
-            {
-                std::cout
-                    << "Add or free the required resources "
-                    << "before trying again.\n";
+                    << "\nA load cannot be scheduled "
+                    << "until a load, driver, and truck "
+                    << "are available for scheduling.\n";
 
                 break;
             }
@@ -405,17 +774,17 @@ void DispatchCenter::Run(
 
             int driverID =
                 InputManager::ReadPositiveInt(
-                    "Enter Driver ID: ",
+                    "Enter Primary Driver ID: ",
                     "Driver ID"
                 );
 
-            const Driver* selectedDriver =
+            const Driver* primaryDriver =
                 FindDriver(
                     *company,
                     driverID
                 );
 
-            if (selectedDriver == nullptr)
+            if (primaryDriver == nullptr)
             {
                 std::cout
                     << "Driver ID "
@@ -425,15 +794,15 @@ void DispatchCenter::Run(
                 break;
             }
 
-            if (selectedDriver->GetStatus() !=
+            if (primaryDriver->GetStatus() !=
                 "Available")
             {
                 std::cout
                     << "Driver ID "
                     << driverID
                     << " is currently "
-                    << selectedDriver->GetStatus()
-                    << " and cannot be assigned.\n";
+                    << primaryDriver->GetStatus()
+                    << " and cannot be scheduled.\n";
 
                 break;
             }
@@ -468,9 +837,256 @@ void DispatchCenter::Run(
                     << truckUnitNumber
                     << " is currently "
                     << selectedTruck->GetStatus()
-                    << " and cannot be assigned.\n";
+                    << " and cannot be scheduled.\n";
 
                 break;
+            }
+
+            long long dispatchStart =
+                GetResourceStartTime(
+                    *primaryDriver,
+                    *selectedTruck
+                );
+
+            double primaryHours =
+                primaryDriver->
+                GetProjectedDrivingHoursAt(
+                    dispatchStart
+                );
+
+            double primaryRest =
+                primaryDriver->
+                GetProjectedRestHoursAt(
+                    dispatchStart
+                );
+
+            HOSPlan selectedPlan =
+                HOSManager::CreateSoloPlan(
+                    primaryHours,
+                    primaryRest,
+                    selectedLoad->
+                    GetDistanceMiles(),
+                    dispatchStart,
+                    selectedLoad->
+                    GetDeliveryDeadlineEpoch()
+                );
+
+            DisplayHOSPlan(
+                selectedPlan,
+                *primaryDriver,
+                nullptr,
+                *selectedLoad,
+                dispatchStart
+            );
+
+            int secondDriverID = 0;
+
+            const Driver* secondDriver =
+                nullptr;
+
+            if (!selectedPlan.
+                meetsDeadline)
+            {
+                std::cout
+                    << "\nThe primary driver cannot "
+                    << "legally deliver this load "
+                    << "before the deadline.\n";
+
+                if (!HasSecondAvailableDriver(
+                    *company,
+                    driverID))
+                {
+                    std::cout
+                        << "No second available driver "
+                        << "exists for team operation.\n";
+
+                    std::cout
+                        << "Load cannot be dispatched.\n";
+
+                    break;
+                }
+
+                int teamChoice = -1;
+
+                while (teamChoice != 1 &&
+                    teamChoice != 2)
+                {
+                    teamChoice =
+                        InputManager::ReadInt(
+                            "Try a team operation? "
+                            "(1 = Yes, 2 = No): "
+                        );
+
+                    if (teamChoice != 1 &&
+                        teamChoice != 2)
+                    {
+                        std::cout
+                            << "Please enter 1 or 2.\n";
+                    }
+                }
+
+                if (teamChoice == 2)
+                {
+                    std::cout
+                        << "Dispatch cancelled.\n";
+
+                    break;
+                }
+
+                std::cout
+                    << "\n========== AVAILABLE TEAM DRIVERS ==========\n";
+
+                for (const Driver& driver :
+                    company->GetDrivers())
+                {
+                    if (driver.GetDriverID() !=
+                        driverID &&
+                        driver.GetStatus() ==
+                        "Available")
+                    {
+                        long long candidateTime =
+                            std::max(
+                                dispatchStart,
+                                driver.
+                                GetAvailableAtEpoch()
+                            );
+
+                        std::cout
+                            << std::fixed
+                            << std::setprecision(2);
+
+                        std::cout
+                            << "Driver ID "
+                            << driver.GetDriverID()
+                            << " | "
+                            << driver.GetName()
+                            << " | HOS: "
+                            << driver.
+                            GetProjectedDrivingHoursAt(
+                                candidateTime
+                            )
+                            << " | Rest: "
+                            << driver.
+                            GetProjectedRestHoursAt(
+                                candidateTime
+                            )
+                            << "\n";
+
+                        std::cout
+                            << std::defaultfloat
+                            << std::setprecision(6);
+                    }
+                }
+
+                secondDriverID =
+                    InputManager::ReadPositiveInt(
+                        "Enter Team Driver ID: ",
+                        "Team Driver ID"
+                    );
+
+                secondDriver =
+                    FindDriver(
+                        *company,
+                        secondDriverID
+                    );
+
+                if (secondDriver == nullptr)
+                {
+                    std::cout
+                        << "Driver ID "
+                        << secondDriverID
+                        << " does not exist.\n";
+
+                    break;
+                }
+
+                if (secondDriverID ==
+                    driverID)
+                {
+                    std::cout
+                        << "The team driver must "
+                        << "be a different driver.\n";
+
+                    break;
+                }
+
+                if (secondDriver->GetStatus() !=
+                    "Available")
+                {
+                    std::cout
+                        << "Driver ID "
+                        << secondDriverID
+                        << " is not available.\n";
+
+                    break;
+                }
+
+                dispatchStart =
+                    GetTeamStartTime(
+                        *primaryDriver,
+                        *secondDriver,
+                        *selectedTruck
+                    );
+
+                primaryHours =
+                    primaryDriver->
+                    GetProjectedDrivingHoursAt(
+                        dispatchStart
+                    );
+
+                primaryRest =
+                    primaryDriver->
+                    GetProjectedRestHoursAt(
+                        dispatchStart
+                    );
+
+                double secondHours =
+                    secondDriver->
+                    GetProjectedDrivingHoursAt(
+                        dispatchStart
+                    );
+
+                double secondRest =
+                    secondDriver->
+                    GetProjectedRestHoursAt(
+                        dispatchStart
+                    );
+
+                selectedPlan =
+                    HOSManager::
+                    CreateTeamPlan(
+                        primaryHours,
+                        primaryRest,
+                        secondHours,
+                        secondRest,
+                        selectedLoad->
+                        GetDistanceMiles(),
+                        dispatchStart,
+                        selectedLoad->
+                        GetDeliveryDeadlineEpoch()
+                    );
+
+                DisplayHOSPlan(
+                    selectedPlan,
+                    *primaryDriver,
+                    secondDriver,
+                    *selectedLoad,
+                    dispatchStart
+                );
+
+                if (!selectedPlan.
+                    meetsDeadline)
+                {
+                    std::cout
+                        << "\nEven a two-driver team "
+                        << "cannot legally meet "
+                        << "this delivery deadline.\n";
+
+                    std::cout
+                        << "Load cannot be dispatched.\n";
+
+                    break;
+                }
             }
 
             double tripFuelNeeded =
@@ -503,13 +1119,9 @@ void DispatchCenter::Run(
                 << "\n========== TRIP FUEL PLAN ==========\n";
 
             std::cout
-                << "Load Distance: "
-                << selectedLoad->GetDistanceMiles()
-                << " miles\n";
-
-            std::cout
                 << "Current Fuel: "
-                << selectedTruck->GetFuelGallons()
+                << selectedTruck->
+                GetFuelGallons()
                 << " gallons\n";
 
             std::cout
@@ -523,7 +1135,7 @@ void DispatchCenter::Run(
                 << " gallons (50% tank)\n";
 
             std::cout
-                << "Estimated In-Trip Fuel Purchase: "
+                << "Estimated In-Trip Purchase: "
                 << plannedFuelPurchase
                 << " gallons\n";
 
@@ -531,11 +1143,6 @@ void DispatchCenter::Run(
                 << "Estimated Fuel Cost: $"
                 << plannedFuelCost
                 << "\n";
-
-            std::cout
-                << "Expected Fuel at Delivery: at least "
-                << minimumArrivalFuel
-                << " gallons\n";
 
             std::cout
                 << "====================================\n";
@@ -548,7 +1155,9 @@ void DispatchCenter::Run(
                 dispatchManager.AssignLoad(
                     loadNumber,
                     driverID,
-                    truckUnitNumber
+                    truckUnitNumber,
+                    secondDriverID,
+                    dispatchStart
                 );
 
             if (assigned)
@@ -556,18 +1165,57 @@ void DispatchCenter::Run(
                 std::cout
                     << "\nLoad #"
                     << loadNumber
-                    << " assigned successfully to Driver ID "
+                    << " assigned successfully.\n";
+
+                std::cout
+                    << "Primary Driver: #"
                     << driverID
-                    << " using Truck #"
+                    << "\n";
+
+                if (secondDriverID > 0)
+                {
+                    std::cout
+                        << "Team Driver: #"
+                        << secondDriverID
+                        << "\n";
+
+                    std::cout
+                        << "Operation: TEAM\n";
+                }
+                else
+                {
+                    std::cout
+                        << "Operation: SOLO\n";
+                }
+
+                std::cout
+                    << "Truck: #"
                     << truckUnitNumber
-                    << ".\n";
+                    << "\n";
+
+                std::cout
+                    << "Scheduled Start: "
+                    << HOSManager::
+                    FormatDateTime(
+                        dispatchStart
+                    )
+                    << "\n";
+
+                std::cout
+                    << "Estimated Delivery: "
+                    << HOSManager::
+                    FormatDateTime(
+                        selectedPlan.
+                        estimatedDeliveryEpoch
+                    )
+                    << "\n";
             }
             else
             {
                 std::cout
                     << "\nUnable to assign load. "
-                    << "The dispatch state changed before "
-                    << "the assignment could be completed.\n";
+                    << "The HOS, deadline, or "
+                    << "resource state is no longer valid.\n";
             }
 
             break;
@@ -575,16 +1223,19 @@ void DispatchCenter::Run(
 
         case 2:
         {
-            if (!dispatchManager.HasCompany())
+            if (!dispatchManager.
+                HasCompany())
             {
                 std::cout
-                    << "\nDispatch Center is not connected to a company.\n";
+                    << "\nDispatch Center is not "
+                    << "connected to a company.\n";
 
                 break;
             }
 
             DisplayAvailableResources(
-                *dispatchManager.GetCompany()
+                *dispatchManager.
+                GetCompany()
             );
 
             break;
@@ -592,22 +1243,26 @@ void DispatchCenter::Run(
 
         case 3:
         {
-            if (!dispatchManager.HasCompany())
+            if (!dispatchManager.
+                HasCompany())
             {
                 std::cout
-                    << "\nDispatch Center is not connected to a company.\n";
+                    << "\nDispatch Center is not "
+                    << "connected to a company.\n";
 
                 break;
             }
 
             Company* company =
-                dispatchManager.GetCompany();
+                dispatchManager.
+                GetCompany();
 
             DisplayAssignedLoads(
                 *company
             );
 
-            bool hasAssignedLoad = false;
+            bool hasAssignedLoad =
+                false;
 
             for (const Load& load :
                 company->GetLoads())
@@ -615,7 +1270,9 @@ void DispatchCenter::Run(
                 if (load.GetStatus() ==
                     "Assigned")
                 {
-                    hasAssignedLoad = true;
+                    hasAssignedLoad =
+                        true;
+
                     break;
                 }
             }
@@ -623,14 +1280,16 @@ void DispatchCenter::Run(
             if (!hasAssignedLoad)
             {
                 std::cout
-                    << "\nThere are no assigned loads to complete.\n";
+                    << "\nThere are no assigned "
+                    << "loads to complete.\n";
 
                 break;
             }
 
             int loadNumber =
                 InputManager::ReadPositiveInt(
-                    "\nEnter the load number to complete: ",
+                    "\nEnter the load number "
+                    "to complete: ",
                     "load number"
                 );
 
@@ -640,32 +1299,23 @@ void DispatchCenter::Run(
                     loadNumber
                 );
 
-            if (selectedLoad == nullptr)
-            {
-                std::cout
-                    << "Load #"
-                    << loadNumber
-                    << " does not exist.\n";
-
-                break;
-            }
-
-            if (selectedLoad->GetStatus() !=
+            if (selectedLoad == nullptr ||
+                selectedLoad->GetStatus() !=
                 "Assigned")
             {
                 std::cout
-                    << "Load #"
-                    << loadNumber
-                    << " is currently "
-                    << selectedLoad->GetStatus()
-                    << " and cannot be completed.\n";
+                    << "That load is not currently assigned.\n";
 
                 break;
             }
 
-            int driverID =
+            int primaryDriverID =
                 selectedLoad->
                 GetAssignedDriverID();
+
+            int secondDriverID =
+                selectedLoad->
+                GetAssignedSecondDriverID();
 
             int truckUnitNumber =
                 selectedLoad->
@@ -703,21 +1353,30 @@ void DispatchCenter::Run(
             }
 
             bool completed =
-                dispatchManager.CompleteLoad(
+                dispatchManager.
+                CompleteLoad(
                     loadNumber
                 );
 
             if (completed)
             {
-                std::cout
-                    << "\nLoad #"
-                    << loadNumber
-                    << " completed successfully.\n";
+                const Driver* primaryDriver =
+                    FindDriver(
+                        *company,
+                        primaryDriverID
+                    );
 
-                std::cout
-                    << "Driver ID "
-                    << driverID
-                    << " is now Available.\n";
+                const Driver* secondDriver =
+                    nullptr;
+
+                if (secondDriverID > 0)
+                {
+                    secondDriver =
+                        FindDriver(
+                            *company,
+                            secondDriverID
+                        );
+                }
 
                 const Truck* completedTruck =
                     FindTruck(
@@ -725,30 +1384,96 @@ void DispatchCenter::Run(
                         truckUnitNumber
                     );
 
-                std::cout
-                    << "Truck #"
-                    << truckUnitNumber
-                    << " is now Available";
+                const Load* completedLoad =
+                    FindLoad(
+                        *company,
+                        loadNumber
+                    );
 
-                if (completedTruck != nullptr)
+                std::cout
+                    << "\nLoad #"
+                    << loadNumber
+                    << " completed successfully.\n";
+
+                if (completedLoad != nullptr)
                 {
                     std::cout
-                        << " with "
-                        << completedTruck->
-                        GetMileage()
-                        << " miles";
+                        << "Simulated Delivery: "
+                        << HOSManager::
+                        FormatDateTime(
+                            completedLoad->
+                            GetEstimatedDeliveryEpoch()
+                        )
+                        << "\n";
                 }
-
-                std::cout << ".\n";
 
                 std::cout
                     << std::fixed
                     << std::setprecision(2);
 
-                std::cout
-                    << "Company revenue is now $"
-                    << company->GetRevenue()
-                    << ".\n";
+                if (primaryDriver != nullptr)
+                {
+                    std::cout
+                        << "Primary Driver HOS Remaining: "
+                        << primaryDriver->
+                        GetDrivingHoursRemaining()
+                        << " hours.\n";
+
+                    std::cout
+                        << "Primary Driver Rest Progress: "
+                        << primaryDriver->
+                        GetRestHoursAccumulated()
+                        << " / 10.00 hours.\n";
+
+                    std::cout
+                        << std::defaultfloat
+                        << std::setprecision(6);
+
+                    std::cout
+                        << "Primary Driver Scheduled Available: "
+                        << HOSManager::
+                        FormatDateTime(
+                            primaryDriver->
+                            GetAvailableAtEpoch()
+                        )
+                        << "\n";
+
+                    std::cout
+                        << std::fixed
+                        << std::setprecision(2);
+                }
+
+                if (secondDriver != nullptr)
+                {
+                    std::cout
+                        << "Team Driver HOS Remaining: "
+                        << secondDriver->
+                        GetDrivingHoursRemaining()
+                        << " hours.\n";
+
+                    std::cout
+                        << "Team Driver Rest Progress: "
+                        << secondDriver->
+                        GetRestHoursAccumulated()
+                        << " / 10.00 hours.\n";
+
+                    std::cout
+                        << std::defaultfloat
+                        << std::setprecision(6);
+
+                    std::cout
+                        << "Team Driver Scheduled Available: "
+                        << HOSManager::
+                        FormatDateTime(
+                            secondDriver->
+                            GetAvailableAtEpoch()
+                        )
+                        << "\n";
+
+                    std::cout
+                        << std::fixed
+                        << std::setprecision(2);
+                }
 
                 std::cout
                     << "Trip Fuel Used: "
@@ -778,24 +1503,45 @@ void DispatchCenter::Run(
                         << completedTruck->
                         GetFuelPercentage()
                         << "%).\n";
-                }
 
-                std::cout
-                    << "Company expenses are now $"
-                    << company->GetExpenses()
-                    << ".\n";
-
-                std::cout
-                    << "Company balance is now $"
-                    << company->GetBalance()
-                    << ".\n";
-
-                if (company->GetBalance() < 0.0)
-                {
                     std::cout
-                        << "The company is operating with a negative balance. "
-                        << "Future revenue will reduce the deficit.\n";
+                        << "Truck Mileage: "
+                        << completedTruck->
+                        GetMileage()
+                        << " miles.\n";
+
+                    std::cout
+                        << std::defaultfloat
+                        << std::setprecision(6);
+
+                    std::cout
+                        << "Truck Scheduled Available: "
+                        << HOSManager::
+                        FormatDateTime(
+                            completedTruck->
+                            GetAvailableAtEpoch()
+                        )
+                        << "\n";
+
+                    std::cout
+                        << std::fixed
+                        << std::setprecision(2);
                 }
+
+                std::cout
+                    << "Company Revenue: $"
+                    << company->GetRevenue()
+                    << "\n";
+
+                std::cout
+                    << "Company Expenses: $"
+                    << company->GetExpenses()
+                    << "\n";
+
+                std::cout
+                    << "Company Balance: $"
+                    << company->GetBalance()
+                    << "\n";
 
                 std::cout
                     << std::defaultfloat
@@ -805,7 +1551,8 @@ void DispatchCenter::Run(
             {
                 std::cout
                     << "\nUnable to complete load. "
-                    << "Check the dispatch state and try again.\n";
+                    << "Check the dispatch state "
+                    << "and try again.\n";
             }
 
             break;

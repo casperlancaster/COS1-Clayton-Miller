@@ -5,16 +5,32 @@
 class DispatchManager
 {
 private:
-	Company* company;
+    Company* company;
 
 public:
-	DispatchManager();
-	DispatchManager(Company* newCompany);
+    DispatchManager();
 
-	Company* GetCompany() const;
-	void SetCompany(Company* newCompany);
+    DispatchManager(
+        Company* newCompany
+    );
 
-	bool HasCompany() const;
-	bool AssignLoad(int loadNumber, int driverID, int truckUnitNumber);
-	bool CompleteLoad(int loadNumber);
+    Company* GetCompany() const;
+
+    void SetCompany(
+        Company* newCompany
+    );
+
+    bool HasCompany() const;
+
+    bool AssignLoad(
+        int loadNumber,
+        int driverID,
+        int truckUnitNumber,
+        int secondDriverID,
+        long long dispatchStartEpoch
+    );
+
+    bool CompleteLoad(
+        int loadNumber
+    );
 };

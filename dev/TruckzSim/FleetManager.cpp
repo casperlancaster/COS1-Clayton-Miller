@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iostream>
 
+#include "HOSManager.h"
 #include "InputManager.h"
 #include "Truck.h"
 
@@ -16,34 +17,42 @@ void FleetManager::ShowMenu()
     std::cout << "======================================\n";
 }
 
-void FleetManager::AddTruck(Company& company)
+void FleetManager::AddTruck(
+    Company& company)
 {
     Truck newTruck;
 
-    std::cout << "\n========== ADD TRUCK ==========\n";
+    std::cout
+        << "\n========== ADD TRUCK ==========\n";
 
     int unitNumber = 0;
 
     while (true)
     {
-        unitNumber = InputManager::ReadPositiveInt(
-            "Enter unit number: ",
-            "unit number"
-        );
+        unitNumber =
+            InputManager::ReadPositiveInt(
+                "Enter unit number: ",
+                "unit number"
+            );
 
-        if (!company.HasTruckUnitNumber(unitNumber))
+        if (!company.HasTruckUnitNumber(
+            unitNumber))
         {
             break;
         }
 
-        std::cout << "Truck #" << unitNumber
-            << " already exists. Please enter a unique unit number.\n";
+        std::cout
+            << "Truck #"
+            << unitNumber
+            << " already exists. "
+            << "Please enter a unique unit number.\n";
     }
 
-    double mileage = InputManager::ReadNonNegativeDouble(
-        "Enter current mileage: ",
-        "mileage"
-    );
+    double mileage =
+        InputManager::ReadNonNegativeDouble(
+            "Enter current mileage: ",
+            "mileage"
+        );
 
     double fuelTankCapacity =
         InputManager::ReadPositiveDouble(
@@ -57,8 +66,14 @@ void FleetManager::AddTruck(Company& company)
             "fuel economy"
         );
 
-    newTruck.SetUnitNumber(unitNumber);
-    newTruck.SetMileage(mileage);
+    newTruck.SetUnitNumber(
+        unitNumber
+    );
+
+    newTruck.SetMileage(
+        mileage
+    );
+
     newTruck.InitializeMaintenanceSchedule();
 
     newTruck.InitializeFuelSystem(
@@ -66,9 +81,17 @@ void FleetManager::AddTruck(Company& company)
         milesPerGallon
     );
 
-    newTruck.SetStatus("Available");
+    newTruck.SetStatus(
+        "Available"
+    );
 
-    company.AddTruck(newTruck);
+    newTruck.SetAvailableAtEpoch(
+        0
+    );
+
+    company.AddTruck(
+        newTruck
+    );
 
     std::cout
         << "\nTruck #"
@@ -88,6 +111,9 @@ void FleetManager::DisplayTrucks(
     const std::vector<Truck>& trucks =
         company.GetTrucks();
 
+    long long now =
+        HOSManager::GetCurrentEpoch();
+
     std::cout
         << "\n========== COMPANY FLEET ==========\n";
 
@@ -98,7 +124,8 @@ void FleetManager::DisplayTrucks(
     }
     else
     {
-        for (const Truck& truck : trucks)
+        for (const Truck& truck :
+            trucks)
         {
             std::cout
                 << "\nTruck #"
@@ -114,6 +141,24 @@ void FleetManager::DisplayTrucks(
                 << "Status: "
                 << truck.GetStatus()
                 << "\n";
+
+            if (truck.GetAvailableAtEpoch() >
+                now)
+            {
+                std::cout
+                    << "Scheduled Available: "
+                    << HOSManager::
+                    FormatDateTime(
+                        truck.
+                        GetAvailableAtEpoch()
+                    )
+                    << "\n";
+            }
+            else
+            {
+                std::cout
+                    << "Scheduled Available: Now\n";
+            }
 
             std::cout
                 << std::fixed
@@ -143,7 +188,8 @@ void FleetManager::DisplayTrucks(
 
             std::cout
                 << "Required Delivery Reserve: "
-                << truck.GetMinimumArrivalFuelGallons()
+                << truck.
+                GetMinimumArrivalFuelGallons()
                 << " gallons\n";
 
             std::cout

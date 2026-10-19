@@ -1,6 +1,10 @@
-TRUCKZSIM_SAVE_V1
+TRUCKZSIM_SAVE_V3
 "Cabdem Transportation LLC"
-0 0
-0
-0
-0
+6000 542.85714285714289
+1
+501 51650 "Available" 50000 10000 200 100 7
+2
+501 "Solo Driver" "Available" 3
+502 "Team Driver" "Available" 0
+1
+501 "Des Moines, IA" "Miami, FL" 1650 6000 "Completed" 501 501 502 1792587600 1792436725 1792544725

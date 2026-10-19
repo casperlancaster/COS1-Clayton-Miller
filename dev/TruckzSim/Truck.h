@@ -16,6 +16,8 @@ private:
     double fuelGallons;
     double milesPerGallon;
 
+    long long availableAtEpoch;
+
 public:
     Truck();
 
@@ -76,5 +78,11 @@ public:
     bool CompleteTripFuel(
         double distanceMiles,
         double& gallonsPurchased
+    );
+
+    long long GetAvailableAtEpoch() const;
+
+    void SetAvailableAtEpoch(
+        long long newAvailableAtEpoch
     );
 };

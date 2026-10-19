@@ -148,6 +148,7 @@
     <ClCompile Include="FleetManager.cpp" />
     <ClCompile Include="FreightManager.cpp" />
     <ClCompile Include="FuelManager.cpp" />
+    <ClCompile Include="HOSManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Load.cpp" />
     <ClCompile Include="MaintenanceManager.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="FreightManager.h" />
     <ClInclude Include="BankingManager.h" />
     <ClInclude Include="FuelManager.h" />
+    <ClInclude Include="HOSManager.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Load.h" />
     <ClInclude Include="MaintenanceManager.h" />

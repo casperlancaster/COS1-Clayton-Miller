@@ -1,5 +1,7 @@
 #include "DispatchManager.h"
 
+#include "HOSManager.h"
+
 namespace
 {
     constexpr double FUEL_PRICE_PER_GALLON =
@@ -36,7 +38,9 @@ bool DispatchManager::HasCompany() const
 bool DispatchManager::AssignLoad(
     int loadNumber,
     int driverID,
-    int truckUnitNumber)
+    int truckUnitNumber,
+    int secondDriverID,
+    long long dispatchStartEpoch)
 {
     if (company == nullptr)
     {
@@ -52,23 +56,42 @@ bool DispatchManager::AssignLoad(
     std::vector<Load>& loads =
         company->GetLoads();
 
-    Driver* selectedDriver = nullptr;
+    Driver* primaryDriver = nullptr;
+    Driver* secondDriver = nullptr;
     Truck* selectedTruck = nullptr;
     Load* selectedLoad = nullptr;
 
-    for (Driver& driver : drivers)
+    for (Driver& driver :
+        drivers)
     {
         if (driver.GetDriverID() ==
             driverID)
         {
-            selectedDriver =
+            primaryDriver =
                 &driver;
 
             break;
         }
     }
 
-    for (Truck& truck : trucks)
+    if (secondDriverID > 0)
+    {
+        for (Driver& driver :
+            drivers)
+        {
+            if (driver.GetDriverID() ==
+                secondDriverID)
+            {
+                secondDriver =
+                    &driver;
+
+                break;
+            }
+        }
+    }
+
+    for (Truck& truck :
+        trucks)
     {
         if (truck.GetUnitNumber() ==
             truckUnitNumber)
@@ -80,7 +103,8 @@ bool DispatchManager::AssignLoad(
         }
     }
 
-    for (Load& load : loads)
+    for (Load& load :
+        loads)
     {
         if (load.GetLoadNumber() ==
             loadNumber)
@@ -92,14 +116,26 @@ bool DispatchManager::AssignLoad(
         }
     }
 
-    if (selectedDriver == nullptr ||
+    if (primaryDriver == nullptr ||
         selectedTruck == nullptr ||
         selectedLoad == nullptr)
     {
         return false;
     }
 
-    if (selectedDriver->GetStatus() !=
+    if (secondDriverID > 0 &&
+        secondDriver == nullptr)
+    {
+        return false;
+    }
+
+    if (secondDriverID ==
+        driverID)
+    {
+        return false;
+    }
+
+    if (primaryDriver->GetStatus() !=
         "Available" ||
         selectedTruck->GetStatus() !=
         "Available" ||
@@ -109,8 +145,104 @@ bool DispatchManager::AssignLoad(
         return false;
     }
 
-    selectedDriver->
+    if (secondDriver != nullptr &&
+        secondDriver->GetStatus() !=
+        "Available")
+    {
+        return false;
+    }
+
+    if (dispatchStartEpoch <
+        primaryDriver->
+        GetAvailableAtEpoch())
+    {
+        return false;
+    }
+
+    if (dispatchStartEpoch <
+        selectedTruck->
+        GetAvailableAtEpoch())
+    {
+        return false;
+    }
+
+    if (secondDriver != nullptr &&
+        dispatchStartEpoch <
+        secondDriver->
+        GetAvailableAtEpoch())
+    {
+        return false;
+    }
+
+    double primaryHours =
+        primaryDriver->
+        GetProjectedDrivingHoursAt(
+            dispatchStartEpoch
+        );
+
+    double primaryRest =
+        primaryDriver->
+        GetProjectedRestHoursAt(
+            dispatchStartEpoch
+        );
+
+    HOSPlan hosPlan;
+
+    if (secondDriver != nullptr)
+    {
+        double secondHours =
+            secondDriver->
+            GetProjectedDrivingHoursAt(
+                dispatchStartEpoch
+            );
+
+        double secondRest =
+            secondDriver->
+            GetProjectedRestHoursAt(
+                dispatchStartEpoch
+            );
+
+        hosPlan =
+            HOSManager::CreateTeamPlan(
+                primaryHours,
+                primaryRest,
+                secondHours,
+                secondRest,
+                selectedLoad->
+                GetDistanceMiles(),
+                dispatchStartEpoch,
+                selectedLoad->
+                GetDeliveryDeadlineEpoch()
+            );
+    }
+    else
+    {
+        hosPlan =
+            HOSManager::CreateSoloPlan(
+                primaryHours,
+                primaryRest,
+                selectedLoad->
+                GetDistanceMiles(),
+                dispatchStartEpoch,
+                selectedLoad->
+                GetDeliveryDeadlineEpoch()
+            );
+    }
+
+    if (!hosPlan.valid ||
+        !hosPlan.meetsDeadline)
+    {
+        return false;
+    }
+
+    primaryDriver->
         SetStatus("Dispatched");
+
+    if (secondDriver != nullptr)
+    {
+        secondDriver->
+            SetStatus("Dispatched");
+    }
 
     selectedTruck->
         SetStatus("Dispatched");
@@ -124,8 +256,24 @@ bool DispatchManager::AssignLoad(
         );
 
     selectedLoad->
+        SetAssignedSecondDriverID(
+            secondDriverID
+        );
+
+    selectedLoad->
         SetAssignedTruckUnitNumber(
             truckUnitNumber
+        );
+
+    selectedLoad->
+        SetDispatchStartEpoch(
+            dispatchStartEpoch
+        );
+
+    selectedLoad->
+        SetEstimatedDeliveryEpoch(
+            hosPlan.
+            estimatedDeliveryEpoch
         );
 
     return true;
@@ -150,7 +298,8 @@ bool DispatchManager::CompleteLoad(
 
     Load* selectedLoad = nullptr;
 
-    for (Load& load : loads)
+    for (Load& load :
+        loads)
     {
         if (load.GetLoadNumber() ==
             loadNumber)
@@ -169,33 +318,46 @@ bool DispatchManager::CompleteLoad(
         return false;
     }
 
-    int assignedDriverID =
+    int primaryDriverID =
         selectedLoad->
         GetAssignedDriverID();
 
-    int assignedTruckUnitNumber =
+    int secondDriverID =
+        selectedLoad->
+        GetAssignedSecondDriverID();
+
+    int truckUnitNumber =
         selectedLoad->
         GetAssignedTruckUnitNumber();
 
-    Driver* selectedDriver = nullptr;
+    Driver* primaryDriver = nullptr;
+    Driver* secondDriver = nullptr;
     Truck* selectedTruck = nullptr;
 
-    for (Driver& driver : drivers)
+    for (Driver& driver :
+        drivers)
     {
         if (driver.GetDriverID() ==
-            assignedDriverID)
+            primaryDriverID)
         {
-            selectedDriver =
+            primaryDriver =
                 &driver;
+        }
 
-            break;
+        if (secondDriverID > 0 &&
+            driver.GetDriverID() ==
+            secondDriverID)
+        {
+            secondDriver =
+                &driver;
         }
     }
 
-    for (Truck& truck : trucks)
+    for (Truck& truck :
+        trucks)
     {
         if (truck.GetUnitNumber() ==
-            assignedTruckUnitNumber)
+            truckUnitNumber)
         {
             selectedTruck =
                 &truck;
@@ -204,13 +366,19 @@ bool DispatchManager::CompleteLoad(
         }
     }
 
-    if (selectedDriver == nullptr ||
+    if (primaryDriver == nullptr ||
         selectedTruck == nullptr)
     {
         return false;
     }
 
-    if (selectedDriver->GetStatus() !=
+    if (secondDriverID > 0 &&
+        secondDriver == nullptr)
+    {
+        return false;
+    }
+
+    if (primaryDriver->GetStatus() !=
         "Dispatched" ||
         selectedTruck->GetStatus() !=
         "Dispatched")
@@ -218,7 +386,79 @@ bool DispatchManager::CompleteLoad(
         return false;
     }
 
-    double gallonsPurchased = 0.0;
+    if (secondDriver != nullptr &&
+        secondDriver->GetStatus() !=
+        "Dispatched")
+    {
+        return false;
+    }
+
+    long long dispatchStart =
+        selectedLoad->
+        GetDispatchStartEpoch();
+
+    double primaryHours =
+        primaryDriver->
+        GetProjectedDrivingHoursAt(
+            dispatchStart
+        );
+
+    double primaryRest =
+        primaryDriver->
+        GetProjectedRestHoursAt(
+            dispatchStart
+        );
+
+    HOSPlan hosPlan;
+
+    if (secondDriver != nullptr)
+    {
+        double secondHours =
+            secondDriver->
+            GetProjectedDrivingHoursAt(
+                dispatchStart
+            );
+
+        double secondRest =
+            secondDriver->
+            GetProjectedRestHoursAt(
+                dispatchStart
+            );
+
+        hosPlan =
+            HOSManager::CreateTeamPlan(
+                primaryHours,
+                primaryRest,
+                secondHours,
+                secondRest,
+                selectedLoad->
+                GetDistanceMiles(),
+                dispatchStart,
+                selectedLoad->
+                GetDeliveryDeadlineEpoch()
+            );
+    }
+    else
+    {
+        hosPlan =
+            HOSManager::CreateSoloPlan(
+                primaryHours,
+                primaryRest,
+                selectedLoad->
+                GetDistanceMiles(),
+                dispatchStart,
+                selectedLoad->
+                GetDeliveryDeadlineEpoch()
+            );
+    }
+
+    if (!hosPlan.valid)
+    {
+        return false;
+    }
+
+    double gallonsPurchased =
+        0.0;
 
     if (!selectedTruck->
         CompleteTripFuel(
@@ -246,14 +486,56 @@ bool DispatchManager::CompleteLoad(
 
     selectedTruck->SetMileage(
         selectedTruck->GetMileage() +
-        selectedLoad->GetDistanceMiles()
+        selectedLoad->
+        GetDistanceMiles()
     );
+
+    primaryDriver->
+        SetHOSState(
+            hosPlan.
+            primaryFinalHours,
+            hosPlan.
+            primaryFinalRestHours,
+            hosPlan.
+            estimatedDeliveryEpoch
+        );
+
+    if (secondDriver != nullptr)
+    {
+        secondDriver->
+            SetHOSState(
+                hosPlan.
+                secondFinalHours,
+                hosPlan.
+                secondFinalRestHours,
+                hosPlan.
+                estimatedDeliveryEpoch
+            );
+    }
+
+    selectedTruck->
+        SetAvailableAtEpoch(
+            hosPlan.
+            estimatedDeliveryEpoch
+        );
+
+    selectedLoad->
+        SetEstimatedDeliveryEpoch(
+            hosPlan.
+            estimatedDeliveryEpoch
+        );
 
     selectedLoad->
         SetStatus("Completed");
 
-    selectedDriver->
+    primaryDriver->
         SetStatus("Available");
+
+    if (secondDriver != nullptr)
+    {
+        secondDriver->
+            SetStatus("Available");
+    }
 
     selectedTruck->
         SetStatus("Available");
