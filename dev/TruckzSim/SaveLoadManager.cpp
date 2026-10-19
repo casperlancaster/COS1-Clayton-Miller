@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cmath>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
@@ -10,6 +11,7 @@
 
 #include "Company.h"
 #include "Driver.h"
+#include "FinancialTransaction.h"
 #include "Load.h"
 #include "Truck.h"
 
@@ -35,6 +37,9 @@ namespace
 
     const std::string SAVE_FILE_HEADER_V5 =
         "TRUCKZSIM_SAVE_V5";
+
+    const std::string SAVE_FILE_HEADER_V6 =
+        "TRUCKZSIM_SAVE_V6";
 
     constexpr std::size_t MAX_SAVE_RECORDS =
         10000;
@@ -135,7 +140,8 @@ SaveLoadManager::GetSavedCompanies()
             header != SAVE_FILE_HEADER_V2 &&
             header != SAVE_FILE_HEADER_V3 &&
             header != SAVE_FILE_HEADER_V4 &&
-            header != SAVE_FILE_HEADER_V5)
+            header != SAVE_FILE_HEADER_V5 &&
+            header != SAVE_FILE_HEADER_V6)
         {
             continue;
         }
@@ -193,7 +199,7 @@ bool SaveLoadManager::SaveCompany(
     }
 
     file
-        << SAVE_FILE_HEADER_V5
+        << SAVE_FILE_HEADER_V6
         << "\n";
 
     file
@@ -351,6 +357,48 @@ bool SaveLoadManager::SaveCompany(
             << "\n";
     }
 
+    const std::vector<FinancialTransaction>& transactions =
+        company.GetFinancialTransactions();
+
+    file
+        << transactions.size()
+        << "\n";
+
+    for (const FinancialTransaction& transaction :
+        transactions)
+    {
+        file
+            << transaction.transactionEpoch
+            << " "
+            << std::quoted(transaction.type)
+            << " "
+            << std::quoted(transaction.category)
+            << " "
+            << std::quoted(transaction.description)
+            << " "
+            << std::setprecision(17)
+            << transaction.amount
+            << " "
+            << transaction.truckUnitNumber
+            << " "
+            << transaction.loadNumber
+            << " "
+            << transaction.primaryDriverID
+            << " "
+            << transaction.secondDriverID
+            << " "
+            << transaction.gallons
+            << " "
+            << transaction.pricePerGallon
+            << " "
+            << transaction.partsCost
+            << " "
+            << transaction.laborCost
+            << " "
+            << transaction.serviceCallCharge
+            << "\n";
+    }
+
     return static_cast<bool>(
         file
         );
@@ -385,8 +433,18 @@ bool SaveLoadManager::LoadCompany(
     bool hasHosData = false;
     bool hasAvailabilityData = false;
     bool hasBreakdownData = false;
+    bool hasTransactionData = false;
 
     if (fileHeader ==
+        SAVE_FILE_HEADER_V6)
+    {
+        hasFuelData = true;
+        hasHosData = true;
+        hasAvailabilityData = true;
+        hasBreakdownData = true;
+        hasTransactionData = true;
+    }
+    else if (fileHeader ==
         SAVE_FILE_HEADER_V5)
     {
         hasFuelData = true;
@@ -915,6 +973,134 @@ bool SaveLoadManager::LoadCompany(
         loadedCompany.AddLoad(
             load
         );
+    }
+
+    if (hasTransactionData)
+    {
+        std::size_t transactionCount = 0;
+
+        if (!(file >> transactionCount) ||
+            transactionCount >
+            MAX_SAVE_RECORDS)
+        {
+            return false;
+        }
+
+        for (std::size_t i = 0;
+            i < transactionCount;
+            i++)
+        {
+            FinancialTransaction transaction;
+
+            if (!(file
+                >> transaction.transactionEpoch
+                >> std::quoted(transaction.type)
+                >> std::quoted(transaction.category)
+                >> std::quoted(transaction.description)
+                >> transaction.amount
+                >> transaction.truckUnitNumber
+                >> transaction.loadNumber
+                >> transaction.primaryDriverID
+                >> transaction.secondDriverID
+                >> transaction.gallons
+                >> transaction.pricePerGallon
+                >> transaction.partsCost
+                >> transaction.laborCost
+                >> transaction.serviceCallCharge))
+            {
+                return false;
+            }
+
+            if (transaction.transactionEpoch < 0 ||
+                (transaction.type != "Income" &&
+                    transaction.type != "Expense") ||
+                transaction.category.empty() ||
+                transaction.amount <= 0.0 ||
+                transaction.truckUnitNumber < 0 ||
+                transaction.loadNumber < 0 ||
+                transaction.primaryDriverID < 0 ||
+                transaction.secondDriverID < 0 ||
+                transaction.gallons < 0.0 ||
+                transaction.pricePerGallon < 0.0 ||
+                transaction.partsCost < 0.0 ||
+                transaction.laborCost < 0.0 ||
+                transaction.serviceCallCharge < 0.0)
+            {
+                return false;
+            }
+
+            loadedCompany.RestoreFinancialTransaction(
+                transaction
+            );
+        }
+    }
+    else
+    {
+        if (revenue > 0.0)
+        {
+            FinancialTransaction legacyRevenue;
+
+            legacyRevenue.type =
+                "Income";
+
+            legacyRevenue.category =
+                "Legacy Revenue";
+
+            legacyRevenue.description =
+                "Imported total from V1-V5 save data";
+
+            legacyRevenue.amount =
+                revenue;
+
+            loadedCompany.RestoreFinancialTransaction(
+                legacyRevenue
+            );
+        }
+
+        if (expenses > 0.0)
+        {
+            FinancialTransaction legacyExpense;
+
+            legacyExpense.type =
+                "Expense";
+
+            legacyExpense.category =
+                "Legacy Expense";
+
+            legacyExpense.description =
+                "Imported total from V1-V5 save data";
+
+            legacyExpense.amount =
+                expenses;
+
+            loadedCompany.RestoreFinancialTransaction(
+                legacyExpense
+            );
+        }
+    }
+
+    double recordedRevenue = 0.0;
+    double recordedExpenses = 0.0;
+
+    for (const FinancialTransaction& transaction :
+        loadedCompany.GetFinancialTransactions())
+    {
+        if (transaction.type == "Income")
+        {
+            recordedRevenue +=
+                transaction.amount;
+        }
+        else if (transaction.type == "Expense")
+        {
+            recordedExpenses +=
+                transaction.amount;
+        }
+    }
+
+    if (std::fabs(recordedRevenue - revenue) > 0.01 ||
+        std::fabs(recordedExpenses - expenses) > 0.01)
+    {
+        return false;
     }
 
     if (!file)

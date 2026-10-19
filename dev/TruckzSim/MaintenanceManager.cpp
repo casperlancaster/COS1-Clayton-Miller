@@ -1,8 +1,10 @@
 #include "MaintenanceManager.h"
 
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
 
+#include "HOSManager.h"
 #include "InputManager.h"
 #include "Truck.h"
 
@@ -60,6 +62,20 @@ void MaintenanceManager::DisplayMaintenanceStatus(
             << truck.GetLastServiceMileage() << "\n";
         std::cout << "Next Service Due: "
             << truck.GetNextServiceMileage() << " miles\n";
+
+        if (truck.GetAvailableAtEpoch() >
+            HOSManager::GetCurrentEpoch())
+        {
+            std::cout << "Scheduled Available: "
+                << HOSManager::FormatDateTime(
+                    truck.GetAvailableAtEpoch()
+                )
+                << "\n";
+        }
+        else
+        {
+            std::cout << "Scheduled Available: Now\n";
+        }
 
         if (truck.GetStatus() == "Maintenance")
         {
@@ -127,11 +143,26 @@ void MaintenanceManager::SendTruckToMaintenance(
         return;
     }
 
+    long long maintenanceStart =
+        std::max(
+            HOSManager::GetCurrentEpoch(),
+            selectedTruck->GetAvailableAtEpoch()
+        );
+
     selectedTruck->SetStatus("Maintenance");
 
     std::cout << "\nTruck #" << unitNumber
         << " has been sent to maintenance.\n";
-    std::cout << "The truck is unavailable for dispatch until service is completed.\n";
+
+    std::cout << "Maintenance Scheduled For: "
+        << HOSManager::FormatDateTime(
+            maintenanceStart
+        )
+        << "\n";
+
+    std::cout
+        << "The truck is unavailable for dispatch "
+        << "until service is completed.\n";
 
     if (selectedTruck->IsMaintenanceDue())
     {
@@ -139,7 +170,9 @@ void MaintenanceManager::SendTruckToMaintenance(
     }
     else
     {
-        std::cout << "Preventive maintenance started before the service deadline.\n";
+        std::cout
+            << "Preventive maintenance started before "
+            << "the service deadline.\n";
     }
 }
 
@@ -191,11 +224,49 @@ void MaintenanceManager::CompleteTruckMaintenance(
         return;
     }
 
+    bool wasScheduledService =
+        selectedTruck->IsMaintenanceDue();
+
+    long long maintenanceTime =
+        std::max(
+            HOSManager::GetCurrentEpoch(),
+            selectedTruck->GetAvailableAtEpoch()
+        );
+
     selectedTruck->CompleteMaintenance();
-    company.AddExpense(SERVICE_COST);
+
+    FinancialTransaction maintenanceTransaction;
+
+    maintenanceTransaction.transactionEpoch =
+        maintenanceTime;
+
+    maintenanceTransaction.category =
+        "Maintenance";
+
+    maintenanceTransaction.description =
+        wasScheduledService
+        ? "Scheduled Maintenance Service"
+        : "Preventive Maintenance Service";
+
+    maintenanceTransaction.amount =
+        SERVICE_COST;
+
+    maintenanceTransaction.truckUnitNumber =
+        unitNumber;
+
+    company.RecordExpenseTransaction(
+        maintenanceTransaction
+    );
 
     std::cout << "\nMaintenance completed for Truck #"
         << unitNumber << ".\n";
+
+    std::cout << "Service Time: "
+        << HOSManager::FormatDateTime(
+            maintenanceTime
+        )
+        << "\n";
+
     std::cout << "Service cost: $"
         << std::fixed
         << std::setprecision(2)
@@ -203,8 +274,10 @@ void MaintenanceManager::CompleteTruckMaintenance(
         << std::defaultfloat
         << std::setprecision(6)
         << "\n";
+
     std::cout << "Truck #" << unitNumber
         << " is now Available for dispatch.\n";
+
     std::cout << "Next service is due at "
         << selectedTruck->GetNextServiceMileage()
         << " miles.\n";

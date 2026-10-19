@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iostream>
 
+#include "HOSManager.h"
 #include "InputManager.h"
 
 void BankingManager::ShowMenu()
@@ -10,8 +11,9 @@ void BankingManager::ShowMenu()
     std::cout << "\n";
     std::cout << "========== COMPANY BANKING ==========\n";
     std::cout << "1. View Account Summary\n";
-    std::cout << "2. View Revenue\n";
-    std::cout << "3. View Expenses\n";
+    std::cout << "2. View Income History\n";
+    std::cout << "3. View Expense History\n";
+    std::cout << "4. View All Transactions\n";
     std::cout << "0. Return to Main Menu\n";
     std::cout << "=====================================\n";
 }
@@ -46,13 +48,18 @@ void BankingManager::ShowAccountSummary(
         << company.GetBalance()
         << "\n";
 
+    std::cout
+        << "Recorded Transactions: "
+        << company.GetFinancialTransactions().size()
+        << "\n";
+
     if (company.GetBalance() < 0.0)
     {
         std::cout
             << "Status: NEGATIVE BALANCE\n";
 
         std::cout
-            << "Fuel, maintenance, and repair expenses are still allowed. "
+            << "Operating expenses are still allowed. "
             << "Future revenue will reduce the deficit.\n";
     }
     else if (company.GetBalance() == 0.0)
@@ -74,19 +81,227 @@ void BankingManager::ShowAccountSummary(
         << "=====================================\n";
 }
 
-void BankingManager::ShowRevenue(
+void BankingManager::DisplayTransaction(
+    const FinancialTransaction& transaction)
+{
+    std::cout
+        << "\n-------------------------------------\n";
+
+    std::cout
+        << "Type: "
+        << transaction.type
+        << "\n";
+
+    std::cout
+        << "Category: "
+        << transaction.category
+        << "\n";
+
+    if (transaction.transactionEpoch > 0)
+    {
+        std::cout
+            << "Date: "
+            << HOSManager::FormatDateTime(
+                transaction.transactionEpoch
+            )
+            << "\n";
+    }
+    else
+    {
+        std::cout
+            << "Date: Imported from legacy save data\n";
+    }
+
+    if (!transaction.description.empty())
+    {
+        std::cout
+            << "Description: "
+            << transaction.description
+            << "\n";
+    }
+
+    if (transaction.loadNumber > 0)
+    {
+        std::cout
+            << "Load: #"
+            << transaction.loadNumber
+            << "\n";
+    }
+
+    if (transaction.truckUnitNumber > 0)
+    {
+        std::cout
+            << "Truck: #"
+            << transaction.truckUnitNumber
+            << "\n";
+    }
+
+    if (transaction.primaryDriverID > 0)
+    {
+        std::cout
+            << "Primary Driver: #"
+            << transaction.primaryDriverID
+            << "\n";
+    }
+
+    if (transaction.secondDriverID > 0)
+    {
+        std::cout
+            << "Team Driver: #"
+            << transaction.secondDriverID
+            << "\n";
+    }
+
+    std::cout
+        << std::fixed
+        << std::setprecision(2);
+
+    if (transaction.gallons > 0.0)
+    {
+        std::cout
+            << "Gallons: "
+            << transaction.gallons
+            << "\n";
+    }
+
+    if (transaction.pricePerGallon > 0.0)
+    {
+        std::cout
+            << "Price Per Gallon: $"
+            << transaction.pricePerGallon
+            << "\n";
+    }
+
+    if (transaction.partsCost > 0.0)
+    {
+        std::cout
+            << "Parts: $"
+            << transaction.partsCost
+            << "\n";
+    }
+
+    if (transaction.laborCost > 0.0)
+    {
+        std::cout
+            << "Labor: $"
+            << transaction.laborCost
+            << "\n";
+    }
+
+    if (transaction.serviceCallCharge > 0.0)
+    {
+        std::cout
+            << "Service Call: $"
+            << transaction.serviceCallCharge
+            << "\n";
+    }
+
+    std::cout
+        << "Amount: $"
+        << transaction.amount
+        << "\n";
+
+    std::cout
+        << std::defaultfloat
+        << std::setprecision(6);
+}
+
+void BankingManager::ShowIncomeHistory(
     const Company& company)
 {
     std::cout
-        << "\n========== COMPANY REVENUE ==========\n";
+        << "\n========== INCOME HISTORY ==========\n";
+
+    bool foundIncome = false;
+    double displayedTotal = 0.0;
+
+    for (const FinancialTransaction& transaction :
+        company.GetFinancialTransactions())
+    {
+        if (transaction.type != "Income")
+        {
+            continue;
+        }
+
+        foundIncome = true;
+        displayedTotal += transaction.amount;
+
+        DisplayTransaction(
+            transaction
+        );
+    }
+
+    if (!foundIncome)
+    {
+        std::cout
+            << "No income transactions have been recorded yet.\n";
+    }
 
     std::cout
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Total revenue from completed loads: $"
+        << "\nDisplayed Income Total: $"
+        << displayedTotal
+        << "\n";
+
+    std::cout
+        << "Company Revenue Total:  $"
         << company.GetRevenue()
+        << "\n";
+
+    std::cout
+        << std::defaultfloat
+        << std::setprecision(6);
+
+    std::cout
+        << "====================================\n";
+}
+
+void BankingManager::ShowExpenseHistory(
+    const Company& company)
+{
+    std::cout
+        << "\n========== EXPENSE HISTORY ==========\n";
+
+    bool foundExpense = false;
+    double displayedTotal = 0.0;
+
+    for (const FinancialTransaction& transaction :
+        company.GetFinancialTransactions())
+    {
+        if (transaction.type != "Expense")
+        {
+            continue;
+        }
+
+        foundExpense = true;
+        displayedTotal += transaction.amount;
+
+        DisplayTransaction(
+            transaction
+        );
+    }
+
+    if (!foundExpense)
+    {
+        std::cout
+            << "No expense transactions have been recorded yet.\n";
+    }
+
+    std::cout
+        << std::fixed
+        << std::setprecision(2);
+
+    std::cout
+        << "\nDisplayed Expense Total: $"
+        << displayedTotal
+        << "\n";
+
+    std::cout
+        << "Company Expense Total:   $"
+        << company.GetExpenses()
         << "\n";
 
     std::cout
@@ -97,24 +312,49 @@ void BankingManager::ShowRevenue(
         << "=====================================\n";
 }
 
-void BankingManager::ShowExpenses(
+void BankingManager::ShowAllTransactions(
     const Company& company)
 {
     std::cout
-        << "\n========== COMPANY EXPENSES ==========\n";
+        << "\n========== ALL TRANSACTIONS ==========\n";
+
+    const std::vector<FinancialTransaction>& transactions =
+        company.GetFinancialTransactions();
+
+    if (transactions.empty())
+    {
+        std::cout
+            << "No financial transactions have been recorded yet.\n";
+    }
+    else
+    {
+        for (const FinancialTransaction& transaction :
+            transactions)
+        {
+            DisplayTransaction(
+                transaction
+            );
+        }
+    }
 
     std::cout
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Total recorded expenses: $"
+        << "\nRevenue:  $"
+        << company.GetRevenue()
+        << "\n";
+
+    std::cout
+        << "Expenses: $"
         << company.GetExpenses()
         << "\n";
 
     std::cout
-        << "Current expenses include maintenance services "
-        << "and fuel purchases.\n";
+        << "Balance:  $"
+        << company.GetBalance()
+        << "\n";
 
     std::cout
         << std::defaultfloat
@@ -147,13 +387,19 @@ void BankingManager::Run(
             break;
 
         case 2:
-            ShowRevenue(
+            ShowIncomeHistory(
                 company
             );
             break;
 
         case 3:
-            ShowExpenses(
+            ShowExpenseHistory(
+                company
+            );
+            break;
+
+        case 4:
+            ShowAllTransactions(
                 company
             );
             break;
@@ -164,7 +410,7 @@ void BankingManager::Run(
         default:
             std::cout
                 << "\nInvalid selection. "
-                << "Please choose 0, 1, 2, or 3.\n";
+                << "Please choose 0, 1, 2, 3, or 4.\n";
 
             break;
         }

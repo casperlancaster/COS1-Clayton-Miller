@@ -3,9 +3,10 @@
 #include <string>
 #include <vector>
 
-#include "Truck.h"
 #include "Driver.h"
+#include "FinancialTransaction.h"
 #include "Load.h"
+#include "Truck.h"
 
 class Company
 {
@@ -17,6 +18,7 @@ private:
     std::vector<Truck> trucks;
     std::vector<Driver> drivers;
     std::vector<Load> loads;
+    std::vector<FinancialTransaction> financialTransactions;
 
 public:
     Company();
@@ -30,6 +32,18 @@ public:
     double GetExpenses() const;
     void AddExpense(double amount);
     double GetBalance() const;
+
+    void RecordIncomeTransaction(
+        const FinancialTransaction& transaction
+    );
+
+    void RecordExpenseTransaction(
+        const FinancialTransaction& transaction
+    );
+
+    void RestoreFinancialTransaction(
+        const FinancialTransaction& transaction
+    );
 
     void AddTruck(const Truck& newTruck);
     void AddDriver(const Driver& newDriver);
@@ -46,4 +60,7 @@ public:
     const std::vector<Truck>& GetTrucks() const;
     const std::vector<Driver>& GetDrivers() const;
     const std::vector<Load>& GetLoads() const;
+
+    const std::vector<FinancialTransaction>&
+        GetFinancialTransactions() const;
 };

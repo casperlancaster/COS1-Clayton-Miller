@@ -122,5 +122,8 @@
     <ClInclude Include="RepairManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FinancialTransaction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

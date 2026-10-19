@@ -492,13 +492,73 @@ bool DispatchManager::CompleteLoad(
 
     if (fuelExpense > 0.0)
     {
-        company->AddExpense(
-            fuelExpense
+        FinancialTransaction fuelTransaction;
+
+        fuelTransaction.transactionEpoch =
+            hosPlan.estimatedDeliveryEpoch;
+
+        fuelTransaction.category =
+            "Fuel";
+
+        fuelTransaction.description =
+            "In-Trip Fuel Purchase";
+
+        fuelTransaction.amount =
+            fuelExpense;
+
+        fuelTransaction.truckUnitNumber =
+            truckUnitNumber;
+
+        fuelTransaction.loadNumber =
+            loadNumber;
+
+        fuelTransaction.primaryDriverID =
+            primaryDriverID;
+
+        fuelTransaction.secondDriverID =
+            secondDriverID;
+
+        fuelTransaction.gallons =
+            gallonsPurchased;
+
+        fuelTransaction.pricePerGallon =
+            FUEL_PRICE_PER_GALLON;
+
+        company->RecordExpenseTransaction(
+            fuelTransaction
         );
     }
 
-    company->AddRevenue(
-        selectedLoad->GetPay()
+    FinancialTransaction revenueTransaction;
+
+    revenueTransaction.transactionEpoch =
+        hosPlan.estimatedDeliveryEpoch;
+
+    revenueTransaction.category =
+        "Load Revenue";
+
+    revenueTransaction.description =
+        selectedLoad->GetOrigin() +
+        " -> " +
+        selectedLoad->GetDestination();
+
+    revenueTransaction.amount =
+        selectedLoad->GetPay();
+
+    revenueTransaction.truckUnitNumber =
+        truckUnitNumber;
+
+    revenueTransaction.loadNumber =
+        loadNumber;
+
+    revenueTransaction.primaryDriverID =
+        primaryDriverID;
+
+    revenueTransaction.secondDriverID =
+        secondDriverID;
+
+    company->RecordIncomeTransaction(
+        revenueTransaction
     );
 
     selectedTruck->SetMileage(

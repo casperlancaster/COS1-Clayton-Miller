@@ -164,6 +164,7 @@
     <ClInclude Include="DispatchManager.h" />
     <ClInclude Include="Driver.h" />
     <ClInclude Include="DriverManager.h" />
+    <ClInclude Include="FinancialTransaction.h" />
     <ClInclude Include="FleetManager.h" />
     <ClInclude Include="FreightManager.h" />
     <ClInclude Include="BankingManager.h" />

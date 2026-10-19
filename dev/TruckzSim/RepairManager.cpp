@@ -376,8 +376,34 @@ void RepairManager::RepairTruck(
         repairStart +
         repairSeconds;
 
-    company.AddExpense(
-        totalCost
+    FinancialTransaction repairTransaction;
+
+    repairTransaction.transactionEpoch =
+        repairComplete;
+
+    repairTransaction.category =
+        "Repair";
+
+    repairTransaction.description =
+        repairType;
+
+    repairTransaction.amount =
+        totalCost;
+
+    repairTransaction.truckUnitNumber =
+        unitNumber;
+
+    repairTransaction.partsCost =
+        partsCost;
+
+    repairTransaction.laborCost =
+        laborCost;
+
+    repairTransaction.serviceCallCharge =
+        serviceCallCharge;
+
+    company.RecordExpenseTransaction(
+        repairTransaction
     );
 
     selectedTruck->

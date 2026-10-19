@@ -1,0 +1,14 @@
+TRUCKZSIM_SAVE_V6
+"Finance Test"
+5000 1571.4285714285716
+1
+230 501000 "Available" 501000 10000 200 100 7 1792554186 0 "" 0 0 0 0
+1
+230 "Finance Tester" "Available" 3.8181818181818166 0 1792546986
+1
+2301 "Des Moines, IA" "Denver, CO" 1000 5000 "Completed" 230 230 0 1793422740 1792445531 1792546986
+4
+1792546986 "Expense" "Fuel" "In-Trip Fuel Purchase" 171.42857142857144 230 2301 230 0 42.857142857142861 4 0 0 0
+1792546986 "Income" "Load Revenue" "Des Moines, IA -> Denver, CO" 5000 230 2301 230 0 0 0 0 0 0
+1792554186 "Expense" "Repair" "Tire Blowout" 900 230 0 0 0 0 0 550 200 150
+1792445605 "Expense" "Maintenance" "Preventive Maintenance Service" 500 230 0 0 0 0 0 0 0 0

@@ -1,8 +1,10 @@
 #include "FuelManager.h"
 
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
 
+#include "HOSManager.h"
 #include "InputManager.h"
 #include "Truck.h"
 
@@ -70,6 +72,22 @@ void FuelManager::DisplayFuelStatus(
             << "Status: "
             << truck.GetStatus()
             << "\n";
+
+        if (truck.GetAvailableAtEpoch() >
+            HOSManager::GetCurrentEpoch())
+        {
+            std::cout
+                << "Scheduled Available: "
+                << HOSManager::FormatDateTime(
+                    truck.GetAvailableAtEpoch()
+                )
+                << "\n";
+        }
+        else
+        {
+            std::cout
+                << "Scheduled Available: Now\n";
+        }
 
         std::cout
             << std::fixed
@@ -223,12 +241,50 @@ void FuelManager::RefuelTruck(
         gallonsAdded *
         FUEL_PRICE_PER_GALLON;
 
-    company.AddExpense(totalCost);
+    long long refuelTime =
+        std::max(
+            HOSManager::GetCurrentEpoch(),
+            selectedTruck->GetAvailableAtEpoch()
+        );
+
+    FinancialTransaction fuelTransaction;
+
+    fuelTransaction.transactionEpoch =
+        refuelTime;
+
+    fuelTransaction.category =
+        "Fuel";
+
+    fuelTransaction.description =
+        "Manual Refuel";
+
+    fuelTransaction.amount =
+        totalCost;
+
+    fuelTransaction.truckUnitNumber =
+        unitNumber;
+
+    fuelTransaction.gallons =
+        gallonsAdded;
+
+    fuelTransaction.pricePerGallon =
+        FUEL_PRICE_PER_GALLON;
+
+    company.RecordExpenseTransaction(
+        fuelTransaction
+    );
 
     std::cout
         << "\nTruck #"
         << unitNumber
         << " refueled successfully.\n";
+
+    std::cout
+        << "Refuel Time: "
+        << HOSManager::FormatDateTime(
+            refuelTime
+        )
+        << "\n";
 
     std::cout
         << std::fixed
