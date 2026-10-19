@@ -10,6 +10,7 @@
 #include "DriverManager.h"
 #include "FleetManager.h"
 #include "FreightManager.h"
+#include "FuelManager.h"
 #include "InputManager.h"
 #include "MaintenanceManager.h"
 #include "SaveLoadManager.h"
@@ -35,7 +36,9 @@ bool TruckzSimApp::RunStartupMenu()
         std::cout << "0. Exit\n";
         std::cout << "---------------------------------------------\n";
 
-        choice = InputManager::ReadInt("Select an option: ");
+        choice = InputManager::ReadInt(
+            "Select an option: "
+        );
 
         std::cout << "\n";
 
@@ -43,7 +46,10 @@ bool TruckzSimApp::RunStartupMenu()
         {
         case 1:
             company = Company();
-            dispatchManager.SetCompany(&company);
+
+            dispatchManager.SetCompany(
+                &company
+            );
 
             SetupCompany();
 
@@ -135,12 +141,15 @@ bool TruckzSimApp::RunStartupMenu()
         }
 
         case 0:
-            std::cout << "Exiting TruckzSim...\n";
+            std::cout
+                << "Exiting TruckzSim...\n";
+
             return false;
 
         default:
             std::cout
-                << "Invalid selection. Please enter 0, 1, or 2.\n\n";
+                << "Invalid selection. "
+                << "Please enter 0, 1, or 2.\n\n";
 
             break;
         }
@@ -149,20 +158,26 @@ bool TruckzSimApp::RunStartupMenu()
 
 void TruckzSimApp::SetupCompany()
 {
-    std::cout << "========== COMPANY SETUP ==========\n";
+    std::cout
+        << "========== COMPANY SETUP ==========\n";
 
-    std::string companyName = InputManager::ReadRequiredText(
-        "Enter your trucking company name: ",
-        "Company name"
+    std::string companyName =
+        InputManager::ReadRequiredText(
+            "Enter your trucking company name: ",
+            "Company name"
+        );
+
+    company.SetCompanyName(
+        companyName
     );
 
-    company.SetCompanyName(companyName);
-
-    std::cout << "\nWelcome to "
+    std::cout
+        << "\nWelcome to "
         << company.GetCompanyName()
         << "!\n";
 
-    std::cout << "===================================\n\n";
+    std::cout
+        << "===================================\n\n";
 }
 
 void TruckzSimApp::ShowMainMenu() const
@@ -179,35 +194,68 @@ void TruckzSimApp::ShowMainMenu() const
     std::cout << "5. Company Overview\n";
     std::cout << "6. Banking\n";
     std::cout << "7. Maintenance\n";
-    std::cout << "8. Save Company\n";
+    std::cout << "8. Fuel Management\n";
+    std::cout << "9. Save Company\n";
     std::cout << "0. Exit\n";
     std::cout << "---------------------------------------------\n";
 }
 
 void TruckzSimApp::ShowCompanyOverview() const
 {
-    std::cout << "========== COMPANY OVERVIEW ==========\n";
-    std::cout << "Company: " << company.GetCompanyName() << "\n";
-    std::cout << "Trucks: " << company.GetTrucks().size() << "\n";
-    std::cout << "Drivers: " << company.GetDrivers().size() << "\n";
-    std::cout << "Loads: " << company.GetLoads().size() << "\n";
+    std::cout
+        << "========== COMPANY OVERVIEW ==========\n";
 
-    std::cout << std::fixed << std::setprecision(2);
+    std::cout
+        << "Company: "
+        << company.GetCompanyName()
+        << "\n";
 
-    std::cout << "Revenue: $"
-        << company.GetRevenue() << "\n";
+    std::cout
+        << "Trucks: "
+        << company.GetTrucks().size()
+        << "\n";
 
-    std::cout << "Expenses: $"
-        << company.GetExpenses() << "\n";
+    std::cout
+        << "Drivers: "
+        << company.GetDrivers().size()
+        << "\n";
 
-    std::cout << "Balance: $"
-        << company.GetBalance() << "\n";
+    std::cout
+        << "Loads: "
+        << company.GetLoads().size()
+        << "\n";
+
+    std::cout
+        << std::fixed
+        << std::setprecision(2);
+
+    std::cout
+        << "Revenue: $"
+        << company.GetRevenue()
+        << "\n";
+
+    std::cout
+        << "Expenses: $"
+        << company.GetExpenses()
+        << "\n";
+
+    std::cout
+        << "Balance: $"
+        << company.GetBalance()
+        << "\n";
+
+    if (company.GetBalance() < 0.0)
+    {
+        std::cout
+            << "Financial Status: NEGATIVE BALANCE\n";
+    }
 
     std::cout
         << std::defaultfloat
         << std::setprecision(6);
 
-    std::cout << "========================================\n";
+    std::cout
+        << "========================================\n";
 }
 
 void TruckzSimApp::Run()
@@ -223,28 +271,37 @@ void TruckzSimApp::Run()
     {
         ShowMainMenu();
 
-        choice = InputManager::ReadInt(
-            "Select an option: "
-        );
+        choice =
+            InputManager::ReadInt(
+                "Select an option: "
+            );
 
         std::cout << "\n";
 
         switch (choice)
         {
         case 1:
-            DispatchCenter::Run(dispatchManager);
+            DispatchCenter::Run(
+                dispatchManager
+            );
             break;
 
         case 2:
-            FleetManager::Run(company);
+            FleetManager::Run(
+                company
+            );
             break;
 
         case 3:
-            DriverManager::Run(company);
+            DriverManager::Run(
+                company
+            );
             break;
 
         case 4:
-            FreightManager::Run(company);
+            FreightManager::Run(
+                company
+            );
             break;
 
         case 5:
@@ -252,15 +309,26 @@ void TruckzSimApp::Run()
             break;
 
         case 6:
-            BankingManager::Run(company);
+            BankingManager::Run(
+                company
+            );
             break;
 
         case 7:
-            MaintenanceManager::Run(company);
+            MaintenanceManager::Run(
+                company
+            );
             break;
 
         case 8:
-            if (SaveLoadManager::SaveCompany(company))
+            FuelManager::Run(
+                company
+            );
+            break;
+
+        case 9:
+            if (SaveLoadManager::SaveCompany(
+                company))
             {
                 std::cout
                     << "Company saved successfully.\n";
@@ -274,13 +342,14 @@ void TruckzSimApp::Run()
             break;
 
         case 0:
-            std::cout << "Exiting TruckzSim...\n";
+            std::cout
+                << "Exiting TruckzSim...\n";
             break;
 
         default:
             std::cout
                 << "Invalid selection. "
-                << "Please enter a number from 0 to 8.\n";
+                << "Please enter a number from 0 to 9.\n";
 
             break;
         }

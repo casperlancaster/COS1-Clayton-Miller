@@ -60,6 +60,9 @@
     <ClCompile Include="SaveLoadManager.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="FuelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Truck.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SaveLoadManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FuelManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

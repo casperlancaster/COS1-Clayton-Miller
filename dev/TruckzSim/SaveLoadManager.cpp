@@ -1,5 +1,6 @@
 #include "SaveLoadManager.h"
 
+#include <algorithm>
 #include <cctype>
 #include <filesystem>
 #include <fstream>
@@ -14,11 +15,20 @@
 
 namespace
 {
-    const std::string SAVE_DIRECTORY = "saves";
-    const std::string SAVE_EXTENSION = ".txt";
-    const std::string SAVE_FILE_HEADER = "TRUCKZSIM_SAVE_V1";
+    const std::string SAVE_DIRECTORY =
+        "saves";
 
-    constexpr std::size_t MAX_SAVE_RECORDS = 10000;
+    const std::string SAVE_EXTENSION =
+        ".txt";
+
+    const std::string SAVE_FILE_HEADER_V1 =
+        "TRUCKZSIM_SAVE_V1";
+
+    const std::string SAVE_FILE_HEADER_V2 =
+        "TRUCKZSIM_SAVE_V2";
+
+    constexpr std::size_t MAX_SAVE_RECORDS =
+        10000;
 }
 
 std::string SaveLoadManager::CreateSaveFileName(
@@ -29,7 +39,8 @@ std::string SaveLoadManager::CreateSaveFileName(
     for (char character : companyName)
     {
         if (std::isalnum(
-            static_cast<unsigned char>(character)))
+            static_cast<unsigned char>(
+                character)))
         {
             fileName += character;
         }
@@ -46,8 +57,10 @@ std::string SaveLoadManager::CreateSaveFileName(
         fileName = "company";
     }
 
-    return SAVE_DIRECTORY + "/" +
-        fileName + SAVE_EXTENSION;
+    return SAVE_DIRECTORY +
+        "/" +
+        fileName +
+        SAVE_EXTENSION;
 }
 
 bool SaveLoadManager::HasSavedCompanies()
@@ -62,25 +75,30 @@ SaveLoadManager::GetSavedCompanies()
 
     namespace fs = std::filesystem;
 
-    if (!fs::exists(SAVE_DIRECTORY))
+    if (!fs::exists(
+        SAVE_DIRECTORY))
     {
         return companyNames;
     }
 
     for (const fs::directory_entry& entry :
-        fs::directory_iterator(SAVE_DIRECTORY))
+        fs::directory_iterator(
+            SAVE_DIRECTORY))
     {
         if (!entry.is_regular_file())
         {
             continue;
         }
 
-        if (entry.path().extension() != SAVE_EXTENSION)
+        if (entry.path().extension() !=
+            SAVE_EXTENSION)
         {
             continue;
         }
 
-        std::ifstream file(entry.path());
+        std::ifstream file(
+            entry.path()
+        );
 
         if (!file)
         {
@@ -88,20 +106,36 @@ SaveLoadManager::GetSavedCompanies()
         }
 
         std::string header;
-        std::getline(file, header);
 
-        if (header != SAVE_FILE_HEADER)
+        std::getline(
+            file,
+            header
+        );
+
+        if (header !=
+            SAVE_FILE_HEADER_V1 &&
+            header !=
+            SAVE_FILE_HEADER_V2)
         {
             continue;
         }
 
         std::string companyName;
 
-        if (file >> std::quoted(companyName))
+        if (file >>
+            std::quoted(
+                companyName))
         {
-            companyNames.push_back(companyName);
+            companyNames.push_back(
+                companyName
+            );
         }
     }
+
+    std::sort(
+        companyNames.begin(),
+        companyNames.end()
+    );
 
     return companyNames;
 }
@@ -113,7 +147,9 @@ bool SaveLoadManager::SaveCompany(
 
     try
     {
-        fs::create_directories(SAVE_DIRECTORY);
+        fs::create_directories(
+            SAVE_DIRECTORY
+        );
     }
     catch (...)
     {
@@ -135,7 +171,9 @@ bool SaveLoadManager::SaveCompany(
         return false;
     }
 
-    file << SAVE_FILE_HEADER << "\n";
+    file
+        << SAVE_FILE_HEADER_V2
+        << "\n";
 
     file
         << std::quoted(
@@ -145,42 +183,59 @@ bool SaveLoadManager::SaveCompany(
 
     file
         << std::setprecision(17)
-        << company.GetRevenue() << " "
+        << company.GetRevenue()
+        << " "
         << company.GetExpenses()
         << "\n";
 
     const std::vector<Truck>& trucks =
         company.GetTrucks();
 
-    file << trucks.size() << "\n";
+    file
+        << trucks.size()
+        << "\n";
 
     for (const Truck& truck : trucks)
     {
         file
-            << truck.GetUnitNumber() << " "
+            << truck.GetUnitNumber()
+            << " "
             << std::setprecision(17)
-            << truck.GetMileage() << " "
+            << truck.GetMileage()
+            << " "
             << std::quoted(
                 truck.GetStatus()
-            ) << " "
+            )
+            << " "
             << truck.GetLastServiceMileage()
             << " "
             << truck.GetServiceIntervalMiles()
+            << " "
+            << truck.GetFuelTankCapacity()
+            << " "
+            << truck.GetFuelGallons()
+            << " "
+            << truck.GetMilesPerGallon()
             << "\n";
     }
 
     const std::vector<Driver>& drivers =
         company.GetDrivers();
 
-    file << drivers.size() << "\n";
+    file
+        << drivers.size()
+        << "\n";
 
-    for (const Driver& driver : drivers)
+    for (const Driver& driver :
+        drivers)
     {
         file
-            << driver.GetDriverID() << " "
+            << driver.GetDriverID()
+            << " "
             << std::quoted(
                 driver.GetName()
-            ) << " "
+            )
+            << " "
             << std::quoted(
                 driver.GetStatus()
             )
@@ -190,32 +245,41 @@ bool SaveLoadManager::SaveCompany(
     const std::vector<Load>& loads =
         company.GetLoads();
 
-    file << loads.size() << "\n";
+    file
+        << loads.size()
+        << "\n";
 
     for (const Load& load : loads)
     {
         file
-            << load.GetLoadNumber() << " "
+            << load.GetLoadNumber()
+            << " "
             << std::quoted(
                 load.GetOrigin()
-            ) << " "
+            )
+            << " "
             << std::quoted(
                 load.GetDestination()
-            ) << " "
+            )
+            << " "
             << std::setprecision(17)
             << load.GetDistanceMiles()
             << " "
-            << load.GetPay() << " "
+            << load.GetPay()
+            << " "
             << std::quoted(
                 load.GetStatus()
-            ) << " "
+            )
+            << " "
             << load.GetAssignedDriverID()
             << " "
             << load.GetAssignedTruckUnitNumber()
             << "\n";
     }
 
-    return static_cast<bool>(file);
+    return static_cast<bool>(
+        file
+        );
 }
 
 bool SaveLoadManager::LoadCompany(
@@ -223,9 +287,13 @@ bool SaveLoadManager::LoadCompany(
     const std::string& companyName)
 {
     std::string fileName =
-        CreateSaveFileName(companyName);
+        CreateSaveFileName(
+            companyName
+        );
 
-    std::ifstream file(fileName);
+    std::ifstream file(
+        fileName
+    );
 
     if (!file)
     {
@@ -233,9 +301,25 @@ bool SaveLoadManager::LoadCompany(
     }
 
     std::string fileHeader;
-    std::getline(file, fileHeader);
 
-    if (fileHeader != SAVE_FILE_HEADER)
+    std::getline(
+        file,
+        fileHeader
+    );
+
+    bool hasFuelData = false;
+
+    if (fileHeader ==
+        SAVE_FILE_HEADER_V2)
+    {
+        hasFuelData = true;
+    }
+    else if (fileHeader ==
+        SAVE_FILE_HEADER_V1)
+    {
+        hasFuelData = false;
+    }
+    else
     {
         return false;
     }
@@ -247,12 +331,15 @@ bool SaveLoadManager::LoadCompany(
     double expenses = 0.0;
 
     if (!(file >>
-        std::quoted(loadedCompanyName)))
+        std::quoted(
+            loadedCompanyName)))
     {
         return false;
     }
 
-    if (!(file >> revenue >> expenses))
+    if (!(file >>
+        revenue >>
+        expenses))
     {
         return false;
     }
@@ -267,13 +354,19 @@ bool SaveLoadManager::LoadCompany(
         loadedCompanyName
     );
 
-    loadedCompany.AddRevenue(revenue);
-    loadedCompany.AddExpense(expenses);
+    loadedCompany.AddRevenue(
+        revenue
+    );
+
+    loadedCompany.AddExpense(
+        expenses
+    );
 
     std::size_t truckCount = 0;
 
     if (!(file >> truckCount) ||
-        truckCount > MAX_SAVE_RECORDS)
+        truckCount >
+        MAX_SAVE_RECORDS)
     {
         return false;
     }
@@ -285,48 +378,93 @@ bool SaveLoadManager::LoadCompany(
         int unitNumber = 0;
         double mileage = 0.0;
         std::string status;
+
         double lastServiceMileage = 0.0;
         double serviceIntervalMiles = 0.0;
+
+        double fuelTankCapacity = 200.0;
+        double fuelGallons = 200.0;
+        double milesPerGallon = 7.0;
 
         if (!(file
             >> unitNumber
             >> mileage
-            >> std::quoted(status)
+            >> std::quoted(
+                status)
             >> lastServiceMileage
             >> serviceIntervalMiles))
         {
             return false;
         }
 
+        if (hasFuelData)
+        {
+            if (!(file
+                >> fuelTankCapacity
+                >> fuelGallons
+                >> milesPerGallon))
+            {
+                return false;
+            }
+        }
+
         if (unitNumber <= 0 ||
             mileage < 0.0 ||
             lastServiceMileage < 0.0 ||
-            lastServiceMileage > mileage ||
+            lastServiceMileage >
+            mileage ||
             serviceIntervalMiles <= 0.0 ||
-            loadedCompany.HasTruckUnitNumber(
+            loadedCompany.
+            HasTruckUnitNumber(
                 unitNumber))
+        {
+            return false;
+        }
+
+        if (fuelTankCapacity <= 0.0 ||
+            fuelGallons < 0.0 ||
+            fuelGallons >
+            fuelTankCapacity ||
+            milesPerGallon <= 0.0)
         {
             return false;
         }
 
         Truck truck;
 
-        truck.SetUnitNumber(unitNumber);
-        truck.SetMileage(mileage);
-        truck.SetStatus(status);
+        truck.SetUnitNumber(
+            unitNumber
+        );
+
+        truck.SetMileage(
+            mileage
+        );
+
+        truck.SetStatus(
+            status
+        );
 
         truck.RestoreMaintenanceSchedule(
             lastServiceMileage,
             serviceIntervalMiles
         );
 
-        loadedCompany.AddTruck(truck);
+        truck.RestoreFuelState(
+            fuelTankCapacity,
+            fuelGallons,
+            milesPerGallon
+        );
+
+        loadedCompany.AddTruck(
+            truck
+        );
     }
 
     std::size_t driverCount = 0;
 
     if (!(file >> driverCount) ||
-        driverCount > MAX_SAVE_RECORDS)
+        driverCount >
+        MAX_SAVE_RECORDS)
     {
         return false;
     }
@@ -341,15 +479,18 @@ bool SaveLoadManager::LoadCompany(
 
         if (!(file
             >> driverID
-            >> std::quoted(name)
-            >> std::quoted(status)))
+            >> std::quoted(
+                name)
+            >> std::quoted(
+                status)))
         {
             return false;
         }
 
         if (driverID <= 0 ||
             name.empty() ||
-            loadedCompany.HasDriverID(
+            loadedCompany.
+            HasDriverID(
                 driverID))
         {
             return false;
@@ -357,17 +498,28 @@ bool SaveLoadManager::LoadCompany(
 
         Driver driver;
 
-        driver.SetDriverID(driverID);
-        driver.SetName(name);
-        driver.SetStatus(status);
+        driver.SetDriverID(
+            driverID
+        );
 
-        loadedCompany.AddDriver(driver);
+        driver.SetName(
+            name
+        );
+
+        driver.SetStatus(
+            status
+        );
+
+        loadedCompany.AddDriver(
+            driver
+        );
     }
 
     std::size_t loadCount = 0;
 
     if (!(file >> loadCount) ||
-        loadCount > MAX_SAVE_RECORDS)
+        loadCount >
+        MAX_SAVE_RECORDS)
     {
         return false;
     }
@@ -387,11 +539,14 @@ bool SaveLoadManager::LoadCompany(
 
         if (!(file
             >> loadNumber
-            >> std::quoted(origin)
-            >> std::quoted(destination)
+            >> std::quoted(
+                origin)
+            >> std::quoted(
+                destination)
             >> distanceMiles
             >> pay
-            >> std::quoted(status)
+            >> std::quoted(
+                status)
             >> assignedDriverID
             >> assignedTruckUnitNumber))
         {
@@ -405,21 +560,24 @@ bool SaveLoadManager::LoadCompany(
             pay < 0.0 ||
             assignedDriverID < 0 ||
             assignedTruckUnitNumber < 0 ||
-            loadedCompany.HasLoadNumber(
+            loadedCompany.
+            HasLoadNumber(
                 loadNumber))
         {
             return false;
         }
 
         if (assignedDriverID > 0 &&
-            !loadedCompany.HasDriverID(
+            !loadedCompany.
+            HasDriverID(
                 assignedDriverID))
         {
             return false;
         }
 
         if (assignedTruckUnitNumber > 0 &&
-            !loadedCompany.HasTruckUnitNumber(
+            !loadedCompany.
+            HasTruckUnitNumber(
                 assignedTruckUnitNumber))
         {
             return false;
@@ -427,15 +585,29 @@ bool SaveLoadManager::LoadCompany(
 
         Load load;
 
-        load.SetLoadNumber(loadNumber);
-        load.SetOrigin(origin);
-        load.SetDestination(destination);
+        load.SetLoadNumber(
+            loadNumber
+        );
+
+        load.SetOrigin(
+            origin
+        );
+
+        load.SetDestination(
+            destination
+        );
+
         load.SetDistanceMiles(
             distanceMiles
         );
 
-        load.SetPay(pay);
-        load.SetStatus(status);
+        load.SetPay(
+            pay
+        );
+
+        load.SetStatus(
+            status
+        );
 
         load.SetAssignedDriverID(
             assignedDriverID
@@ -445,7 +617,9 @@ bool SaveLoadManager::LoadCompany(
             assignedTruckUnitNumber
         );
 
-        loadedCompany.AddLoad(load);
+        loadedCompany.AddLoad(
+            load
+        );
     }
 
     if (!file)
@@ -453,7 +627,8 @@ bool SaveLoadManager::LoadCompany(
         return false;
     }
 
-    company = loadedCompany;
+    company =
+        loadedCompany;
 
     return true;
 }

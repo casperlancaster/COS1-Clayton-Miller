@@ -1,11 +1,18 @@
 #include "DispatchManager.h"
 
+namespace
+{
+    constexpr double FUEL_PRICE_PER_GALLON =
+        4.00;
+}
+
 DispatchManager::DispatchManager()
 {
     company = nullptr;
 }
 
-DispatchManager::DispatchManager(Company* newCompany)
+DispatchManager::DispatchManager(
+    Company* newCompany)
 {
     company = newCompany;
 }
@@ -15,7 +22,8 @@ Company* DispatchManager::GetCompany() const
     return company;
 }
 
-void DispatchManager::SetCompany(Company* newCompany)
+void DispatchManager::SetCompany(
+    Company* newCompany)
 {
     company = newCompany;
 }
@@ -25,16 +33,24 @@ bool DispatchManager::HasCompany() const
     return company != nullptr;
 }
 
-bool DispatchManager::AssignLoad(int loadNumber, int driverID, int truckUnitNumber)
+bool DispatchManager::AssignLoad(
+    int loadNumber,
+    int driverID,
+    int truckUnitNumber)
 {
     if (company == nullptr)
     {
         return false;
     }
 
-    std::vector<Driver>& drivers = company->GetDrivers();
-    std::vector<Truck>& trucks = company->GetTrucks();
-    std::vector<Load>& loads = company->GetLoads();
+    std::vector<Driver>& drivers =
+        company->GetDrivers();
+
+    std::vector<Truck>& trucks =
+        company->GetTrucks();
+
+    std::vector<Load>& loads =
+        company->GetLoads();
 
     Driver* selectedDriver = nullptr;
     Truck* selectedTruck = nullptr;
@@ -42,27 +58,36 @@ bool DispatchManager::AssignLoad(int loadNumber, int driverID, int truckUnitNumb
 
     for (Driver& driver : drivers)
     {
-        if (driver.GetDriverID() == driverID)
+        if (driver.GetDriverID() ==
+            driverID)
         {
-            selectedDriver = &driver;
+            selectedDriver =
+                &driver;
+
             break;
         }
     }
 
     for (Truck& truck : trucks)
     {
-        if (truck.GetUnitNumber() == truckUnitNumber)
+        if (truck.GetUnitNumber() ==
+            truckUnitNumber)
         {
-            selectedTruck = &truck;
+            selectedTruck =
+                &truck;
+
             break;
         }
     }
 
     for (Load& load : loads)
     {
-        if (load.GetLoadNumber() == loadNumber)
+        if (load.GetLoadNumber() ==
+            loadNumber)
         {
-            selectedLoad = &load;
+            selectedLoad =
+                &load;
+
             break;
         }
     }
@@ -74,94 +99,164 @@ bool DispatchManager::AssignLoad(int loadNumber, int driverID, int truckUnitNumb
         return false;
     }
 
-    if (selectedDriver->GetStatus() != "Available" ||
-        selectedTruck->GetStatus() != "Available" ||
-        selectedLoad->GetStatus() != "Available")
+    if (selectedDriver->GetStatus() !=
+        "Available" ||
+        selectedTruck->GetStatus() !=
+        "Available" ||
+        selectedLoad->GetStatus() !=
+        "Available")
     {
         return false;
     }
 
-    selectedDriver->SetStatus("Dispatched");
-    selectedTruck->SetStatus("Dispatched");
+    selectedDriver->
+        SetStatus("Dispatched");
 
-    selectedLoad->SetStatus("Assigned");
-    selectedLoad->SetAssignedDriverID(driverID);
-    selectedLoad->SetAssignedTruckUnitNumber(truckUnitNumber);
+    selectedTruck->
+        SetStatus("Dispatched");
+
+    selectedLoad->
+        SetStatus("Assigned");
+
+    selectedLoad->
+        SetAssignedDriverID(
+            driverID
+        );
+
+    selectedLoad->
+        SetAssignedTruckUnitNumber(
+            truckUnitNumber
+        );
 
     return true;
 }
 
-bool DispatchManager::CompleteLoad(int loadNumber)
+bool DispatchManager::CompleteLoad(
+    int loadNumber)
 {
     if (company == nullptr)
     {
         return false;
     }
 
-    std::vector<Driver>& drivers = company->GetDrivers();
-    std::vector<Truck>& trucks = company->GetTrucks();
-    std::vector<Load>& loads = company->GetLoads();
+    std::vector<Driver>& drivers =
+        company->GetDrivers();
+
+    std::vector<Truck>& trucks =
+        company->GetTrucks();
+
+    std::vector<Load>& loads =
+        company->GetLoads();
 
     Load* selectedLoad = nullptr;
 
     for (Load& load : loads)
     {
-        if (load.GetLoadNumber() == loadNumber)
+        if (load.GetLoadNumber() ==
+            loadNumber)
         {
-            selectedLoad = &load;
+            selectedLoad =
+                &load;
+
             break;
         }
     }
 
-    if (selectedLoad == nullptr || selectedLoad->GetStatus() != "Assigned")
+    if (selectedLoad == nullptr ||
+        selectedLoad->GetStatus() !=
+        "Assigned")
     {
         return false;
     }
 
-    int assignedDriverID = selectedLoad->GetAssignedDriverID();
-    int assignedTruckUnitNumber = selectedLoad->GetAssignedTruckUnitNumber();
+    int assignedDriverID =
+        selectedLoad->
+        GetAssignedDriverID();
+
+    int assignedTruckUnitNumber =
+        selectedLoad->
+        GetAssignedTruckUnitNumber();
 
     Driver* selectedDriver = nullptr;
     Truck* selectedTruck = nullptr;
 
     for (Driver& driver : drivers)
     {
-        if (driver.GetDriverID() == assignedDriverID)
+        if (driver.GetDriverID() ==
+            assignedDriverID)
         {
-            selectedDriver = &driver;
+            selectedDriver =
+                &driver;
+
             break;
         }
     }
 
     for (Truck& truck : trucks)
     {
-        if (truck.GetUnitNumber() == assignedTruckUnitNumber)
+        if (truck.GetUnitNumber() ==
+            assignedTruckUnitNumber)
         {
-            selectedTruck = &truck;
+            selectedTruck =
+                &truck;
+
             break;
         }
     }
 
-    if (selectedDriver == nullptr || selectedTruck == nullptr)
+    if (selectedDriver == nullptr ||
+        selectedTruck == nullptr)
     {
         return false;
     }
 
-    if (selectedDriver->GetStatus() != "Dispatched" ||
-        selectedTruck->GetStatus() != "Dispatched")
+    if (selectedDriver->GetStatus() !=
+        "Dispatched" ||
+        selectedTruck->GetStatus() !=
+        "Dispatched")
     {
         return false;
     }
 
-    company->AddRevenue(selectedLoad->GetPay());
+    double gallonsPurchased = 0.0;
 
-    selectedTruck->SetMileage(
-        selectedTruck->GetMileage() + selectedLoad->GetDistanceMiles()
+    if (!selectedTruck->
+        CompleteTripFuel(
+            selectedLoad->
+            GetDistanceMiles(),
+            gallonsPurchased))
+    {
+        return false;
+    }
+
+    double fuelExpense =
+        gallonsPurchased *
+        FUEL_PRICE_PER_GALLON;
+
+    if (fuelExpense > 0.0)
+    {
+        company->AddExpense(
+            fuelExpense
+        );
+    }
+
+    company->AddRevenue(
+        selectedLoad->GetPay()
     );
 
-    selectedLoad->SetStatus("Completed");
-    selectedDriver->SetStatus("Available");
-    selectedTruck->SetStatus("Available");
+    selectedTruck->SetMileage(
+        selectedTruck->GetMileage() +
+        selectedLoad->GetDistanceMiles()
+    );
+
+    selectedLoad->
+        SetStatus("Completed");
+
+    selectedDriver->
+        SetStatus("Available");
+
+    selectedTruck->
+        SetStatus("Available");
 
     return true;
 }

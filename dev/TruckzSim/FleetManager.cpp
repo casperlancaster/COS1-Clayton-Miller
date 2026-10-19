@@ -1,5 +1,6 @@
 #include "FleetManager.h"
 
+#include <iomanip>
 #include <iostream>
 
 #include "InputManager.h"
@@ -44,47 +45,130 @@ void FleetManager::AddTruck(Company& company)
         "mileage"
     );
 
+    double fuelTankCapacity =
+        InputManager::ReadPositiveDouble(
+            "Enter fuel tank capacity in gallons: ",
+            "fuel tank capacity"
+        );
+
+    double milesPerGallon =
+        InputManager::ReadPositiveDouble(
+            "Enter estimated fuel economy (MPG): ",
+            "fuel economy"
+        );
+
     newTruck.SetUnitNumber(unitNumber);
     newTruck.SetMileage(mileage);
     newTruck.InitializeMaintenanceSchedule();
+
+    newTruck.InitializeFuelSystem(
+        fuelTankCapacity,
+        milesPerGallon
+    );
+
     newTruck.SetStatus("Available");
 
     company.AddTruck(newTruck);
 
-    std::cout << "\nTruck #" << unitNumber << " added successfully.\n";
+    std::cout
+        << "\nTruck #"
+        << unitNumber
+        << " added successfully with a full "
+        << std::fixed
+        << std::setprecision(1)
+        << fuelTankCapacity
+        << "-gallon tank.\n"
+        << std::defaultfloat
+        << std::setprecision(6);
 }
 
-void FleetManager::DisplayTrucks(const Company& company)
+void FleetManager::DisplayTrucks(
+    const Company& company)
 {
-    const std::vector<Truck>& trucks = company.GetTrucks();
+    const std::vector<Truck>& trucks =
+        company.GetTrucks();
 
-    std::cout << "\n========== COMPANY FLEET ==========\n";
+    std::cout
+        << "\n========== COMPANY FLEET ==========\n";
 
     if (trucks.empty())
     {
-        std::cout << "No trucks have been added yet.\n";
+        std::cout
+            << "No trucks have been added yet.\n";
     }
     else
     {
-        for (int i = 0; i < trucks.size(); i++)
+        for (const Truck& truck : trucks)
         {
-            std::cout << "\nTruck #" << trucks[i].GetUnitNumber() << "\n";
-            std::cout << "Mileage: " << trucks[i].GetMileage() << "\n";
-            std::cout << "Status: " << trucks[i].GetStatus() << "\n";
+            std::cout
+                << "\nTruck #"
+                << truck.GetUnitNumber()
+                << "\n";
+
+            std::cout
+                << "Mileage: "
+                << truck.GetMileage()
+                << "\n";
+
+            std::cout
+                << "Status: "
+                << truck.GetStatus()
+                << "\n";
+
+            std::cout
+                << std::fixed
+                << std::setprecision(1);
+
+            std::cout
+                << "Fuel: "
+                << truck.GetFuelGallons()
+                << " / "
+                << truck.GetFuelTankCapacity()
+                << " gallons\n";
+
+            std::cout
+                << "Fuel Level: "
+                << truck.GetFuelPercentage()
+                << "%\n";
+
+            std::cout
+                << "Fuel Economy: "
+                << truck.GetMilesPerGallon()
+                << " MPG\n";
+
+            std::cout
+                << "Estimated Fuel Range: "
+                << truck.GetFuelRangeMiles()
+                << " miles\n";
+
+            std::cout
+                << "Required Delivery Reserve: "
+                << truck.GetMinimumArrivalFuelGallons()
+                << " gallons\n";
+
+            std::cout
+                << std::defaultfloat
+                << std::setprecision(6);
         }
     }
 
-    std::cout << "==================================\n";
+    std::cout
+        << "==================================\n";
 }
 
-void FleetManager::Run(Company& company)
+void FleetManager::Run(
+    Company& company)
 {
     int choice = -1;
 
     while (choice != 0)
     {
         ShowMenu();
-        choice = InputManager::ReadInt("Select an option: ");
+
+        choice =
+            InputManager::ReadInt(
+                "Select an option: "
+            );
 
         switch (choice)
         {
@@ -100,7 +184,10 @@ void FleetManager::Run(Company& company)
             break;
 
         default:
-            std::cout << "\nInvalid selection. Please choose 0, 1, or 2.\n";
+            std::cout
+                << "\nInvalid selection. "
+                << "Please choose 0, 1, or 2.\n";
+
             break;
         }
     }
