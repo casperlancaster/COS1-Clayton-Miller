@@ -123,9 +123,7 @@ bool TruckzSimApp::RunStartupMenu()
                 InputManager::ReadMenuChoice(
                     "Select a company: ",
                     0,
-                    static_cast<int>(
-                        savedCompanies.size()
-                        )
+                    savedCompanies.size()
                 );
 
             if (saveChoice == 0)

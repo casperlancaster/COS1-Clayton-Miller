@@ -1,7 +1,6 @@
 #include "SaveLoadManager.h"
 
 #include <algorithm>
-#include <cctype>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -65,9 +64,12 @@ std::string SaveLoadManager::CreateSaveFileName(
     for (char character :
     companyName)
     {
-        if (std::isalnum(
-            static_cast<unsigned char>(
-                character)))
+        if ((character >= 'A' &&
+            character <= 'Z') ||
+            (character >= 'a' &&
+                character <= 'z') ||
+            (character >= '0' &&
+                character <= '9'))
         {
             fileName += character;
         }
@@ -421,9 +423,7 @@ bool SaveLoadManager::SaveCompany(
             << "\n";
     }
 
-    return static_cast<bool>(
-        file
-        );
+    return file.good();
 }
 
 bool SaveLoadManager::LoadCompany(

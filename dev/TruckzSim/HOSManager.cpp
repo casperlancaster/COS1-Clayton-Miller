@@ -1,7 +1,6 @@
 #include "HOSManager.h"
 
 #include <algorithm>
-#include <cctype>
 #include <cmath>
 #include <ctime>
 #include <iomanip>
@@ -54,9 +53,10 @@ namespace
         std::size_t start = 0;
 
         while (start < input.size() &&
-            std::isspace(
-                static_cast<unsigned char>(
-                    input[start])))
+            (input[start] == ' ' ||
+                input[start] == '\t' ||
+                input[start] == '\n' ||
+                input[start] == '\r'))
         {
             start++;
         }
@@ -64,9 +64,10 @@ namespace
         std::size_t end = input.size();
 
         while (end > start &&
-            std::isspace(
-                static_cast<unsigned char>(
-                    input[end - 1])))
+            (input[end - 1] == ' ' ||
+                input[end - 1] == '\t' ||
+                input[end - 1] == '\n' ||
+                input[end - 1] == '\r'))
         {
             end--;
         }
@@ -81,11 +82,12 @@ namespace
     {
         for (char& character : text)
         {
-            character = static_cast<char>(
-                std::toupper(
-                    static_cast<unsigned char>(
-                        character))
-                );
+            if (character >= 'a' &&
+                character <= 'z')
+            {
+                character =
+                    character - ('a' - 'A');
+            }
         }
 
         return text;
@@ -101,9 +103,8 @@ namespace
 
         for (char character : text)
         {
-            if (!std::isdigit(
-                static_cast<unsigned char>(
-                    character)))
+            if (character < '0' ||
+                character > '9')
             {
                 return false;
             }
@@ -129,9 +130,8 @@ namespace
 
         for (char character : cleaned)
         {
-            if (std::isdigit(
-                static_cast<unsigned char>(
-                    character)))
+            if (character >= '0' &&
+                character <= '9')
             {
                 digitsOnly += character;
             }
@@ -251,9 +251,10 @@ namespace
 
         for (char character : cleaned)
         {
-            if (!std::isspace(
-                static_cast<unsigned char>(
-                    character)))
+            if (character != ' ' &&
+                character != '\t' &&
+                character != '\n' &&
+                character != '\r')
             {
                 compact += character;
             }
@@ -413,9 +414,7 @@ double HOSManager::GetAveragePlanningSpeedMph()
 
 long long HOSManager::GetCurrentEpoch()
 {
-    return static_cast<long long>(
-        std::time(nullptr)
-        );
+    return std::time(nullptr);
 }
 
 void HOSManager::SetDateFormat(
@@ -522,8 +521,7 @@ bool HOSManager::ParseDateTime(
     std::time_t converted =
         std::mktime(&dateTime);
 
-    if (converted ==
-        static_cast<std::time_t>(-1))
+    if (converted == -1)
     {
         return false;
     }
@@ -537,10 +535,7 @@ bool HOSManager::ParseDateTime(
         return false;
     }
 
-    epochResult =
-        static_cast<long long>(
-            converted
-            );
+    epochResult = converted;
 
     return true;
 }
@@ -554,9 +549,7 @@ std::string HOSManager::FormatDateTime(
     }
 
     std::time_t timeValue =
-        static_cast<std::time_t>(
-            epochTime
-            );
+        epochTime;
 
     std::tm localTime = {};
 
@@ -739,12 +732,10 @@ HOSPlan HOSManager::CreateSoloPlan(
     }
 
     long long tripSeconds =
-        static_cast<long long>(
-            std::llround(
-                elapsedHours *
-                3600.0
-            )
-            );
+        std::llround(
+            elapsedHours *
+            3600.0
+        );
 
     plan.valid = true;
 
@@ -1057,12 +1048,10 @@ HOSPlan HOSManager::CreateTeamPlan(
     }
 
     long long tripSeconds =
-        static_cast<long long>(
-            std::llround(
-                elapsedHours *
-                3600.0
-            )
-            );
+        std::llround(
+            elapsedHours *
+            3600.0
+        );
 
     plan.valid = true;
 

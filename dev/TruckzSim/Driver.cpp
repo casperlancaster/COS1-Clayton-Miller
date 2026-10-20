@@ -144,10 +144,8 @@ double Driver::GetProjectedRestHoursAt(
     }
 
     double elapsedHours =
-        static_cast<double>(
-            epochTime -
-            availableAtEpoch
-            ) /
+        (epochTime -
+            availableAtEpoch) /
         3600.0;
 
     projectedRest +=

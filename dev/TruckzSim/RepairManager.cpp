@@ -365,12 +365,10 @@ void RepairManager::RepairTruck(
         );
 
     long long repairSeconds =
-        static_cast<long long>(
-            std::llround(
-                repairHours *
-                3600.0
-            )
-            );
+        std::llround(
+            repairHours *
+            3600.0
+        );
 
     long long repairComplete =
         repairStart +
