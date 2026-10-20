@@ -1,137 +1,392 @@
-# Milestone 4 - TruckzSim
+# Milestone 4
 
-**Student:** Clayton Miller  
-**Course:** COS119 - Project & Portfolio I  
-**Project:** TruckzSim  
-**Milestone:** 4
+## Final Project Development
+
+Milestone 4 focused on completing TruckzSim, connecting the major systems together, improving usability, resolving remaining bugs, and performing final testing across the entire application.
+
+TruckzSim has grown from a basic console application into a multi-class trucking company management simulation with persistent company data, dispatching, Hours of Service, fuel management, maintenance, breakdowns, financial tracking, driver payroll, and other management systems.
+
+---
 
 ## Final Features Added
 
-During Milestone 4, TruckzSim received several final gameplay and management systems that completed the console application.
-
 ### Company Save and Load
-A multi-company save and load system was implemented so company data can persist between program sessions. Saved companies can be selected from the startup menu, and older save versions remain compatible with newer versions of the application.
+
+TruckzSim now supports multiple saved companies.
+
+Players can create a new company or select an existing saved company from the startup menu. Company information, trucks, drivers, loads, financial history, settings, truck locations, Hours of Service data, fuel data, maintenance information, and breakdown information are preserved between sessions.
+
+Older save versions remain compatible with the final version of the program.
+
+---
 
 ### Fuel Management
-Trucks now have individual fuel tank capacities, current fuel levels, and fuel economy ratings. Loads calculate required trip fuel and maintain a required delivery reserve. Fuel purchased during a trip is recorded as a company expense. Manual refueling is also available through the Fuel Management menu.
+
+Each truck now tracks:
+
+- Fuel tank capacity
+- Current fuel level
+- Fuel economy
+- Estimated fuel range
+- Required delivery fuel reserve
+
+TruckzSim calculates the amount of fuel required for a load before dispatch.
+
+If additional fuel is required during the trip, the required fuel purchase is calculated and recorded as a company expense when the load is completed.
+
+Manual refueling is also available through the Fuel Management menu.
+
+---
 
 ### Driver Hours of Service
-Drivers now track available driving hours, accumulated rest, and simulated availability time. Solo trips calculate required rest periods, and team operations can be used when a solo driver cannot legally meet a delivery deadline.
 
-Driver Management was also expanded with manual rest controls. Individual drivers can be rested until their Hours of Service reset or have off-duty time advanced manually. All eligible available drivers can also be rested together.
+Drivers now track:
 
-### Breakdown and Repair System
-Trucks can experience random post-trip mechanical breakdowns. Several breakdown types include different parts costs, labor costs, service charges, and repair times. Broken trucks are blocked from dispatch until repaired through the Breakdown / Repair Center.
+- Remaining driving hours
+- Accumulated rest time
+- Scheduled availability
+
+TruckzSim calculates whether a driver can legally complete a load before its delivery deadline.
+
+Solo trips automatically account for required rest periods.
+
+If a solo driver cannot legally meet the deadline, TruckzSim can evaluate a two-driver team operation.
+
+Team drivers alternate driving and resting while the truck continues moving.
+
+---
+
+### Driver Rest Management
+
+Driver Management now allows the player to manually manage driver rest.
+
+A single available driver can:
+
+- Rest until a full Hours of Service reset
+- Advance a selected amount of off-duty time
+
+The player can also rest all eligible available drivers until their Hours of Service resets.
+
+Drivers assigned to active loads cannot be manually rested.
+
+---
+
+### Truck Breakdown and Repair System
+
+Trucks can experience random mechanical failures after completing loads.
+
+Breakdowns include several possible repair types with different:
+
+- Parts costs
+- Labor costs
+- Service call charges
+- Repair times
+
+A truck experiencing a breakdown becomes unavailable for dispatch.
+
+The Breakdown / Repair Center allows the player to review active breakdowns and repair trucks before returning them to service.
+
+---
 
 ### Financial Transaction History
-TruckzSim now records company income and expenses as individual financial transactions. Transactions include load revenue, fuel purchases, maintenance, repairs, and driver payroll. Banking provides separate views for income, expenses, all transactions, and driver payroll.
+
+TruckzSim now records individual company financial transactions instead of only storing total revenue and expenses.
+
+Transactions include:
+
+- Load revenue
+- Fuel purchases
+- Maintenance expenses
+- Repair expenses
+- Driver payroll
+
+Banking allows the player to view:
+
+- Account summary
+- Income history
+- Expense history
+- All transactions
+- Driver payroll history
+
+Transactions include identifying information such as truck numbers, load numbers, and driver IDs when applicable.
+
+---
 
 ### Settings and Data Correction
-A Settings menu was added to improve usability. Players can select date and time display formats and correct truck, driver, and available-load information when entry mistakes occur.
 
-Date and time input was also made more flexible. The program accepts multiple date formats and allows time entry with or without a colon.
+A Settings menu was added to improve usability and allow corrections to user-entered information.
+
+The player can change the preferred:
+
+- Date format
+- Time format
+
+TruckzSim supports both:
+
+- MM/DD/YYYY
+- YYYY-MM-DD
+
+Time can be displayed using either:
+
+- 12-hour time
+- 24-hour time
+
+Input was also made more flexible so dates and times can be entered using multiple formats.
+
+The Settings menu also allows the player to correct information for available trucks, drivers, and loads.
+
+Important ID changes automatically update related references.
+
+---
 
 ### System Validation
-A System Validation feature was added to inspect the company's trucks, drivers, loads, finances, assignments, statuses, and other stored data for inconsistent or invalid values. Companies are also validated during important save and load operations.
+
+A System Validation feature was added to check the current company for inconsistent or invalid data.
+
+Validation checks include:
+
+- Duplicate IDs
+- Invalid truck information
+- Invalid driver information
+- Invalid Hours of Service information
+- Invalid load assignments
+- Missing truck or driver references
+- Invalid financial transactions
+- Revenue and expense totals
+- Breakdown information
+- Fuel information
+- Truck locations
+
+The validator can be run manually and is also used during important save and load operations.
+
+---
+
+### Truck Location Tracking
+
+Every truck now stores its current location.
+
+A truck begins at the location entered when it is added to the fleet.
+
+When a load is completed, the truck automatically moves to the destination of that load.
+
+Truck locations are displayed in Fleet Management and the Company Overview and are preserved through save and load.
+
+---
 
 ### Company Overview Dashboard
-The Company Overview was expanded into a management dashboard showing fleet, driver, freight, financial, maintenance, and breakdown information.
 
-Trucks now track their current location. A truck begins at the location entered when it is created and automatically moves to the destination of a completed load. Truck locations persist through save and load.
+The Company Overview was expanded into a more useful management dashboard.
+
+The dashboard displays information about:
+
+- Total trucks
+- Available trucks
+- Dispatched trucks
+- Trucks in maintenance
+- Truck breakdowns
+- Maintenance due
+- Total drivers
+- Available drivers
+- Dispatched drivers
+- Available loads
+- Assigned loads
+- Completed loads
+- Company revenue
+- Company expenses
+- Company balance
+- Truck locations
+
+This provides the player with a quick view of the current condition of the company.
+
+---
 
 ### Confirmation and Safety Prompts
-Confirmation prompts were added before important actions such as dispatching freight, completing loads, purchasing fuel, performing repairs, completing maintenance, changing important IDs, and exiting the application.
+
+Confirmation prompts were added before important actions that modify company data.
+
+Confirmations are used for actions such as:
+
+- Dispatching a load
+- Completing a load
+- Purchasing fuel
+- Performing maintenance
+- Repairing a truck
+- Changing important IDs
+- Scheduling driver rest
+- Exiting the application
 
 Cancelling an action leaves the related company data unchanged.
 
+---
+
 ### Driver Payroll
-The final payroll system records driver compensation when freight is completed.
 
-Solo drivers earn $0.60 per mile.
+Driver payroll was added as the final financial system for the school version of TruckzSim.
 
-Team drivers each earn 70 percent of the solo rate, or $0.42 per mile per driver.
+Solo drivers earn:
 
-Payroll is recorded as a company expense and appears in the financial transaction history. Payroll is processed only after a load is completed and can result in a negative company balance.
+$0.60 per mile
+
+Team drivers each earn 70 percent of the solo rate:
+
+$0.42 per mile per driver
+
+Payroll is processed only after a load is successfully completed.
+
+Each driver payment is recorded as an individual company expense transaction.
+
+Driver payroll is allowed even if the payment causes the company balance to become negative.
+
+---
 
 ## Refactoring Improvements
 
-Object access was improved by using references and pointers to work directly with trucks, drivers, and loads stored by the Company class.
+Several areas of the program were refactored during the final milestone.
 
-Reusable object lookup functions were added for finding trucks, drivers, and loads.
+Object access was improved by using references and pointers to access trucks, drivers, and loads stored inside the Company object.
 
-Input handling was centralized through InputManager to reduce repeated validation logic.
+Reusable lookup functions were added for finding:
 
-Menu input was standardized using range-checked menu choices.
+- Trucks
+- Drivers
+- Loads
 
-Repeated financial operations were consolidated through the financial transaction system.
+Input handling was centralized through InputManager.
 
-The project was also reviewed for unsupported or unnecessary casting syntax, and remaining static_cast usage was removed before final submission.
+Menu input now uses consistent range validation.
+
+Repeated financial operations were consolidated through the transaction history system.
+
+The program was divided into specialized manager classes instead of allowing the main application file to contain most of the program logic.
+
+The project was also reviewed for syntax that had not been covered during the course. Remaining `static_cast` usage was removed before final submission.
+
+---
 
 ## Bug Fixes
 
-Duplicate truck, driver, and load identifiers are prevented.
+Several bugs and edge cases were addressed during final development.
 
-Invalid numeric input, negative values, zero values where inappropriate, and non-finite numeric values are rejected.
+Duplicate truck numbers, driver IDs, and load numbers are prevented.
 
-Truck mileage is updated only once when a load is completed.
+Invalid numeric input is rejected.
 
-Completed-load fuel, HOS, revenue, truck location, and payroll updates occur only after confirmation.
+Negative values and zero values are rejected where they are not valid.
 
-Drivers and trucks assigned to active loads cannot be incorrectly reused for another load.
+Non-finite numeric values are rejected.
 
-Breakdown trucks cannot be dispatched until repaired.
+Truck mileage is only added once when a load is completed.
 
-Maintenance and repair scheduling respects simulated availability time.
+Fuel purchases are not recorded until the related action is confirmed.
 
-Financial transactions preserve their correct simulated transaction time.
+Driver payroll is not charged until the load is completed.
 
-Settings edits update related load and transaction references when truck or driver IDs change.
+Cancelled load completion does not modify:
 
-Assigned or completed loads are protected from unsafe editing.
+- Fuel
+- Mileage
+- Driver HOS
+- Revenue
+- Payroll
+- Truck location
 
-Older company save files continue loading after newer save formats were introduced.
+Trucks experiencing breakdowns cannot be dispatched until repaired.
 
-## Usability Updates
+Drivers and trucks assigned to active loads cannot be reused for another load.
 
-Menus provide clearer prompts and navigation.
+Maintenance and repair actions respect simulated availability times.
+
+Financial transactions use the correct simulated transaction time.
+
+Changing truck or driver IDs updates related load and financial references.
+
+Assigned and completed loads cannot be edited in ways that would invalidate completed simulation data.
+
+Older save files remain compatible with newer save versions.
+
+---
+
+## Usability Improvements
+
+TruckzSim received several final usability improvements.
+
+Menus use consistent navigation and input validation.
 
 Invalid menu selections are rejected and reprompted.
 
-Date input supports multiple formats.
+Text input is trimmed to prevent accidental spaces from causing incorrect data.
 
-Time input supports both 12-hour and 24-hour formats and does not require the user to type a colon.
+Date input accepts multiple formats.
 
-Important actions provide confirmation screens before modifying company data.
+Time input accepts 12-hour and 24-hour formats.
 
-Company Overview gives the user a single dashboard for viewing the current condition of the company.
+Time entry does not require the user to manually enter a colon.
 
-Driver Management provides clear HOS and rest information.
+Important actions display clear confirmation screens before making changes.
 
-Banking provides dedicated financial history views, including payroll history.
+Driver Management clearly displays Hours of Service and rest progress.
 
-System Validation gives the user an immediate way to confirm that major company systems remain consistent.
+Fleet Management displays truck fuel information, availability, maintenance status, and current location.
+
+Banking provides separate views for different financial transaction types.
+
+The Company Overview provides a single dashboard for viewing major company information.
+
+System Validation provides an easy way to confirm that the company's systems remain consistent.
+
+---
 
 ## Final Testing
 
-The completed program was tested across its major systems rather than only testing the newest feature.
+Final testing was performed across the entire application instead of only testing the newest feature.
 
 Testing included:
 
-- Creating and loading companies
-- Adding and editing trucks, drivers, and loads
-- Invalid and duplicate input
-- Solo and team dispatch
-- Driver Hours of Service and rest
-- Fuel consumption and manual refueling
+- Creating new companies
+- Loading saved companies
+- Saving company data
+- Restarting and reloading saved data
+- Adding trucks
+- Adding drivers
+- Adding loads
+- Duplicate ID handling
+- Invalid menu input
+- Invalid numeric input
+- Flexible date and time input
+- Solo dispatch
+- Team dispatch
+- Driver Hours of Service
+- Partial driver rest
+- Full driver rest
+- Resting all eligible drivers
+- Fuel planning
+- Manual refueling
 - Load completion
+- Truck mileage updates
 - Truck location updates
-- Random breakdowns and repairs
+- Random truck breakdowns
+- Truck repair
 - Preventive maintenance
-- Financial transactions
+- Financial transaction history
 - Driver payroll
-- Confirmation and cancellation behavior
-- Settings and date/time formats
-- Company save and reload persistence
+- Negative company balances
+- Settings changes
+- Editing entered information
+- Confirmation cancellation behavior
+- Company Overview
 - System Validation
+- Application exit behavior
 
-The final application successfully compiled and completed full-system testing before submission.
+Previously completed features were retested after final changes to make sure new development did not break existing functionality.
+
+The final version successfully compiled and completed full-system validation.
+
+---
+
+## Final Project Status
+
+TruckzSim is now a complete and functional C++ console application that demonstrates the development completed throughout the four-week course.
+
+The final application uses multiple classes and systems, references and pointers, persistent data, input validation, menus, loops, financial management, gameplay simulation, and structured project organization.
+
+The project is ready for final presentation and submission.
