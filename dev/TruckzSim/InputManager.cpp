@@ -1,6 +1,7 @@
 #include "InputManager.h"
 
 #include <cctype>
+#include <cmath>
 #include <iostream>
 
 std::string InputManager::Trim(
@@ -87,7 +88,8 @@ bool InputManager::TryParseDouble(
             );
 
         return charactersProcessed ==
-            cleanedInput.length();
+            cleanedInput.length() &&
+            std::isfinite(value);
     }
     catch (...)
     {
@@ -104,6 +106,7 @@ int InputManager::ReadInt(
         int value = 0;
 
         std::cout << prompt;
+
         std::getline(
             std::cin,
             input
@@ -201,7 +204,7 @@ double InputManager::ReadNonNegativeDouble(
         std::cout
             << "Invalid "
             << fieldName
-            << ". Please enter a number "
+            << ". Please enter a finite number "
             << "that is 0 or greater.\n";
     }
 }
@@ -233,7 +236,7 @@ double InputManager::ReadPositiveDouble(
         std::cout
             << "Invalid "
             << fieldName
-            << ". Please enter a number "
+            << ". Please enter a finite number "
             << "greater than 0.\n";
     }
 }
@@ -305,13 +308,13 @@ double InputManager::ReadCurrency(
         if (TryParseDouble(
             cleanedPay,
             pay) &&
-            pay >= 0.0)
+            pay > 0.0)
         {
             return pay;
         }
 
         std::cout
             << "Invalid load pay. "
-            << "Please enter a valid amount.\n";
+            << "Please enter an amount greater than 0.\n";
     }
 }

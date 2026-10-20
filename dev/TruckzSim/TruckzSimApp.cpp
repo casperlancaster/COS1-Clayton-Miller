@@ -15,6 +15,7 @@
 #include "MaintenanceManager.h"
 #include "SaveLoadManager.h"
 #include "SettingsManager.h"
+#include "ValidationManager.h"
 
 TruckzSimApp::TruckzSimApp()
     : dispatchManager(&company)
@@ -142,6 +143,45 @@ bool TruckzSimApp::RunStartupMenu()
                 company,
                 selectedCompany))
             {
+                std::vector<std::string>
+                    validationIssues;
+
+                if (!ValidationManager::ValidateCompany(
+                    company,
+                    validationIssues))
+                {
+                    std::cout
+                        << "\nThe saved company failed system "
+                        << "validation and was not opened.\n";
+
+                    for (std::size_t i = 0;
+                        i < validationIssues.size();
+                        i++)
+                    {
+                        std::cout
+                            << (i + 1)
+                            << ". "
+                            << validationIssues[i]
+                            << "\n";
+                    }
+
+                    company =
+                        Company();
+
+                    dispatchManager.SetCompany(
+                        &company
+                    );
+
+                    SettingsManager::
+                        ApplyDateTimeSettings(
+                            company
+                        );
+
+                    std::cout << "\n";
+
+                    break;
+                }
+
                 dispatchManager.SetCompany(
                     &company
                 );
@@ -228,6 +268,7 @@ void TruckzSimApp::ShowMainMenu() const
     std::cout << "8. Fuel Management\n";
     std::cout << "9. Save Company\n";
     std::cout << "10. Settings\n";
+    std::cout << "11. System Validation\n";
     std::cout << "0. Exit\n";
 
     std::cout
@@ -309,7 +350,7 @@ void TruckzSimApp::Run()
             InputManager::ReadMenuChoice(
                 "Select an option: ",
                 0,
-                10
+                11
             );
 
         std::cout << "\n";
@@ -363,6 +404,32 @@ void TruckzSimApp::Run()
             break;
 
         case 9:
+        {
+            std::vector<std::string>
+                validationIssues;
+
+            if (!ValidationManager::ValidateCompany(
+                company,
+                validationIssues))
+            {
+                std::cout
+                    << "Company save blocked because "
+                    << "system validation failed.\n";
+
+                for (std::size_t i = 0;
+                    i < validationIssues.size();
+                    i++)
+                {
+                    std::cout
+                        << (i + 1)
+                        << ". "
+                        << validationIssues[i]
+                        << "\n";
+                }
+
+                break;
+            }
+
             if (SaveLoadManager::SaveCompany(
                 company))
             {
@@ -376,9 +443,16 @@ void TruckzSimApp::Run()
             }
 
             break;
+        }
 
         case 10:
             SettingsManager::Run(
+                company
+            );
+            break;
+
+        case 11:
+            ValidationManager::DisplayReport(
                 company
             );
             break;

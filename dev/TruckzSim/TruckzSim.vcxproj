@@ -158,6 +158,7 @@
     <ClCompile Include="Truck.cpp" />
     <ClCompile Include="TruckzSim.cpp" />
     <ClCompile Include="TruckzSimApp.cpp" />
+    <ClCompile Include="ValidationManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Company.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="SettingsManager.h" />
     <ClInclude Include="Truck.h" />
     <ClInclude Include="TruckzSimApp.h" />
+    <ClInclude Include="ValidationManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
