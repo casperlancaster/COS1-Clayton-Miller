@@ -85,4 +85,19 @@ I also plan to begin expanding the simulation with truck fuel usage, simplified 
 
 ### Week 4
 
-My final stand up...
+## Final Project Stand-Up
+
+⚙️ **Overview – What did you accomplish this past week?**  
+This week I completed the final development work on TruckzSim. I added save/load, fuel management, driver HOS and rest controls, breakdowns and repairs, financial history, settings, system validation, truck locations, an improved company overview, safety confirmations, and driver compensation.
+
+🛠️ **Project Wrap-Up – What did you finish, polish, or improve before submitting your final project?**  
+I improved how the systems work together, strengthened input validation and navigation, added confirmation prompts, improved my use of references and pointers, tested save/load persistence, cleaned up the code, and completed full-system testing.
+
+🌵 **Challenges – What obstacles did you face, and how did you overcome them?**  
+The biggest challenge was making sure new systems did not break existing features. HOS, fuel, maintenance, repairs, finances, driver compensation, and save/load all interact. I handled this by working one issue at a time, rebuilding often, testing edge cases, and using system validation after major changes.
+
+📚 **Biggest Takeaway – Looking back, what was the most valuable thing you learned during this course?**  
+My biggest takeaway was learning how much easier a larger program becomes when it is separated into classes and systems. I also became more comfortable with GitHub, branches, Issues, commits, debugging, and testing. I now understand how to break a larger project into smaller pieces and build it over time.
+
+🔮 **Future Development – If you continued this project after the course, what would you build or improve next?**  
+I would expand TruckzSim with deeper driver systems, trailers, equipment, freight types, customers, insurance, loans, employees, maintenance and compliance systems, and eventually connect it to an Unreal Engine driving experience.
