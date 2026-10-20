@@ -8,6 +8,7 @@ private:
     int unitNumber;
     std::string status;
     double mileage;
+    std::string currentLocation;
 
     double lastServiceMileage;
     double serviceIntervalMiles;
@@ -38,6 +39,9 @@ public:
 
     double GetMileage() const;
     void SetMileage(double newMileage);
+
+    const std::string& GetCurrentLocation() const;
+    void SetCurrentLocation(const std::string& newCurrentLocation);
 
     double GetLastServiceMileage() const;
     double GetServiceIntervalMiles() const;

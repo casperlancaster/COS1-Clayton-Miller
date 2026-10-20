@@ -277,8 +277,86 @@ void TruckzSimApp::ShowMainMenu() const
 
 void TruckzSimApp::ShowCompanyOverview() const
 {
+    int availableTrucks = 0;
+    int dispatchedTrucks = 0;
+    int maintenanceTrucks = 0;
+    int breakdownTrucks = 0;
+    int maintenanceDueTrucks = 0;
+
+    for (const Truck& truck :
+        company.GetTrucks())
+    {
+        if (truck.GetStatus() ==
+            "Available")
+        {
+            availableTrucks++;
+        }
+        else if (truck.GetStatus() ==
+            "Dispatched")
+        {
+            dispatchedTrucks++;
+        }
+        else if (truck.GetStatus() ==
+            "Maintenance")
+        {
+            maintenanceTrucks++;
+        }
+        else if (truck.GetStatus() ==
+            "Breakdown")
+        {
+            breakdownTrucks++;
+        }
+
+        if (truck.IsMaintenanceDue())
+        {
+            maintenanceDueTrucks++;
+        }
+    }
+
+    int availableDrivers = 0;
+    int dispatchedDrivers = 0;
+
+    for (const Driver& driver :
+        company.GetDrivers())
+    {
+        if (driver.GetStatus() ==
+            "Available")
+        {
+            availableDrivers++;
+        }
+        else if (driver.GetStatus() ==
+            "Dispatched")
+        {
+            dispatchedDrivers++;
+        }
+    }
+
+    int availableLoads = 0;
+    int assignedLoads = 0;
+    int completedLoads = 0;
+
+    for (const Load& load :
+        company.GetLoads())
+    {
+        if (load.GetStatus() ==
+            "Available")
+        {
+            availableLoads++;
+        }
+        else if (load.GetStatus() ==
+            "Assigned")
+        {
+            assignedLoads++;
+        }
+        else if (load.GetStatus() ==
+            "Completed")
+        {
+            completedLoads++;
+        }
+    }
+
     std::cout
-        << "========== COMPANY OVERVIEW ==========\n";
+        << "=============== COMPANY OVERVIEW ===============\n";
 
     std::cout
         << "Company: "
@@ -286,26 +364,86 @@ void TruckzSimApp::ShowCompanyOverview() const
         << "\n";
 
     std::cout
-        << "Trucks: "
+        << "\nFLEET\n";
+
+    std::cout
+        << "Total Trucks: "
         << company.GetTrucks().size()
         << "\n";
 
     std::cout
-        << "Drivers: "
+        << "Available: "
+        << availableTrucks
+        << "\n";
+
+    std::cout
+        << "Dispatched: "
+        << dispatchedTrucks
+        << "\n";
+
+    std::cout
+        << "In Maintenance: "
+        << maintenanceTrucks
+        << "\n";
+
+    std::cout
+        << "Breakdown: "
+        << breakdownTrucks
+        << "\n";
+
+    std::cout
+        << "Maintenance Due: "
+        << maintenanceDueTrucks
+        << "\n";
+
+    std::cout
+        << "\nDRIVERS\n";
+
+    std::cout
+        << "Total Drivers: "
         << company.GetDrivers().size()
         << "\n";
 
     std::cout
-        << "Loads: "
+        << "Available: "
+        << availableDrivers
+        << "\n";
+
+    std::cout
+        << "Dispatched: "
+        << dispatchedDrivers
+        << "\n";
+
+    std::cout
+        << "\nFREIGHT\n";
+
+    std::cout
+        << "Total Loads: "
         << company.GetLoads().size()
         << "\n";
 
     std::cout
+        << "Available: "
+        << availableLoads
+        << "\n";
+
+    std::cout
+        << "Active / Assigned: "
+        << assignedLoads
+        << "\n";
+
+    std::cout
+        << "Completed: "
+        << completedLoads
+        << "\n";
+
+    std::cout
+        << "\nFINANCIALS\n"
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Revenue: $"
+        << "Revenue:  $"
         << company.GetRevenue()
         << "\n";
 
@@ -315,7 +453,7 @@ void TruckzSimApp::ShowCompanyOverview() const
         << "\n";
 
     std::cout
-        << "Balance: $"
+        << "Balance:  $"
         << company.GetBalance()
         << "\n";
 
@@ -324,13 +462,42 @@ void TruckzSimApp::ShowCompanyOverview() const
         std::cout
             << "Financial Status: NEGATIVE BALANCE\n";
     }
+    else
+    {
+        std::cout
+            << "Financial Status: POSITIVE / BALANCED\n";
+    }
 
     std::cout
         << std::defaultfloat
         << std::setprecision(6);
 
     std::cout
-        << "========================================\n";
+        << "\nTRUCK LOCATIONS\n";
+
+    if (company.GetTrucks().empty())
+    {
+        std::cout
+            << "No trucks have been added yet.\n";
+    }
+    else
+    {
+        for (const Truck& truck :
+            company.GetTrucks())
+        {
+            std::cout
+                << "Truck #"
+                << truck.GetUnitNumber()
+                << " - "
+                << truck.GetCurrentLocation()
+                << " ["
+                << truck.GetStatus()
+                << "]\n";
+        }
+    }
+
+    std::cout
+        << "================================================\n";
 }
 
 void TruckzSimApp::Run()

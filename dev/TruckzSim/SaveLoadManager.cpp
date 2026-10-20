@@ -44,6 +44,9 @@ namespace
     const std::string SAVE_FILE_HEADER_V7 =
         "TRUCKZSIM_SAVE_V7";
 
+    const std::string SAVE_FILE_HEADER_V8 =
+        "TRUCKZSIM_SAVE_V8";
+
     constexpr std::size_t MAX_SAVE_RECORDS =
         10000;
 
@@ -145,7 +148,8 @@ SaveLoadManager::GetSavedCompanies()
             header != SAVE_FILE_HEADER_V4 &&
             header != SAVE_FILE_HEADER_V5 &&
             header != SAVE_FILE_HEADER_V6 &&
-            header != SAVE_FILE_HEADER_V7)
+            header != SAVE_FILE_HEADER_V7 &&
+            header != SAVE_FILE_HEADER_V8)
         {
             continue;
         }
@@ -203,7 +207,7 @@ bool SaveLoadManager::SaveCompany(
     }
 
     file
-        << SAVE_FILE_HEADER_V7
+        << SAVE_FILE_HEADER_V8
         << "\n";
 
     file
@@ -285,6 +289,10 @@ bool SaveLoadManager::SaveCompany(
             << " "
             << truck.
             GetBreakdownRepairHours()
+            << " "
+            << std::quoted(
+                truck.GetCurrentLocation()
+            )
             << "\n";
     }
 
@@ -449,8 +457,20 @@ bool SaveLoadManager::LoadCompany(
     bool hasBreakdownData = false;
     bool hasTransactionData = false;
     bool hasSettingsData = false;
+    bool hasLocationData = false;
 
     if (fileHeader ==
+        SAVE_FILE_HEADER_V8)
+    {
+        hasFuelData = true;
+        hasHosData = true;
+        hasAvailabilityData = true;
+        hasBreakdownData = true;
+        hasTransactionData = true;
+        hasSettingsData = true;
+        hasLocationData = true;
+    }
+    else if (fileHeader ==
         SAVE_FILE_HEADER_V7)
     {
         hasFuelData = true;
@@ -626,6 +646,9 @@ bool SaveLoadManager::LoadCompany(
         double breakdownRepairHours =
             0.0;
 
+        std::string currentLocation =
+            "Unknown";
+
         if (!(file
             >> unitNumber
             >> mileage
@@ -666,6 +689,21 @@ bool SaveLoadManager::LoadCompany(
                 >> breakdownLaborCost
                 >> breakdownServiceCallCharge
                 >> breakdownRepairHours))
+            {
+                return false;
+            }
+        }
+
+        if (hasLocationData)
+        {
+            if (!(file >>
+                std::quoted(
+                    currentLocation)))
+            {
+                return false;
+            }
+
+            if (currentLocation.empty())
             {
                 return false;
             }
@@ -729,6 +767,10 @@ bool SaveLoadManager::LoadCompany(
 
         truck.SetStatus(
             status
+        );
+
+        truck.SetCurrentLocation(
+            currentLocation
         );
 
         truck.

@@ -133,6 +133,15 @@ bool ValidationManager::ValidateCompany(
             );
         }
 
+        if (truck.GetCurrentLocation().empty())
+        {
+            issues.push_back(
+                "Truck #" +
+                NumberText(unitNumber) +
+                " has an empty current location."
+            );
+        }
+
         if (!IsFinite(
             truck.GetMileage()) ||
             truck.GetMileage() < 0.0)

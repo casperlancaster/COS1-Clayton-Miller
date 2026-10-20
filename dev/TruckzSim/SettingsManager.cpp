@@ -239,6 +239,8 @@ void SettingsManager::EditTruck(
             << truck.GetStatus()
             << " | Mileage: "
             << truck.GetMileage()
+            << " | Location: "
+            << truck.GetCurrentLocation()
             << "\n";
     }
 
@@ -248,16 +250,10 @@ void SettingsManager::EditTruck(
             "truck unit number"
         );
 
-    Truck* selectedTruck = nullptr;
-
-    for (Truck& truck : company.GetTrucks())
-    {
-        if (truck.GetUnitNumber() == unitNumber)
-        {
-            selectedTruck = &truck;
-            break;
-        }
-    }
+    Truck* selectedTruck =
+        company.FindTruck(
+            unitNumber
+        );
 
     if (selectedTruck == nullptr)
     {
@@ -292,13 +288,14 @@ void SettingsManager::EditTruck(
         std::cout << "3. Fuel Tank Capacity\n";
         std::cout << "4. Fuel Economy (MPG)\n";
         std::cout << "5. Current Fuel Gallons\n";
+        std::cout << "6. Current Location\n";
         std::cout << "0. Return to Settings\n";
 
         choice =
             InputManager::ReadMenuChoice(
                 "Select field to edit: ",
                 0,
-                5
+                6
             );
 
         if (choice == 1)
@@ -423,6 +420,23 @@ void SettingsManager::EditTruck(
                     << selectedTruck->GetFuelTankCapacity()
                     << " gallons.\n";
             }
+        }
+        else if (choice == 6)
+        {
+            std::string newLocation =
+                InputManager::ReadRequiredText(
+                    "Enter corrected current location: ",
+                    "current location"
+                );
+
+            selectedTruck->SetCurrentLocation(
+                newLocation
+            );
+
+            std::cout
+                << "Truck location updated to "
+                << selectedTruck->GetCurrentLocation()
+                << ".\n";
         }
     }
 }

@@ -2,6 +2,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <string>
 
 #include "HOSManager.h"
 #include "InputManager.h"
@@ -56,6 +57,12 @@ void FleetManager::AddTruck(
             "mileage"
         );
 
+    std::string currentLocation =
+        InputManager::ReadRequiredText(
+            "Enter current location: ",
+            "current location"
+        );
+
     double fuelTankCapacity =
         InputManager::ReadPositiveDouble(
             "Enter fuel tank capacity in gallons: ",
@@ -74,6 +81,10 @@ void FleetManager::AddTruck(
 
     newTruck.SetMileage(
         mileage
+    );
+
+    newTruck.SetCurrentLocation(
+        currentLocation
     );
 
     newTruck.InitializeMaintenanceSchedule();
@@ -142,6 +153,11 @@ void FleetManager::DisplayTrucks(
             std::cout
                 << "Status: "
                 << truck.GetStatus()
+                << "\n";
+
+            std::cout
+                << "Current Location: "
+                << truck.GetCurrentLocation()
                 << "\n";
 
             if (truck.GetAvailableAtEpoch() >

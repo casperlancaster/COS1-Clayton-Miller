@@ -490,6 +490,10 @@ bool DispatchManager::CompleteLoad(
         GetDistanceMiles()
     );
 
+    selectedTruck->SetCurrentLocation(
+        selectedLoad->GetDestination()
+    );
+
     primaryDriver->
         SetHOSState(
             hosPlan.

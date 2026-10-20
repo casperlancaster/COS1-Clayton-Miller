@@ -5,6 +5,7 @@ Truck::Truck()
     unitNumber = 0;
     status = "Available";
     mileage = 0.0;
+    currentLocation = "Unknown";
 
     lastServiceMileage = 0.0;
     serviceIntervalMiles = 10000.0;
@@ -58,6 +59,26 @@ void Truck::SetMileage(
 {
     mileage =
         newMileage;
+}
+
+const std::string& Truck::GetCurrentLocation() const
+{
+    return currentLocation;
+}
+
+void Truck::SetCurrentLocation(
+    const std::string& newCurrentLocation)
+{
+    if (newCurrentLocation.empty())
+    {
+        currentLocation =
+            "Unknown";
+    }
+    else
+    {
+        currentLocation =
+            newCurrentLocation;
+    }
 }
 
 double Truck::GetLastServiceMileage() const
