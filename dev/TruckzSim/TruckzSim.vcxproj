@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>18.0</VCProjectVersion>
+    <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{a0b41020-ac22-4556-8ccd-76111036072d}</ProjectGuid>
     <RootNamespace>TruckzSim</RootNamespace>
@@ -29,26 +29,34 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <!-- Select the native, normally-installed compiler for each Visual Studio version. -->
+    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '18.0'">v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <!-- Select the native, normally-installed compiler for each Visual Studio version. -->
+    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '18.0'">v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <!-- Select the native, normally-installed compiler for each Visual Studio version. -->
+    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '18.0'">v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <!-- Select the native, normally-installed compiler for each Visual Studio version. -->
+    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '18.0'">v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -147,27 +155,43 @@
     <ClCompile Include="DriverManager.cpp" />
     <ClCompile Include="FleetManager.cpp" />
     <ClCompile Include="FreightManager.cpp" />
+    <ClCompile Include="FuelManager.cpp" />
+    <ClCompile Include="HOSManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Load.cpp" />
     <ClCompile Include="MaintenanceManager.cpp" />
+    <ClCompile Include="PayrollManager.cpp" />
+    <ClCompile Include="RepairManager.cpp" />
+    <ClCompile Include="SaveLoadManager.cpp" />
+    <ClCompile Include="SettingsManager.cpp" />
     <ClCompile Include="Truck.cpp" />
     <ClCompile Include="TruckzSim.cpp" />
     <ClCompile Include="TruckzSimApp.cpp" />
+    <ClCompile Include="ValidationManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConsoleTheme.h" />
     <ClInclude Include="Company.h" />
     <ClInclude Include="DispatchCenter.h" />
     <ClInclude Include="DispatchManager.h" />
     <ClInclude Include="Driver.h" />
     <ClInclude Include="DriverManager.h" />
+    <ClInclude Include="FinancialTransaction.h" />
     <ClInclude Include="FleetManager.h" />
     <ClInclude Include="FreightManager.h" />
     <ClInclude Include="BankingManager.h" />
+    <ClInclude Include="FuelManager.h" />
+    <ClInclude Include="HOSManager.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Load.h" />
     <ClInclude Include="MaintenanceManager.h" />
+    <ClInclude Include="PayrollManager.h" />
+    <ClInclude Include="RepairManager.h" />
+    <ClInclude Include="SaveLoadManager.h" />
+    <ClInclude Include="SettingsManager.h" />
     <ClInclude Include="Truck.h" />
     <ClInclude Include="TruckzSimApp.h" />
+    <ClInclude Include="ValidationManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

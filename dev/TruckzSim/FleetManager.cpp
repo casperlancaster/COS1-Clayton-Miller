@@ -1,106 +1,309 @@
+#include "ConsoleTheme.h"
 #include "FleetManager.h"
 
+#include <iomanip>
 #include <iostream>
+#include <string>
 
+#include "HOSManager.h"
 #include "InputManager.h"
+#include "RepairManager.h"
 #include "Truck.h"
 
 void FleetManager::ShowMenu()
 {
-    std::cout << "\n";
-    std::cout << "========== FLEET MANAGEMENT ==========\n";
-    std::cout << "1. Add Truck\n";
-    std::cout << "2. View Trucks\n";
-    std::cout << "0. Return to Main Menu\n";
-    std::cout << "======================================\n";
+    std::cout << ConsoleTheme::FormatLiteral("\n");
+    std::cout << ConsoleTheme::FormatLiteral("========== FLEET MANAGEMENT ==========\n");
+    std::cout << ConsoleTheme::FormatLiteral("1. Add Truck\n");
+    std::cout << ConsoleTheme::FormatLiteral("2. View Trucks\n");
+    std::cout << ConsoleTheme::FormatLiteral("3. Breakdown / Repair Center\n");
+    std::cout << ConsoleTheme::FormatLiteral("0. Return to Main Menu\n");
+    std::cout << ConsoleTheme::FormatLiteral("======================================\n");
 }
 
-void FleetManager::AddTruck(Company& company)
+void FleetManager::AddTruck(
+    Company& company)
 {
     Truck newTruck;
 
-    std::cout << "\n========== ADD TRUCK ==========\n";
+    std::cout
+        << ConsoleTheme::FormatLiteral("\n========== ADD TRUCK ==========\n");
 
     int unitNumber = 0;
 
     while (true)
     {
-        unitNumber = InputManager::ReadPositiveInt(
-            "Enter unit number: ",
-            "unit number"
-        );
+        unitNumber =
+            InputManager::ReadPositiveInt(
+                "Enter unit number: ",
+                "unit number"
+            );
 
-        if (!company.HasTruckUnitNumber(unitNumber))
+        if (!company.HasTruckUnitNumber(
+            unitNumber))
         {
             break;
         }
 
-        std::cout << "Truck #" << unitNumber
-            << " already exists. Please enter a unique unit number.\n";
+        std::cout
+            << ConsoleTheme::FormatLiteral("Truck #")
+            << unitNumber
+            << ConsoleTheme::FormatLiteral(" already exists. ")
+            << ConsoleTheme::FormatLiteral("Please enter a unique unit number.\n");
     }
 
-    double mileage = InputManager::ReadNonNegativeDouble(
-        "Enter current mileage: ",
-        "mileage"
+    double mileage =
+        InputManager::ReadNonNegativeDouble(
+            "Enter current mileage: ",
+            "mileage"
+        );
+
+    std::string currentLocation =
+        InputManager::ReadRequiredText(
+            "Enter current location: ",
+            "current location"
+        );
+
+    double fuelTankCapacity =
+        InputManager::ReadPositiveDouble(
+            "Enter fuel tank capacity in gallons: ",
+            "fuel tank capacity"
+        );
+
+    double milesPerGallon =
+        InputManager::ReadPositiveDouble(
+            "Enter estimated fuel economy (MPG): ",
+            "fuel economy"
+        );
+
+    newTruck.SetUnitNumber(
+        unitNumber
     );
 
-    newTruck.SetUnitNumber(unitNumber);
-    newTruck.SetMileage(mileage);
+    newTruck.SetMileage(
+        mileage
+    );
+
+    newTruck.SetCurrentLocation(
+        currentLocation
+    );
+
     newTruck.InitializeMaintenanceSchedule();
-    newTruck.SetStatus("Available");
 
-    company.AddTruck(newTruck);
+    newTruck.InitializeFuelSystem(
+        fuelTankCapacity,
+        milesPerGallon
+    );
 
-    std::cout << "\nTruck #" << unitNumber << " added successfully.\n";
+    newTruck.SetStatus(
+        "Available"
+    );
+
+    newTruck.SetAvailableAtEpoch(
+        0
+    );
+
+    company.AddTruck(
+        newTruck
+    );
+
+    std::cout
+        << ConsoleTheme::FormatLiteral("\nTruck #")
+        << unitNumber
+        << ConsoleTheme::FormatLiteral(" added successfully with a full ")
+        << std::fixed
+        << std::setprecision(1)
+        << fuelTankCapacity
+        << ConsoleTheme::FormatLiteral("-gallon tank.\n")
+        << std::defaultfloat
+        << std::setprecision(6);
 }
 
-void FleetManager::DisplayTrucks(const Company& company)
+void FleetManager::DisplayTrucks(
+    const Company& company)
 {
-    const std::vector<Truck>& trucks = company.GetTrucks();
+    const std::vector<Truck>& trucks =
+        company.GetTrucks();
 
-    std::cout << "\n========== COMPANY FLEET ==========\n";
+    long long now =
+        HOSManager::GetCurrentEpoch();
+
+    std::cout
+        << ConsoleTheme::FormatLiteral("\n========== COMPANY FLEET ==========\n");
 
     if (trucks.empty())
     {
-        std::cout << "No trucks have been added yet.\n";
+        std::cout
+            << ConsoleTheme::FormatLiteral("No trucks have been added yet.\n");
     }
     else
     {
-        for (int i = 0; i < trucks.size(); i++)
+        for (const Truck& truck :
+            trucks)
         {
-            std::cout << "\nTruck #" << trucks[i].GetUnitNumber() << "\n";
-            std::cout << "Mileage: " << trucks[i].GetMileage() << "\n";
-            std::cout << "Status: " << trucks[i].GetStatus() << "\n";
+            std::cout
+                << ConsoleTheme::FormatLiteral("\nTruck #")
+                << truck.GetUnitNumber()
+                << ConsoleTheme::FormatLiteral("\n");
+
+            std::cout
+                << ConsoleTheme::FormatLiteral("Mileage: ")
+                << truck.GetMileage()
+                << ConsoleTheme::FormatLiteral("\n");
+
+            std::cout
+                << ConsoleTheme::FormatLiteral("Status: ")
+                << ConsoleTheme::Status(truck.GetStatus())
+                << ConsoleTheme::FormatLiteral("\n");
+
+            std::cout
+                << ConsoleTheme::FormatLiteral("Current Location: ")
+                << truck.GetCurrentLocation()
+                << ConsoleTheme::FormatLiteral("\n");
+
+            if (truck.GetAvailableAtEpoch() >
+                now)
+            {
+                std::cout
+                    << ConsoleTheme::FormatLiteral("Scheduled Available: ")
+                    << HOSManager::
+                    FormatDateTime(
+                        truck.
+                        GetAvailableAtEpoch()
+                    )
+                    << ConsoleTheme::FormatLiteral("\n");
+            }
+            else
+            {
+                std::cout
+                    << ConsoleTheme::FormatLiteral("Scheduled Available: Now\n");
+            }
+
+            std::cout
+                << std::fixed
+                << std::setprecision(1);
+
+            std::cout
+                << ConsoleTheme::FormatLiteral("Fuel: ")
+                << truck.GetFuelGallons()
+                << ConsoleTheme::FormatLiteral(" / ")
+                << truck.GetFuelTankCapacity()
+                << ConsoleTheme::FormatLiteral(" gallons\n");
+
+            std::cout
+                << ConsoleTheme::FormatLiteral("Fuel Level: ")
+                << truck.GetFuelPercentage()
+                << ConsoleTheme::FormatLiteral("%\n");
+
+            std::cout
+                << ConsoleTheme::FormatLiteral("Fuel Economy: ")
+                << truck.GetMilesPerGallon()
+                << ConsoleTheme::FormatLiteral(" MPG\n");
+
+            std::cout
+                << ConsoleTheme::FormatLiteral("Estimated Fuel Range: ")
+                << truck.GetFuelRangeMiles()
+                << ConsoleTheme::FormatLiteral(" miles\n");
+
+            std::cout
+                << ConsoleTheme::FormatLiteral("Required Delivery Reserve: ")
+                << truck.
+                GetMinimumArrivalFuelGallons()
+                << ConsoleTheme::FormatLiteral(" gallons\n");
+
+            if (truck.HasBreakdown())
+            {
+                std::cout
+                    << ConsoleTheme::FormatLiteral("\n*** ACTIVE BREAKDOWN ***\n");
+
+                std::cout
+                    << ConsoleTheme::FormatLiteral("Repair Required: ")
+                    << truck.GetBreakdownType()
+                    << ConsoleTheme::FormatLiteral("\n");
+
+                std::cout
+                    << std::fixed
+                    << std::setprecision(2);
+
+                std::cout
+                    << ConsoleTheme::FormatLiteral("Parts: $")
+                    << truck.GetBreakdownPartsCost()
+                    << ConsoleTheme::FormatLiteral("\n");
+
+                std::cout
+                    << ConsoleTheme::FormatLiteral("Labor: $")
+                    << truck.GetBreakdownLaborCost()
+                    << ConsoleTheme::FormatLiteral("\n");
+
+                std::cout
+                    << ConsoleTheme::FormatLiteral("Service Call: $")
+                    << truck.
+                    GetBreakdownServiceCallCharge()
+                    << ConsoleTheme::FormatLiteral("\n");
+
+                std::cout
+                    << ConsoleTheme::FormatLiteral("Total Repair: $")
+                    << truck.GetBreakdownTotalCost()
+                    << ConsoleTheme::FormatLiteral("\n");
+
+                std::cout
+                    << ConsoleTheme::FormatLiteral("Repair Time: ")
+                    << truck.GetBreakdownRepairHours()
+                    << ConsoleTheme::FormatLiteral(" hours\n");
+            }
+
+            std::cout
+                << std::defaultfloat
+                << std::setprecision(6);
         }
     }
 
-    std::cout << "==================================\n";
+    std::cout
+        << ConsoleTheme::FormatLiteral("==================================\n");
 }
 
-void FleetManager::Run(Company& company)
+void FleetManager::Run(
+    Company& company)
 {
     int choice = -1;
 
     while (choice != 0)
     {
         ShowMenu();
-        choice = InputManager::ReadInt("Select an option: ");
+
+        choice =
+            InputManager::ReadMenuChoice(
+                "Select an option: ",
+                0,
+                3
+            );
 
         switch (choice)
         {
         case 1:
-            AddTruck(company);
+            AddTruck(
+                company
+            );
             break;
 
         case 2:
-            DisplayTrucks(company);
+            DisplayTrucks(
+                company
+            );
+            break;
+
+        case 3:
+            RepairManager::Run(
+                company
+            );
             break;
 
         case 0:
             break;
 
         default:
-            std::cout << "\nInvalid selection. Please choose 0, 1, or 2.\n";
+            std::cout
+                << ConsoleTheme::FormatLiteral("\nInvalid selection.\n");
             break;
         }
     }

@@ -1,0 +1,26 @@
+TRUCKZSIM_SAVE_V8
+"Cabdem Transportation LLC"
+12000 4854.2857142857147
+"MM/DD/YYYY" "12-hour"
+2
+501 52650 "Available" 50000 10000 200 100 7 1792576611 0 "" 0 0 0 0 "Denver, CO"
+270 100140 "Available" 100140 10000 200 180 7 1792492579 0 "" 0 0 0 0 "Omaha, NE"
+3
+501 "Solo Driver" "Available" 0 7.1818181818181834 1792569411
+502 "Team Driver" "Available" 3.8181818181818166 0 1792569411
+270 "Location Driver" "Available" 8.454545454545455 0 1792474579
+3
+501 "Des Moines, IA" "Miami, FL" 1650 6000 "Completed" 501 501 502 1792587600 1792436725 1792544725
+270 "Des Moines, IA" "Omaha, NE" 140 1000 "Completed" 270 270 0 1792522800 1792465415 1792474579
+2901 "Des Moines, IA" "Denver, CO" 1000 5000 "Completed" 501 501 502 1792569600 1792503956 1792569411
+10
+0 "Income" "Legacy Revenue" "Imported total from V1-V5 save data" 6000 0 0 0 0 0 0 0 0 0
+0 "Expense" "Legacy Expense" "Imported total from V1-V5 save data" 542.85714285714289 0 0 0 0 0 0 0 0 0
+1792474579 "Income" "Load Revenue" "Des Moines, IA -> Omaha, NE" 1000 270 270 270 0 0 0 0 0 0
+1792492579 "Expense" "Repair" "Cooling System Failure" 1500 270 0 0 0 0 0 900 400 200
+1792492579 "Expense" "Maintenance" "Scheduled Maintenance Service" 500 270 0 0 0 0 0 0 0 0
+1792569411 "Expense" "Fuel" "In-Trip Fuel Purchase" 571.42857142857144 501 2901 501 502 142.85714285714286 4 0 0 0
+1792569411 "Income" "Load Revenue" "Des Moines, IA -> Denver, CO" 5000 501 2901 501 502 0 0 0 0 0
+1792569411 "Expense" "Driver Payroll" "Team Driver Pay - Solo Driver - 1000.00 miles @ $0.42/mile" 420 501 2901 501 0 0 0 0 0 0
+1792569411 "Expense" "Driver Payroll" "Team Driver Pay - Team Driver - 1000.00 miles @ $0.42/mile" 420 501 2901 502 0 0 0 0 0 0
+1792576611 "Expense" "Repair" "Tire Blowout" 900 501 0 0 0 0 0 550 200 150

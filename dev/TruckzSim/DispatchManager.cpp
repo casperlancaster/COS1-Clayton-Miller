@@ -1,11 +1,26 @@
+#include "ConsoleTheme.h"
 #include "DispatchManager.h"
+
+#include <iomanip>
+#include <iostream>
+
+#include "HOSManager.h"
+#include "PayrollManager.h"
+#include "RepairManager.h"
+
+namespace
+{
+    constexpr double FUEL_PRICE_PER_GALLON =
+        4.00;
+}
 
 DispatchManager::DispatchManager()
 {
     company = nullptr;
 }
 
-DispatchManager::DispatchManager(Company* newCompany)
+DispatchManager::DispatchManager(
+    Company* newCompany)
 {
     company = newCompany;
 }
@@ -15,7 +30,8 @@ Company* DispatchManager::GetCompany() const
     return company;
 }
 
-void DispatchManager::SetCompany(Company* newCompany)
+void DispatchManager::SetCompany(
+    Company* newCompany)
 {
     company = newCompany;
 }
@@ -25,143 +41,599 @@ bool DispatchManager::HasCompany() const
     return company != nullptr;
 }
 
-bool DispatchManager::AssignLoad(int loadNumber, int driverID, int truckUnitNumber)
+bool DispatchManager::AssignLoad(
+    int loadNumber,
+    int driverID,
+    int truckUnitNumber,
+    int secondDriverID,
+    long long dispatchStartEpoch)
 {
     if (company == nullptr)
     {
         return false;
     }
 
-    std::vector<Driver>& drivers = company->GetDrivers();
-    std::vector<Truck>& trucks = company->GetTrucks();
-    std::vector<Load>& loads = company->GetLoads();
+    Driver* primaryDriver =
+        company->FindDriver(
+            driverID
+        );
 
-    Driver* selectedDriver = nullptr;
-    Truck* selectedTruck = nullptr;
-    Load* selectedLoad = nullptr;
+    Driver* secondDriver =
+        nullptr;
 
-    for (Driver& driver : drivers)
+    if (secondDriverID > 0)
     {
-        if (driver.GetDriverID() == driverID)
-        {
-            selectedDriver = &driver;
-            break;
-        }
+        secondDriver =
+            company->FindDriver(
+                secondDriverID
+            );
     }
 
-    for (Truck& truck : trucks)
-    {
-        if (truck.GetUnitNumber() == truckUnitNumber)
-        {
-            selectedTruck = &truck;
-            break;
-        }
-    }
+    Truck* selectedTruck =
+        company->FindTruck(
+            truckUnitNumber
+        );
 
-    for (Load& load : loads)
-    {
-        if (load.GetLoadNumber() == loadNumber)
-        {
-            selectedLoad = &load;
-            break;
-        }
-    }
+    Load* selectedLoad =
+        company->FindLoad(
+            loadNumber
+        );
 
-    if (selectedDriver == nullptr ||
+    if (primaryDriver == nullptr ||
         selectedTruck == nullptr ||
         selectedLoad == nullptr)
     {
         return false;
     }
 
-    if (selectedDriver->GetStatus() != "Available" ||
-        selectedTruck->GetStatus() != "Available" ||
-        selectedLoad->GetStatus() != "Available")
+    if (secondDriverID > 0 &&
+        secondDriver == nullptr)
     {
         return false;
     }
 
-    selectedDriver->SetStatus("Dispatched");
-    selectedTruck->SetStatus("Dispatched");
+    if (secondDriverID ==
+        driverID)
+    {
+        return false;
+    }
 
-    selectedLoad->SetStatus("Assigned");
-    selectedLoad->SetAssignedDriverID(driverID);
-    selectedLoad->SetAssignedTruckUnitNumber(truckUnitNumber);
+    if (primaryDriver->GetStatus() !=
+        "Available" ||
+        selectedTruck->GetStatus() !=
+        "Available" ||
+        selectedLoad->GetStatus() !=
+        "Available")
+    {
+        return false;
+    }
+
+    if (selectedTruck->HasBreakdown())
+    {
+        return false;
+    }
+
+    if (secondDriver != nullptr &&
+        secondDriver->GetStatus() !=
+        "Available")
+    {
+        return false;
+    }
+
+    if (dispatchStartEpoch <
+        primaryDriver->
+        GetAvailableAtEpoch())
+    {
+        return false;
+    }
+
+    if (dispatchStartEpoch <
+        selectedTruck->
+        GetAvailableAtEpoch())
+    {
+        return false;
+    }
+
+    if (secondDriver != nullptr &&
+        dispatchStartEpoch <
+        secondDriver->
+        GetAvailableAtEpoch())
+    {
+        return false;
+    }
+
+    double primaryHours =
+        primaryDriver->
+        GetProjectedDrivingHoursAt(
+            dispatchStartEpoch
+        );
+
+    double primaryRest =
+        primaryDriver->
+        GetProjectedRestHoursAt(
+            dispatchStartEpoch
+        );
+
+    HOSPlan hosPlan;
+
+    if (secondDriver != nullptr)
+    {
+        double secondHours =
+            secondDriver->
+            GetProjectedDrivingHoursAt(
+                dispatchStartEpoch
+            );
+
+        double secondRest =
+            secondDriver->
+            GetProjectedRestHoursAt(
+                dispatchStartEpoch
+            );
+
+        hosPlan =
+            HOSManager::CreateTeamPlan(
+                primaryHours,
+                primaryRest,
+                secondHours,
+                secondRest,
+                selectedLoad->
+                GetDistanceMiles(),
+                dispatchStartEpoch,
+                selectedLoad->
+                GetDeliveryDeadlineEpoch()
+            );
+    }
+    else
+    {
+        hosPlan =
+            HOSManager::CreateSoloPlan(
+                primaryHours,
+                primaryRest,
+                selectedLoad->
+                GetDistanceMiles(),
+                dispatchStartEpoch,
+                selectedLoad->
+                GetDeliveryDeadlineEpoch()
+            );
+    }
+
+    if (!hosPlan.valid ||
+        !hosPlan.meetsDeadline)
+    {
+        return false;
+    }
+
+    primaryDriver->
+        SetStatus(
+            "Dispatched"
+        );
+
+    if (secondDriver != nullptr)
+    {
+        secondDriver->
+            SetStatus(
+                "Dispatched"
+            );
+    }
+
+    selectedTruck->
+        SetStatus(
+            "Dispatched"
+        );
+
+    selectedLoad->
+        SetStatus(
+            "Assigned"
+        );
+
+    selectedLoad->
+        SetAssignedDriverID(
+            driverID
+        );
+
+    selectedLoad->
+        SetAssignedSecondDriverID(
+            secondDriverID
+        );
+
+    selectedLoad->
+        SetAssignedTruckUnitNumber(
+            truckUnitNumber
+        );
+
+    selectedLoad->
+        SetDispatchStartEpoch(
+            dispatchStartEpoch
+        );
+
+    selectedLoad->
+        SetEstimatedDeliveryEpoch(
+            hosPlan.
+            estimatedDeliveryEpoch
+        );
 
     return true;
 }
 
-bool DispatchManager::CompleteLoad(int loadNumber)
+bool DispatchManager::CompleteLoad(
+    int loadNumber)
 {
     if (company == nullptr)
     {
         return false;
     }
 
-    std::vector<Driver>& drivers = company->GetDrivers();
-    std::vector<Truck>& trucks = company->GetTrucks();
-    std::vector<Load>& loads = company->GetLoads();
+    Load* selectedLoad =
+        company->FindLoad(
+            loadNumber
+        );
 
-    Load* selectedLoad = nullptr;
-
-    for (Load& load : loads)
-    {
-        if (load.GetLoadNumber() == loadNumber)
-        {
-            selectedLoad = &load;
-            break;
-        }
-    }
-
-    if (selectedLoad == nullptr || selectedLoad->GetStatus() != "Assigned")
+    if (selectedLoad == nullptr ||
+        selectedLoad->GetStatus() !=
+        "Assigned")
     {
         return false;
     }
 
-    int assignedDriverID = selectedLoad->GetAssignedDriverID();
-    int assignedTruckUnitNumber = selectedLoad->GetAssignedTruckUnitNumber();
+    int primaryDriverID =
+        selectedLoad->
+        GetAssignedDriverID();
 
-    Driver* selectedDriver = nullptr;
-    Truck* selectedTruck = nullptr;
+    int secondDriverID =
+        selectedLoad->
+        GetAssignedSecondDriverID();
 
-    for (Driver& driver : drivers)
+    int truckUnitNumber =
+        selectedLoad->
+        GetAssignedTruckUnitNumber();
+
+    Driver* primaryDriver =
+        company->FindDriver(
+            primaryDriverID
+        );
+
+    Driver* secondDriver =
+        nullptr;
+
+    if (secondDriverID > 0)
     {
-        if (driver.GetDriverID() == assignedDriverID)
-        {
-            selectedDriver = &driver;
-            break;
-        }
+        secondDriver =
+            company->FindDriver(
+                secondDriverID
+            );
     }
 
-    for (Truck& truck : trucks)
-    {
-        if (truck.GetUnitNumber() == assignedTruckUnitNumber)
-        {
-            selectedTruck = &truck;
-            break;
-        }
-    }
+    Truck* selectedTruck =
+        company->FindTruck(
+            truckUnitNumber
+        );
 
-    if (selectedDriver == nullptr || selectedTruck == nullptr)
+    if (primaryDriver == nullptr ||
+        selectedTruck == nullptr)
     {
         return false;
     }
 
-    if (selectedDriver->GetStatus() != "Dispatched" ||
-        selectedTruck->GetStatus() != "Dispatched")
+    if (secondDriverID > 0 &&
+        secondDriver == nullptr)
     {
         return false;
     }
 
-    company->AddRevenue(selectedLoad->GetPay());
+    if (primaryDriver->GetStatus() !=
+        "Dispatched" ||
+        selectedTruck->GetStatus() !=
+        "Dispatched")
+    {
+        return false;
+    }
 
-    selectedTruck->SetMileage(
-        selectedTruck->GetMileage() + selectedLoad->GetDistanceMiles()
+    if (secondDriver != nullptr &&
+        secondDriver->GetStatus() !=
+        "Dispatched")
+    {
+        return false;
+    }
+
+    long long dispatchStart =
+        selectedLoad->
+        GetDispatchStartEpoch();
+
+    double primaryHours =
+        primaryDriver->
+        GetProjectedDrivingHoursAt(
+            dispatchStart
+        );
+
+    double primaryRest =
+        primaryDriver->
+        GetProjectedRestHoursAt(
+            dispatchStart
+        );
+
+    HOSPlan hosPlan;
+
+    if (secondDriver != nullptr)
+    {
+        double secondHours =
+            secondDriver->
+            GetProjectedDrivingHoursAt(
+                dispatchStart
+            );
+
+        double secondRest =
+            secondDriver->
+            GetProjectedRestHoursAt(
+                dispatchStart
+            );
+
+        hosPlan =
+            HOSManager::CreateTeamPlan(
+                primaryHours,
+                primaryRest,
+                secondHours,
+                secondRest,
+                selectedLoad->
+                GetDistanceMiles(),
+                dispatchStart,
+                selectedLoad->
+                GetDeliveryDeadlineEpoch()
+            );
+    }
+    else
+    {
+        hosPlan =
+            HOSManager::CreateSoloPlan(
+                primaryHours,
+                primaryRest,
+                selectedLoad->
+                GetDistanceMiles(),
+                dispatchStart,
+                selectedLoad->
+                GetDeliveryDeadlineEpoch()
+            );
+    }
+
+    if (!hosPlan.valid)
+    {
+        return false;
+    }
+
+    double gallonsPurchased =
+        0.0;
+
+    if (!selectedTruck->
+        CompleteTripFuel(
+            selectedLoad->
+            GetDistanceMiles(),
+            gallonsPurchased))
+    {
+        return false;
+    }
+
+    double fuelExpense =
+        gallonsPurchased *
+        FUEL_PRICE_PER_GALLON;
+
+    if (fuelExpense > 0.0)
+    {
+        FinancialTransaction fuelTransaction;
+
+        fuelTransaction.transactionEpoch =
+            hosPlan.estimatedDeliveryEpoch;
+
+        fuelTransaction.category =
+            "Fuel";
+
+        fuelTransaction.description =
+            "In-Trip Fuel Purchase";
+
+        fuelTransaction.amount =
+            fuelExpense;
+
+        fuelTransaction.truckUnitNumber =
+            truckUnitNumber;
+
+        fuelTransaction.loadNumber =
+            loadNumber;
+
+        fuelTransaction.primaryDriverID =
+            primaryDriverID;
+
+        fuelTransaction.secondDriverID =
+            secondDriverID;
+
+        fuelTransaction.gallons =
+            gallonsPurchased;
+
+        fuelTransaction.pricePerGallon =
+            FUEL_PRICE_PER_GALLON;
+
+        company->RecordExpenseTransaction(
+            fuelTransaction
+        );
+    }
+
+    FinancialTransaction revenueTransaction;
+
+    revenueTransaction.transactionEpoch =
+        hosPlan.estimatedDeliveryEpoch;
+
+    revenueTransaction.category =
+        "Load Revenue";
+
+    revenueTransaction.description =
+        selectedLoad->GetOrigin() +
+        " -> " +
+        selectedLoad->GetDestination();
+
+    revenueTransaction.amount =
+        selectedLoad->GetPay();
+
+    revenueTransaction.truckUnitNumber =
+        truckUnitNumber;
+
+    revenueTransaction.loadNumber =
+        loadNumber;
+
+    revenueTransaction.primaryDriverID =
+        primaryDriverID;
+
+    revenueTransaction.secondDriverID =
+        secondDriverID;
+
+    company->RecordIncomeTransaction(
+        revenueTransaction
     );
 
-    selectedLoad->SetStatus("Completed");
-    selectedDriver->SetStatus("Available");
-    selectedTruck->SetStatus("Available");
+    PayrollManager::RecordLoadPayroll(
+        *company,
+        *selectedLoad,
+        hosPlan.estimatedDeliveryEpoch
+    );
+
+    selectedTruck->SetMileage(
+        selectedTruck->GetMileage() +
+        selectedLoad->
+        GetDistanceMiles()
+    );
+
+    selectedTruck->SetCurrentLocation(
+        selectedLoad->GetDestination()
+    );
+
+    primaryDriver->
+        SetHOSState(
+            hosPlan.
+            primaryFinalHours,
+            hosPlan.
+            primaryFinalRestHours,
+            hosPlan.
+            estimatedDeliveryEpoch
+        );
+
+    if (secondDriver != nullptr)
+    {
+        secondDriver->
+            SetHOSState(
+                hosPlan.
+                secondFinalHours,
+                hosPlan.
+                secondFinalRestHours,
+                hosPlan.
+                estimatedDeliveryEpoch
+            );
+    }
+
+    selectedTruck->
+        SetAvailableAtEpoch(
+            hosPlan.
+            estimatedDeliveryEpoch
+        );
+
+    selectedLoad->
+        SetEstimatedDeliveryEpoch(
+            hosPlan.
+            estimatedDeliveryEpoch
+        );
+
+    selectedLoad->
+        SetStatus(
+            "Completed"
+        );
+
+    primaryDriver->
+        SetStatus(
+            "Available"
+        );
+
+    if (secondDriver != nullptr)
+    {
+        secondDriver->
+            SetStatus(
+                "Available"
+            );
+    }
+
+    selectedTruck->
+        SetStatus(
+            "Available"
+        );
+
+    bool breakdownOccurred =
+        RepairManager::RollForBreakdown(
+            *selectedTruck,
+            selectedLoad->
+            GetDistanceMiles()
+        );
+
+    if (breakdownOccurred)
+    {
+        std::cout
+            << ConsoleTheme::FormatLiteral("\n");
+
+        std::cout
+            << ConsoleTheme::FormatLiteral("!!!!!!!!!! POST-TRIP BREAKDOWN !!!!!!!!!!\n");
+
+        std::cout
+            << ConsoleTheme::FormatLiteral("Truck #")
+            << selectedTruck->GetUnitNumber()
+            << ConsoleTheme::FormatLiteral(" suffered a mechanical failure.\n");
+
+        std::cout
+            << ConsoleTheme::FormatLiteral("Breakdown: ")
+            << selectedTruck->GetBreakdownType()
+            << ConsoleTheme::FormatLiteral("\n");
+
+        std::cout
+            << std::fixed
+            << std::setprecision(2);
+
+        std::cout
+            << ConsoleTheme::FormatLiteral("Parts Estimate: $")
+            << selectedTruck->
+            GetBreakdownPartsCost()
+            << ConsoleTheme::FormatLiteral("\n");
+
+        std::cout
+            << ConsoleTheme::FormatLiteral("Labor Estimate: $")
+            << selectedTruck->
+            GetBreakdownLaborCost()
+            << ConsoleTheme::FormatLiteral("\n");
+
+        std::cout
+            << ConsoleTheme::FormatLiteral("Service Call: $")
+            << selectedTruck->
+            GetBreakdownServiceCallCharge()
+            << ConsoleTheme::FormatLiteral("\n");
+
+        std::cout
+            << ConsoleTheme::FormatLiteral("Estimated Total Repair: $")
+            << selectedTruck->
+            GetBreakdownTotalCost()
+            << ConsoleTheme::FormatLiteral("\n");
+
+        std::cout
+            << ConsoleTheme::FormatLiteral("Estimated Repair Time: ")
+            << selectedTruck->
+            GetBreakdownRepairHours()
+            << ConsoleTheme::FormatLiteral(" hours\n");
+
+        std::cout
+            << std::defaultfloat
+            << std::setprecision(6);
+
+        std::cout
+            << ConsoleTheme::FormatLiteral("Truck status is now BREAKDOWN.\n");
+
+        std::cout
+            << ConsoleTheme::FormatLiteral("Use Fleet Management -> ")
+            << ConsoleTheme::FormatLiteral("Breakdown / Repair Center ")
+            << ConsoleTheme::FormatLiteral("before dispatching this truck again.\n");
+
+        std::cout
+            << ConsoleTheme::FormatLiteral("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    }
 
     return true;
 }

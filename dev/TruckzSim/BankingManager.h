@@ -10,6 +10,12 @@ public:
 private:
     static void ShowMenu();
     static void ShowAccountSummary(const Company& company);
-    static void ShowRevenue(const Company& company);
-    static void ShowExpenses(const Company& company);
+    static void ShowIncomeHistory(const Company& company);
+    static void ShowExpenseHistory(const Company& company);
+    static void ShowAllTransactions(const Company& company);
+    static void ShowPayrollHistory(const Company& company);
+
+    static void DisplayTransaction(
+        const FinancialTransaction& transaction
+    );
 };
