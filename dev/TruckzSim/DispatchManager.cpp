@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "HOSManager.h"
+#include "PayrollManager.h"
 #include "RepairManager.h"
 
 namespace
@@ -482,6 +483,12 @@ bool DispatchManager::CompleteLoad(
 
     company->RecordIncomeTransaction(
         revenueTransaction
+    );
+
+    PayrollManager::RecordLoadPayroll(
+        *company,
+        *selectedLoad,
+        hosPlan.estimatedDeliveryEpoch
     );
 
     selectedTruck->SetMileage(

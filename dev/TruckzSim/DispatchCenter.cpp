@@ -8,6 +8,7 @@
 #include "HOSManager.h"
 #include "InputManager.h"
 #include "Load.h"
+#include "PayrollManager.h"
 #include "Truck.h"
 
 namespace
@@ -256,9 +257,7 @@ namespace
                 GetDeliveryDeadlineEpoch();
 
             double lateHours =
-                static_cast<double>(
-                    lateSeconds
-                    ) /
+                lateSeconds /
                 3600.0;
 
             std::cout
@@ -1100,6 +1099,17 @@ void DispatchCenter::Run(
                 plannedFuelPurchase *
                 FUEL_PRICE_PER_GALLON;
 
+            bool teamOperation =
+                secondDriverID > 0;
+
+            double estimatedPayroll =
+                PayrollManager::
+                CalculateTotalPayroll(
+                    selectedLoad->
+                    GetDistanceMiles(),
+                    teamOperation
+                );
+
             std::cout
                 << std::fixed
                 << std::setprecision(2);
@@ -1201,6 +1211,28 @@ void DispatchCenter::Run(
                 << "Estimated In-Trip Fuel Cost: $"
                 << plannedFuelCost
                 << "\n";
+
+            std::cout
+                << "Driver Payroll on Completion: $"
+                << estimatedPayroll
+                << "\n";
+
+            if (teamOperation)
+            {
+                std::cout
+                    << "Team Pay Rate: $"
+                    << PayrollManager::
+                    GetTeamRatePerMile()
+                    << " per mile per driver\n";
+            }
+            else
+            {
+                std::cout
+                    << "Solo Pay Rate: $"
+                    << PayrollManager::
+                    GetSoloRatePerMile()
+                    << " per mile\n";
+            }
 
             std::cout
                 << std::defaultfloat
@@ -1420,6 +1452,26 @@ void DispatchCenter::Run(
                     FUEL_PRICE_PER_GALLON;
             }
 
+            bool teamOperation =
+                secondDriverID > 0;
+
+            double primaryDriverPay =
+                PayrollManager::
+                CalculateDriverPay(
+                    selectedLoad->
+                    GetDistanceMiles(),
+                    teamOperation
+                );
+
+            double secondDriverPay =
+                teamOperation
+                ? primaryDriverPay
+                : 0.0;
+
+            double totalPayroll =
+                primaryDriverPay +
+                secondDriverPay;
+
             std::cout
                 << "\n========== LOAD COMPLETION CONFIRMATION ==========\n";
 
@@ -1482,14 +1534,51 @@ void DispatchCenter::Run(
                 << tripFuelCost
                 << "\n";
 
+            if (teamOperation)
+            {
+                std::cout
+                    << "Team Pay Rate: $"
+                    << PayrollManager::
+                    GetTeamRatePerMile()
+                    << " per mile per driver\n";
+
+                std::cout
+                    << "Primary Driver Payroll: $"
+                    << primaryDriverPay
+                    << "\n";
+
+                std::cout
+                    << "Team Driver Payroll: $"
+                    << secondDriverPay
+                    << "\n";
+            }
+            else
+            {
+                std::cout
+                    << "Solo Pay Rate: $"
+                    << PayrollManager::
+                    GetSoloRatePerMile()
+                    << " per mile\n";
+
+                std::cout
+                    << "Primary Driver Payroll: $"
+                    << primaryDriverPay
+                    << "\n";
+            }
+
+            std::cout
+                << "Total Driver Payroll Expense: $"
+                << totalPayroll
+                << "\n";
+
             std::cout
                 << std::defaultfloat
                 << std::setprecision(6);
 
             std::cout
                 << "Completing this load will update HOS, fuel, "
-                << "mileage, revenue, truck location, and may trigger "
-                << "a post-trip breakdown.\n";
+                << "mileage, revenue, driver payroll, truck location, "
+                << "and may trigger a post-trip breakdown.\n";
 
             std::cout
                 << "==================================================\n";
@@ -1679,6 +1768,31 @@ void DispatchCenter::Run(
                         << std::fixed
                         << std::setprecision(2);
                 }
+
+                if (teamOperation)
+                {
+                    std::cout
+                        << "Primary Driver Payroll: $"
+                        << primaryDriverPay
+                        << ".\n";
+
+                    std::cout
+                        << "Team Driver Payroll: $"
+                        << secondDriverPay
+                        << ".\n";
+                }
+                else
+                {
+                    std::cout
+                        << "Driver Payroll: $"
+                        << primaryDriverPay
+                        << ".\n";
+                }
+
+                std::cout
+                    << "Total Driver Payroll Expense: $"
+                    << totalPayroll
+                    << ".\n";
 
                 std::cout
                     << "Company Revenue: $"

@@ -9,6 +9,7 @@
 #include "Driver.h"
 #include "HOSManager.h"
 #include "InputManager.h"
+#include "PayrollManager.h"
 
 namespace
 {
@@ -239,6 +240,24 @@ void DriverManager::DisplayDrivers(
 
     std::cout
         << "\n========== COMPANY DRIVERS ==========\n";
+
+    std::cout
+        << std::fixed
+        << std::setprecision(2);
+
+    std::cout
+        << "Solo Pay Rate: $"
+        << PayrollManager::GetSoloRatePerMile()
+        << " per mile\n";
+
+    std::cout
+        << "Team Pay Rate: $"
+        << PayrollManager::GetTeamRatePerMile()
+        << " per mile per driver\n";
+
+    std::cout
+        << std::defaultfloat
+        << std::setprecision(6);
 
     if (drivers.empty())
     {

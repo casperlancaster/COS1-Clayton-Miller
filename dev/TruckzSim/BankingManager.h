@@ -13,6 +13,7 @@ private:
     static void ShowIncomeHistory(const Company& company);
     static void ShowExpenseHistory(const Company& company);
     static void ShowAllTransactions(const Company& company);
+    static void ShowPayrollHistory(const Company& company);
 
     static void DisplayTransaction(
         const FinancialTransaction& transaction

@@ -14,6 +14,7 @@ void BankingManager::ShowMenu()
     std::cout << "2. View Income History\n";
     std::cout << "3. View Expense History\n";
     std::cout << "4. View All Transactions\n";
+    std::cout << "5. View Driver Payroll History\n";
     std::cout << "0. Return to Main Menu\n";
     std::cout << "=====================================\n";
 }
@@ -138,10 +139,21 @@ void BankingManager::DisplayTransaction(
 
     if (transaction.primaryDriverID > 0)
     {
-        std::cout
-            << "Primary Driver: #"
-            << transaction.primaryDriverID
-            << "\n";
+        if (transaction.category ==
+            "Driver Payroll")
+        {
+            std::cout
+                << "Driver: #"
+                << transaction.primaryDriverID
+                << "\n";
+        }
+        else
+        {
+            std::cout
+                << "Primary Driver: #"
+                << transaction.primaryDriverID
+                << "\n";
+        }
     }
 
     if (transaction.secondDriverID > 0)
@@ -364,6 +376,58 @@ void BankingManager::ShowAllTransactions(
         << "======================================\n";
 }
 
+void BankingManager::ShowPayrollHistory(
+    const Company& company)
+{
+    std::cout
+        << "\n========== DRIVER PAYROLL HISTORY ==========\n";
+
+    bool foundPayroll = false;
+    double payrollTotal = 0.0;
+
+    for (const FinancialTransaction& transaction :
+        company.GetFinancialTransactions())
+    {
+        if (transaction.type != "Expense" ||
+            transaction.category !=
+            "Driver Payroll")
+        {
+            continue;
+        }
+
+        foundPayroll = true;
+        payrollTotal +=
+            transaction.amount;
+
+        DisplayTransaction(
+            transaction
+        );
+    }
+
+    if (!foundPayroll)
+    {
+        std::cout
+            << "No driver payroll transactions "
+            << "have been recorded yet.\n";
+    }
+
+    std::cout
+        << std::fixed
+        << std::setprecision(2);
+
+    std::cout
+        << "\nDriver Payroll Total: $"
+        << payrollTotal
+        << "\n";
+
+    std::cout
+        << std::defaultfloat
+        << std::setprecision(6);
+
+    std::cout
+        << "============================================\n";
+}
+
 void BankingManager::Run(
     const Company& company)
 {
@@ -374,8 +438,10 @@ void BankingManager::Run(
         ShowMenu();
 
         choice =
-            InputManager::ReadInt(
-                "Select an option: "
+            InputManager::ReadMenuChoice(
+                "Select an option: ",
+                0,
+                5
             );
 
         switch (choice)
@@ -404,14 +470,13 @@ void BankingManager::Run(
             );
             break;
 
-        case 0:
+        case 5:
+            ShowPayrollHistory(
+                company
+            );
             break;
 
-        default:
-            std::cout
-                << "\nInvalid selection. "
-                << "Please choose 0, 1, 2, 3, or 4.\n";
-
+        case 0:
             break;
         }
     }

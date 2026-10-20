@@ -152,6 +152,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Load.cpp" />
     <ClCompile Include="MaintenanceManager.cpp" />
+    <ClCompile Include="PayrollManager.cpp" />
     <ClCompile Include="RepairManager.cpp" />
     <ClCompile Include="SaveLoadManager.cpp" />
     <ClCompile Include="SettingsManager.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Load.h" />
     <ClInclude Include="MaintenanceManager.h" />
+    <ClInclude Include="PayrollManager.h" />
     <ClInclude Include="RepairManager.h" />
     <ClInclude Include="SaveLoadManager.h" />
     <ClInclude Include="SettingsManager.h" />
