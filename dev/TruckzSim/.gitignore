@@ -1,0 +1,30 @@
+# IDE caches and user-specific settings
+.vs/
+*.suo
+*.user
+*.sln.docstates
+*.VC.db
+*.VC.opendb
+
+# C++ compiled output and intermediates
+x64/
+Win32/
+Debug/
+Release/
+**/x64/
+**/Win32/
+**/Debug/
+**/Release/
+*.obj
+*.pdb
+*.ilk
+*.idb
+*.tlog
+*.lastbuildstate
+*.exe
+*.ipch
+*.pch
+
+# Local temp files
+*.tmp
+*.log
