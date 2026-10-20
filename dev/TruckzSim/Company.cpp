@@ -10,7 +10,7 @@ Company::Company()
     timeFormat = "12-hour";
 }
 
-std::string Company::GetCompanyName() const
+const std::string& Company::GetCompanyName() const
 {
     return companyName;
 }
@@ -52,7 +52,7 @@ double Company::GetBalance() const
     return revenue - expenses;
 }
 
-std::string Company::GetDateFormat() const
+const std::string& Company::GetDateFormat() const
 {
     return dateFormat;
 }
@@ -67,7 +67,7 @@ void Company::SetDateFormat(
     }
 }
 
-std::string Company::GetTimeFormat() const
+const std::string& Company::GetTimeFormat() const
 {
     return timeFormat;
 }
@@ -156,45 +156,112 @@ void Company::AddLoad(const Load& newLoad)
     loads.push_back(newLoad);
 }
 
-bool Company::HasTruckUnitNumber(
+Truck* Company::FindTruck(
+    int unitNumber)
+{
+    for (Truck& truck : trucks)
+    {
+        if (truck.GetUnitNumber() ==
+            unitNumber)
+        {
+            return &truck;
+        }
+    }
+
+    return nullptr;
+}
+
+const Truck* Company::FindTruck(
     int unitNumber) const
 {
     for (const Truck& truck : trucks)
     {
-        if (truck.GetUnitNumber() == unitNumber)
+        if (truck.GetUnitNumber() ==
+            unitNumber)
         {
-            return true;
+            return &truck;
         }
     }
 
-    return false;
+    return nullptr;
 }
 
-bool Company::HasDriverID(int driverID) const
+Driver* Company::FindDriver(
+    int driverID)
+{
+    for (Driver& driver : drivers)
+    {
+        if (driver.GetDriverID() ==
+            driverID)
+        {
+            return &driver;
+        }
+    }
+
+    return nullptr;
+}
+
+const Driver* Company::FindDriver(
+    int driverID) const
 {
     for (const Driver& driver : drivers)
     {
-        if (driver.GetDriverID() == driverID)
+        if (driver.GetDriverID() ==
+            driverID)
         {
-            return true;
+            return &driver;
         }
     }
 
-    return false;
+    return nullptr;
+}
+
+Load* Company::FindLoad(
+    int loadNumber)
+{
+    for (Load& load : loads)
+    {
+        if (load.GetLoadNumber() ==
+            loadNumber)
+        {
+            return &load;
+        }
+    }
+
+    return nullptr;
+}
+
+const Load* Company::FindLoad(
+    int loadNumber) const
+{
+    for (const Load& load : loads)
+    {
+        if (load.GetLoadNumber() ==
+            loadNumber)
+        {
+            return &load;
+        }
+    }
+
+    return nullptr;
+}
+
+bool Company::HasTruckUnitNumber(
+    int unitNumber) const
+{
+    return FindTruck(unitNumber) != nullptr;
+}
+
+bool Company::HasDriverID(
+    int driverID) const
+{
+    return FindDriver(driverID) != nullptr;
 }
 
 bool Company::HasLoadNumber(
     int loadNumber) const
 {
-    for (const Load& load : loads)
-    {
-        if (load.GetLoadNumber() == loadNumber)
-        {
-            return true;
-        }
-    }
-
-    return false;
+    return FindLoad(loadNumber) != nullptr;
 }
 
 bool Company::ChangeTruckUnitNumber(
@@ -217,16 +284,8 @@ bool Company::ChangeTruckUnitNumber(
         return false;
     }
 
-    Truck* selectedTruck = nullptr;
-
-    for (Truck& truck : trucks)
-    {
-        if (truck.GetUnitNumber() == oldUnitNumber)
-        {
-            selectedTruck = &truck;
-            break;
-        }
-    }
+    Truck* selectedTruck =
+        FindTruck(oldUnitNumber);
 
     if (selectedTruck == nullptr)
     {
@@ -274,16 +333,8 @@ bool Company::ChangeDriverID(
         return false;
     }
 
-    Driver* selectedDriver = nullptr;
-
-    for (Driver& driver : drivers)
-    {
-        if (driver.GetDriverID() == oldDriverID)
-        {
-            selectedDriver = &driver;
-            break;
-        }
-    }
+    Driver* selectedDriver =
+        FindDriver(oldDriverID);
 
     if (selectedDriver == nullptr)
     {
@@ -341,16 +392,8 @@ bool Company::ChangeLoadNumber(
         return false;
     }
 
-    Load* selectedLoad = nullptr;
-
-    for (Load& load : loads)
-    {
-        if (load.GetLoadNumber() == oldLoadNumber)
-        {
-            selectedLoad = &load;
-            break;
-        }
-    }
+    Load* selectedLoad =
+        FindLoad(oldLoadNumber);
 
     if (selectedLoad == nullptr)
     {

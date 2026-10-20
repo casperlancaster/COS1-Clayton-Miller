@@ -26,7 +26,7 @@ private:
 public:
     Company();
 
-    std::string GetCompanyName() const;
+    const std::string& GetCompanyName() const;
     void SetCompanyName(const std::string& newCompanyName);
 
     double GetRevenue() const;
@@ -36,10 +36,10 @@ public:
     void AddExpense(double amount);
     double GetBalance() const;
 
-    std::string GetDateFormat() const;
+    const std::string& GetDateFormat() const;
     void SetDateFormat(const std::string& newDateFormat);
 
-    std::string GetTimeFormat() const;
+    const std::string& GetTimeFormat() const;
     void SetTimeFormat(const std::string& newTimeFormat);
 
     void RecordIncomeTransaction(
@@ -61,6 +61,15 @@ public:
     bool HasTruckUnitNumber(int unitNumber) const;
     bool HasDriverID(int driverID) const;
     bool HasLoadNumber(int loadNumber) const;
+
+    Truck* FindTruck(int unitNumber);
+    const Truck* FindTruck(int unitNumber) const;
+
+    Driver* FindDriver(int driverID);
+    const Driver* FindDriver(int driverID) const;
+
+    Load* FindLoad(int loadNumber);
+    const Load* FindLoad(int loadNumber) const;
 
     bool ChangeTruckUnitNumber(
         int oldUnitNumber,

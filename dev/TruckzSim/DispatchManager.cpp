@@ -51,74 +51,31 @@ bool DispatchManager::AssignLoad(
         return false;
     }
 
-    std::vector<Driver>& drivers =
-        company->GetDrivers();
+    Driver* primaryDriver =
+        company->FindDriver(
+            driverID
+        );
 
-    std::vector<Truck>& trucks =
-        company->GetTrucks();
-
-    std::vector<Load>& loads =
-        company->GetLoads();
-
-    Driver* primaryDriver = nullptr;
-    Driver* secondDriver = nullptr;
-    Truck* selectedTruck = nullptr;
-    Load* selectedLoad = nullptr;
-
-    for (Driver& driver :
-        drivers)
-    {
-        if (driver.GetDriverID() ==
-            driverID)
-        {
-            primaryDriver =
-                &driver;
-
-            break;
-        }
-    }
+    Driver* secondDriver =
+        nullptr;
 
     if (secondDriverID > 0)
     {
-        for (Driver& driver :
-            drivers)
-        {
-            if (driver.GetDriverID() ==
-                secondDriverID)
-            {
-                secondDriver =
-                    &driver;
-
-                break;
-            }
-        }
+        secondDriver =
+            company->FindDriver(
+                secondDriverID
+            );
     }
 
-    for (Truck& truck :
-        trucks)
-    {
-        if (truck.GetUnitNumber() ==
-            truckUnitNumber)
-        {
-            selectedTruck =
-                &truck;
+    Truck* selectedTruck =
+        company->FindTruck(
+            truckUnitNumber
+        );
 
-            break;
-        }
-    }
-
-    for (Load& load :
-        loads)
-    {
-        if (load.GetLoadNumber() ==
-            loadNumber)
-        {
-            selectedLoad =
-                &load;
-
-            break;
-        }
-    }
+    Load* selectedLoad =
+        company->FindLoad(
+            loadNumber
+        );
 
     if (primaryDriver == nullptr ||
         selectedTruck == nullptr ||
@@ -304,29 +261,10 @@ bool DispatchManager::CompleteLoad(
         return false;
     }
 
-    std::vector<Driver>& drivers =
-        company->GetDrivers();
-
-    std::vector<Truck>& trucks =
-        company->GetTrucks();
-
-    std::vector<Load>& loads =
-        company->GetLoads();
-
-    Load* selectedLoad = nullptr;
-
-    for (Load& load :
-        loads)
-    {
-        if (load.GetLoadNumber() ==
-            loadNumber)
-        {
-            selectedLoad =
-                &load;
-
-            break;
-        }
-    }
+    Load* selectedLoad =
+        company->FindLoad(
+            loadNumber
+        );
 
     if (selectedLoad == nullptr ||
         selectedLoad->GetStatus() !=
@@ -347,41 +285,26 @@ bool DispatchManager::CompleteLoad(
         selectedLoad->
         GetAssignedTruckUnitNumber();
 
-    Driver* primaryDriver = nullptr;
-    Driver* secondDriver = nullptr;
-    Truck* selectedTruck = nullptr;
+    Driver* primaryDriver =
+        company->FindDriver(
+            primaryDriverID
+        );
 
-    for (Driver& driver :
-        drivers)
+    Driver* secondDriver =
+        nullptr;
+
+    if (secondDriverID > 0)
     {
-        if (driver.GetDriverID() ==
-            primaryDriverID)
-        {
-            primaryDriver =
-                &driver;
-        }
-
-        if (secondDriverID > 0 &&
-            driver.GetDriverID() ==
-            secondDriverID)
-        {
-            secondDriver =
-                &driver;
-        }
+        secondDriver =
+            company->FindDriver(
+                secondDriverID
+            );
     }
 
-    for (Truck& truck :
-        trucks)
-    {
-        if (truck.GetUnitNumber() ==
-            truckUnitNumber)
-        {
-            selectedTruck =
-                &truck;
-
-            break;
-        }
-    }
+    Truck* selectedTruck =
+        company->FindTruck(
+            truckUnitNumber
+        );
 
     if (primaryDriver == nullptr ||
         selectedTruck == nullptr)
@@ -636,6 +559,7 @@ bool DispatchManager::CompleteLoad(
     {
         std::cout
             << "\n";
+
         std::cout
             << "!!!!!!!!!! POST-TRIP BREAKDOWN !!!!!!!!!!\n";
 
