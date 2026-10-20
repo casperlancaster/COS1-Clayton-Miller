@@ -1,3 +1,4 @@
+#include "ConsoleTheme.h"
 #include "ValidationManager.h"
 
 #include <cmath>
@@ -684,51 +685,51 @@ bool ValidationManager::DisplayReport(
         );
 
     std::cout
-        << "\n========== SYSTEM VALIDATION ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== SYSTEM VALIDATION ==========\n");
 
     std::cout
-        << "Company: "
+        << ConsoleTheme::FormatLiteral("Company: ")
         << company.GetCompanyName()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Trucks Checked: "
+        << ConsoleTheme::FormatLiteral("Trucks Checked: ")
         << company.GetTrucks().size()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Drivers Checked: "
+        << ConsoleTheme::FormatLiteral("Drivers Checked: ")
         << company.GetDrivers().size()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Loads Checked: "
+        << ConsoleTheme::FormatLiteral("Loads Checked: ")
         << company.GetLoads().size()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Transactions Checked: "
+        << ConsoleTheme::FormatLiteral("Transactions Checked: ")
         << company.GetFinancialTransactions().size()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     if (valid)
     {
         std::cout
-            << "Result: PASS\n";
+            << ConsoleTheme::FormatLiteral("Result: PASS\n");
 
         std::cout
-            << "No consistency or edge-case "
-            << "validation issues were found.\n";
+            << ConsoleTheme::FormatLiteral("No consistency or edge-case ")
+            << ConsoleTheme::FormatLiteral("validation issues were found.\n");
     }
     else
     {
         std::cout
-            << "Result: FAILED\n";
+            << ConsoleTheme::FormatLiteral("Result: FAILED\n");
 
         std::cout
-            << "Issues Found: "
+            << ConsoleTheme::FormatLiteral("Issues Found: ")
             << issues.size()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         for (std::size_t i = 0;
             i < issues.size();
@@ -736,14 +737,14 @@ bool ValidationManager::DisplayReport(
         {
             std::cout
                 << (i + 1)
-                << ". "
+                << ConsoleTheme::FormatLiteral(". ")
                 << issues[i]
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
         }
     }
 
     std::cout
-        << "=======================================\n";
+        << ConsoleTheme::FormatLiteral("=======================================\n");
 
     return valid;
 }

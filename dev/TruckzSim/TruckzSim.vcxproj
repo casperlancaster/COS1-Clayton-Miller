@@ -162,6 +162,7 @@
     <ClCompile Include="ValidationManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConsoleTheme.h" />
     <ClInclude Include="Company.h" />
     <ClInclude Include="DispatchCenter.h" />
     <ClInclude Include="DispatchManager.h" />

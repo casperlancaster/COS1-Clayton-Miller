@@ -89,6 +89,9 @@
     <ClInclude Include="Load.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ConsoleTheme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Company.h">
       <Filter>Header Files</Filter>
     </ClInclude>

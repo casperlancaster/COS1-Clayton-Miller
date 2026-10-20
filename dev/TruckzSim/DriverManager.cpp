@@ -1,3 +1,4 @@
+#include "ConsoleTheme.h"
 #include "DriverManager.h"
 
 #include <algorithm>
@@ -137,25 +138,25 @@ namespace
 void DriverManager::ShowMenu()
 {
     std::cout
-        << "\n========== DRIVER MANAGEMENT ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== DRIVER MANAGEMENT ==========\n");
 
     std::cout
-        << "1. Add Driver\n";
+        << ConsoleTheme::FormatLiteral("1. Add Driver\n");
 
     std::cout
-        << "2. View Drivers\n";
+        << ConsoleTheme::FormatLiteral("2. View Drivers\n");
 
     std::cout
-        << "3. Rest Driver\n";
+        << ConsoleTheme::FormatLiteral("3. Rest Driver\n");
 
     std::cout
-        << "4. Rest All Available Drivers\n";
+        << ConsoleTheme::FormatLiteral("4. Rest All Available Drivers\n");
 
     std::cout
-        << "0. Return to Main Menu\n";
+        << ConsoleTheme::FormatLiteral("0. Return to Main Menu\n");
 
     std::cout
-        << "=======================================\n";
+        << ConsoleTheme::FormatLiteral("=======================================\n");
 }
 
 void DriverManager::AddDriver(
@@ -164,7 +165,7 @@ void DriverManager::AddDriver(
     Driver newDriver;
 
     std::cout
-        << "\n========== ADD DRIVER ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== ADD DRIVER ==========\n");
 
     int driverID = 0;
 
@@ -183,10 +184,10 @@ void DriverManager::AddDriver(
         }
 
         std::cout
-            << "Driver ID "
+            << ConsoleTheme::FormatLiteral("Driver ID ")
             << driverID
-            << " already exists. "
-            << "Please enter a unique Driver ID.\n";
+            << ConsoleTheme::FormatLiteral(" already exists. ")
+            << ConsoleTheme::FormatLiteral("Please enter a unique Driver ID.\n");
     }
 
     std::string driverName =
@@ -214,17 +215,17 @@ void DriverManager::AddDriver(
     );
 
     std::cout
-        << "\nDriver "
+        << ConsoleTheme::FormatLiteral("\nDriver ")
         << driverName
-        << " added successfully.\n";
+        << ConsoleTheme::FormatLiteral(" added successfully.\n");
 
     std::cout
-        << "Starting HOS: "
+        << ConsoleTheme::FormatLiteral("Starting HOS: ")
         << std::fixed
         << std::setprecision(1)
         << HOSManager::
         GetMaxDrivingHours()
-        << " driving hours available.\n"
+        << ConsoleTheme::FormatLiteral(" driving hours available.\n")
         << std::defaultfloat
         << std::setprecision(6);
 }
@@ -239,21 +240,21 @@ void DriverManager::DisplayDrivers(
         HOSManager::GetCurrentEpoch();
 
     std::cout
-        << "\n========== COMPANY DRIVERS ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== COMPANY DRIVERS ==========\n");
 
     std::cout
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Solo Pay Rate: $"
+        << ConsoleTheme::FormatLiteral("Solo Pay Rate: $")
         << PayrollManager::GetSoloRatePerMile()
-        << " per mile\n";
+        << ConsoleTheme::FormatLiteral(" per mile\n");
 
     std::cout
-        << "Team Pay Rate: $"
+        << ConsoleTheme::FormatLiteral("Team Pay Rate: $")
         << PayrollManager::GetTeamRatePerMile()
-        << " per mile per driver\n";
+        << ConsoleTheme::FormatLiteral(" per mile per driver\n");
 
     std::cout
         << std::defaultfloat
@@ -262,7 +263,7 @@ void DriverManager::DisplayDrivers(
     if (drivers.empty())
     {
         std::cout
-            << "No drivers have been added yet.\n";
+            << ConsoleTheme::FormatLiteral("No drivers have been added yet.\n");
     }
     else
     {
@@ -292,39 +293,39 @@ void DriverManager::DisplayDrivers(
                 );
 
             std::cout
-                << "\nDriver ID: "
+                << ConsoleTheme::FormatLiteral("\nDriver ID: ")
                 << driver.GetDriverID()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Name: "
+                << ConsoleTheme::FormatLiteral("Name: ")
                 << driver.GetName()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Status: "
-                << driver.GetStatus()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("Status: ")
+                << ConsoleTheme::Status(driver.GetStatus())
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
                 << std::fixed
                 << std::setprecision(2);
 
             std::cout
-                << "Driving Hours Remaining: "
+                << ConsoleTheme::FormatLiteral("Driving Hours Remaining: ")
                 << projectedHours
-                << " / "
+                << ConsoleTheme::FormatLiteral(" / ")
                 << HOSManager::
                 GetMaxDrivingHours()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Rest Progress: "
+                << ConsoleTheme::FormatLiteral("Rest Progress: ")
                 << projectedRest
-                << " / "
+                << ConsoleTheme::FormatLiteral(" / ")
                 << HOSManager::
                 GetRequiredRestHours()
-                << " hours\n";
+                << ConsoleTheme::FormatLiteral(" hours\n");
 
             std::cout
                 << std::defaultfloat
@@ -334,24 +335,24 @@ void DriverManager::DisplayDrivers(
                 now)
             {
                 std::cout
-                    << "Scheduled Available: "
+                    << ConsoleTheme::FormatLiteral("Scheduled Available: ")
                     << HOSManager::
                     FormatDateTime(
                         driver.
                         GetAvailableAtEpoch()
                     )
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
             else
             {
                 std::cout
-                    << "Scheduled Available: Now\n";
+                    << ConsoleTheme::FormatLiteral("Scheduled Available: Now\n");
             }
         }
     }
 
     std::cout
-        << "=====================================\n";
+        << ConsoleTheme::FormatLiteral("=====================================\n");
 }
 
 void DriverManager::RestDriver(
@@ -363,13 +364,13 @@ void DriverManager::RestDriver(
     if (drivers.empty())
     {
         std::cout
-            << "\nNo drivers have been added yet.\n";
+            << ConsoleTheme::FormatLiteral("\nNo drivers have been added yet.\n");
 
         return;
     }
 
     std::cout
-        << "\n========== DRIVER REST MANAGEMENT ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== DRIVER REST MANAGEMENT ==========\n");
 
     for (const Driver& driver :
         drivers)
@@ -390,31 +391,31 @@ void DriverManager::RestDriver(
             );
 
         std::cout
-            << "Driver #"
+            << ConsoleTheme::FormatLiteral("Driver #")
             << driver.GetDriverID()
-            << " | "
+            << ConsoleTheme::FormatLiteral(" | ")
             << driver.GetName()
-            << " | "
-            << driver.GetStatus();
+            << ConsoleTheme::FormatLiteral(" | ")
+            << ConsoleTheme::Status(driver.GetStatus());
 
         std::cout
             << std::fixed
             << std::setprecision(2);
 
         std::cout
-            << " | HOS: "
+            << ConsoleTheme::FormatLiteral(" | HOS: ")
             << projectedHours
-            << " / "
+            << ConsoleTheme::FormatLiteral(" / ")
             << HOSManager::
             GetMaxDrivingHours();
 
         std::cout
-            << " | Rest: "
+            << ConsoleTheme::FormatLiteral(" | Rest: ")
             << projectedRest
-            << " / "
+            << ConsoleTheme::FormatLiteral(" / ")
             << HOSManager::
             GetRequiredRestHours()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
             << std::defaultfloat
@@ -422,7 +423,7 @@ void DriverManager::RestDriver(
     }
 
     std::cout
-        << "============================================\n";
+        << ConsoleTheme::FormatLiteral("============================================\n");
 
     int driverID =
         InputManager::ReadInt(
@@ -432,7 +433,7 @@ void DriverManager::RestDriver(
     if (driverID == 0)
     {
         std::cout
-            << "Driver rest cancelled.\n";
+            << ConsoleTheme::FormatLiteral("Driver rest cancelled.\n");
 
         return;
     }
@@ -445,9 +446,9 @@ void DriverManager::RestDriver(
     if (selectedDriver == nullptr)
     {
         std::cout
-            << "Driver ID "
+            << ConsoleTheme::FormatLiteral("Driver ID ")
             << driverID
-            << " was not found.\n";
+            << ConsoleTheme::FormatLiteral(" was not found.\n");
 
         return;
     }
@@ -456,15 +457,15 @@ void DriverManager::RestDriver(
         "Available")
     {
         std::cout
-            << "Driver #"
+            << ConsoleTheme::FormatLiteral("Driver #")
             << driverID
-            << " cannot be manually rested "
-            << "while "
-            << selectedDriver->GetStatus()
-            << ".\n";
+            << ConsoleTheme::FormatLiteral(" cannot be manually rested ")
+            << ConsoleTheme::FormatLiteral("while ")
+            << ConsoleTheme::Status(selectedDriver->GetStatus())
+            << ConsoleTheme::FormatLiteral(".\n");
 
         std::cout
-            << "Complete the driver's active load first.\n";
+            << ConsoleTheme::FormatLiteral("Complete the driver's active load first.\n");
 
         return;
     }
@@ -491,14 +492,14 @@ void DriverManager::RestDriver(
         EPSILON)
     {
         std::cout
-            << "\nDriver #"
+            << ConsoleTheme::FormatLiteral("\nDriver #")
             << driverID
-            << " already has a full "
+            << ConsoleTheme::FormatLiteral(" already has a full ")
             << std::fixed
             << std::setprecision(2)
             << HOSManager::
             GetMaxDrivingHours()
-            << " driving hours available.\n"
+            << ConsoleTheme::FormatLiteral(" driving hours available.\n")
             << std::defaultfloat
             << std::setprecision(6);
 
@@ -506,34 +507,34 @@ void DriverManager::RestDriver(
     }
 
     std::cout
-        << "\n========== REST OPTIONS ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== REST OPTIONS ==========\n");
 
     std::cout
-        << "Driver: #"
+        << ConsoleTheme::FormatLiteral("Driver: #")
         << selectedDriver->GetDriverID()
-        << " - "
+        << ConsoleTheme::FormatLiteral(" - ")
         << selectedDriver->GetName()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Driving Hours Remaining: "
+        << ConsoleTheme::FormatLiteral("Driving Hours Remaining: ")
         << currentHours
-        << " / "
+        << ConsoleTheme::FormatLiteral(" / ")
         << HOSManager::
         GetMaxDrivingHours()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Current Rest Progress: "
+        << ConsoleTheme::FormatLiteral("Current Rest Progress: ")
         << currentRest
-        << " / "
+        << ConsoleTheme::FormatLiteral(" / ")
         << HOSManager::
         GetRequiredRestHours()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::defaultfloat
@@ -543,30 +544,30 @@ void DriverManager::RestDriver(
         HOSManager::GetCurrentEpoch())
     {
         std::cout
-            << "Rest Can Begin: "
+            << ConsoleTheme::FormatLiteral("Rest Can Begin: ")
             << HOSManager::
             FormatDateTime(
                 restStartTime
             )
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
     }
     else
     {
         std::cout
-            << "Rest Can Begin: Now\n";
+            << ConsoleTheme::FormatLiteral("Rest Can Begin: Now\n");
     }
 
     std::cout
-        << "\n1. Rest Until Full HOS Reset\n";
+        << ConsoleTheme::FormatLiteral("\n1. Rest Until Full HOS Reset\n");
 
     std::cout
-        << "2. Advance Off-Duty Time Manually\n";
+        << ConsoleTheme::FormatLiteral("2. Advance Off-Duty Time Manually\n");
 
     std::cout
-        << "0. Cancel\n";
+        << ConsoleTheme::FormatLiteral("0. Cancel\n");
 
     std::cout
-        << "==================================\n";
+        << ConsoleTheme::FormatLiteral("==================================\n");
 
     int restChoice =
         InputManager::ReadMenuChoice(
@@ -578,7 +579,7 @@ void DriverManager::RestDriver(
     if (restChoice == 0)
     {
         std::cout
-            << "Driver rest cancelled.\n";
+            << ConsoleTheme::FormatLiteral("Driver rest cancelled.\n");
 
         return;
     }
@@ -604,17 +605,17 @@ void DriverManager::RestDriver(
             hoursNeeded)
         {
             std::cout
-                << "Only "
+                << ConsoleTheme::FormatLiteral("Only ")
                 << std::fixed
                 << std::setprecision(2)
                 << hoursNeeded
-                << " more rest hours are needed "
-                << "for a full HOS reset.\n";
+                << ConsoleTheme::FormatLiteral(" more rest hours are needed ")
+                << ConsoleTheme::FormatLiteral("for a full HOS reset.\n");
 
             std::cout
-                << "Rest time will be limited to "
+                << ConsoleTheme::FormatLiteral("Rest time will be limited to ")
                 << hoursNeeded
-                << " hours.\n"
+                << ConsoleTheme::FormatLiteral(" hours.\n")
                 << std::defaultfloat
                 << std::setprecision(6);
 
@@ -644,45 +645,45 @@ void DriverManager::RestDriver(
         EPSILON;
 
     std::cout
-        << "\n========== REST CONFIRMATION ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== REST CONFIRMATION ==========\n");
 
     std::cout
-        << "Driver: #"
+        << ConsoleTheme::FormatLiteral("Driver: #")
         << selectedDriver->GetDriverID()
-        << " - "
+        << ConsoleTheme::FormatLiteral(" - ")
         << selectedDriver->GetName()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Off-Duty Time: "
+        << ConsoleTheme::FormatLiteral("Off-Duty Time: ")
         << restHours
-        << " hours\n";
+        << ConsoleTheme::FormatLiteral(" hours\n");
 
     std::cout
         << std::defaultfloat
         << std::setprecision(6);
 
     std::cout
-        << "Rest Complete: "
+        << ConsoleTheme::FormatLiteral("Rest Complete: ")
         << HOSManager::
         FormatDateTime(
             restCompleteTime
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     if (fullReset)
     {
         std::cout
-            << "Result: Full HOS reset to "
+            << ConsoleTheme::FormatLiteral("Result: Full HOS reset to ")
             << std::fixed
             << std::setprecision(2)
             << HOSManager::
             GetMaxDrivingHours()
-            << " driving hours.\n"
+            << ConsoleTheme::FormatLiteral(" driving hours.\n")
             << std::defaultfloat
             << std::setprecision(6);
     }
@@ -693,17 +694,17 @@ void DriverManager::RestDriver(
             << std::setprecision(2);
 
         std::cout
-            << "Resulting Rest Progress: "
+            << ConsoleTheme::FormatLiteral("Resulting Rest Progress: ")
             << projectedRestAfter
-            << " / "
+            << ConsoleTheme::FormatLiteral(" / ")
             << HOSManager::
             GetRequiredRestHours()
-            << " hours\n";
+            << ConsoleTheme::FormatLiteral(" hours\n");
 
         std::cout
-            << "Driving Hours Remaining: "
+            << ConsoleTheme::FormatLiteral("Driving Hours Remaining: ")
             << currentHours
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
             << std::defaultfloat
@@ -711,14 +712,14 @@ void DriverManager::RestDriver(
     }
 
     std::cout
-        << "=======================================\n";
+        << ConsoleTheme::FormatLiteral("=======================================\n");
 
     if (!InputManager::ReadYesNo(
         "Schedule this driver rest? (Y/N): "))
     {
         std::cout
-            << "Driver rest cancelled. "
-            << "No HOS changes were made.\n";
+            << ConsoleTheme::FormatLiteral("Driver rest cancelled. ")
+            << ConsoleTheme::FormatLiteral("No HOS changes were made.\n");
 
         return;
     }
@@ -729,50 +730,50 @@ void DriverManager::RestDriver(
     );
 
     std::cout
-        << "\nDriver #"
+        << ConsoleTheme::FormatLiteral("\nDriver #")
         << selectedDriver->GetDriverID()
-        << " scheduled for "
+        << ConsoleTheme::FormatLiteral(" scheduled for ")
         << std::fixed
         << std::setprecision(2)
         << restHours
-        << " off-duty hours.\n"
+        << ConsoleTheme::FormatLiteral(" off-duty hours.\n")
         << std::defaultfloat
         << std::setprecision(6);
 
     std::cout
-        << "Scheduled Available: "
+        << ConsoleTheme::FormatLiteral("Scheduled Available: ")
         << HOSManager::
         FormatDateTime(
             selectedDriver->
             GetAvailableAtEpoch()
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     if (fullReset)
     {
         std::cout
-            << "Driver will return with a full "
+            << ConsoleTheme::FormatLiteral("Driver will return with a full ")
             << std::fixed
             << std::setprecision(2)
             << HOSManager::
             GetMaxDrivingHours()
-            << " driving hours available.\n"
+            << ConsoleTheme::FormatLiteral(" driving hours available.\n")
             << std::defaultfloat
             << std::setprecision(6);
     }
     else
     {
         std::cout
-            << "Driver will retain "
+            << ConsoleTheme::FormatLiteral("Driver will retain ")
             << std::fixed
             << std::setprecision(2)
             << currentHours
-            << " driving hours with "
+            << ConsoleTheme::FormatLiteral(" driving hours with ")
             << projectedRestAfter
-            << " / "
+            << ConsoleTheme::FormatLiteral(" / ")
             << HOSManager::
             GetRequiredRestHours()
-            << " rest hours accumulated.\n"
+            << ConsoleTheme::FormatLiteral(" rest hours accumulated.\n")
             << std::defaultfloat
             << std::setprecision(6);
     }
@@ -787,7 +788,7 @@ void DriverManager::RestAllDrivers(
     if (drivers.empty())
     {
         std::cout
-            << "\nNo drivers have been added yet.\n";
+            << ConsoleTheme::FormatLiteral("\nNo drivers have been added yet.\n");
 
         return;
     }
@@ -795,7 +796,7 @@ void DriverManager::RestAllDrivers(
     int driversNeedingRest = 0;
 
     std::cout
-        << "\n========== REST ALL AVAILABLE DRIVERS ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== REST ALL AVAILABLE DRIVERS ==========\n");
 
     for (const Driver& driver :
         drivers)
@@ -826,9 +827,9 @@ void DriverManager::RestAllDrivers(
         driversNeedingRest++;
 
         std::cout
-            << "Driver #"
+            << ConsoleTheme::FormatLiteral("Driver #")
             << driver.GetDriverID()
-            << " - "
+            << ConsoleTheme::FormatLiteral(" - ")
             << driver.GetName();
 
         std::cout
@@ -836,9 +837,9 @@ void DriverManager::RestAllDrivers(
             << std::setprecision(2);
 
         std::cout
-            << " | Rest Needed: "
+            << ConsoleTheme::FormatLiteral(" | Rest Needed: ")
             << hoursNeeded
-            << " hours\n";
+            << ConsoleTheme::FormatLiteral(" hours\n");
 
         std::cout
             << std::defaultfloat
@@ -848,36 +849,36 @@ void DriverManager::RestAllDrivers(
     if (driversNeedingRest == 0)
     {
         std::cout
-            << "No available drivers currently "
-            << "need an HOS reset.\n";
+            << ConsoleTheme::FormatLiteral("No available drivers currently ")
+            << ConsoleTheme::FormatLiteral("need an HOS reset.\n");
 
         std::cout
-            << "================================================\n";
+            << ConsoleTheme::FormatLiteral("================================================\n");
 
         return;
     }
 
     std::cout
-        << "================================================\n";
+        << ConsoleTheme::FormatLiteral("================================================\n");
 
     std::cout
         << driversNeedingRest
-        << " available driver";
+        << ConsoleTheme::FormatLiteral(" available driver");
 
     if (driversNeedingRest != 1)
     {
-        std::cout << "s";
+        std::cout << ConsoleTheme::FormatLiteral("s");
     }
 
     std::cout
-        << " will be rested until full HOS reset.\n";
+        << ConsoleTheme::FormatLiteral(" will be rested until full HOS reset.\n");
 
     if (!InputManager::ReadYesNo(
         "Rest all listed drivers? (Y/N): "))
     {
         std::cout
-            << "Rest-all cancelled. "
-            << "No HOS changes were made.\n";
+            << ConsoleTheme::FormatLiteral("Rest-all cancelled. ")
+            << ConsoleTheme::FormatLiteral("No HOS changes were made.\n");
 
         return;
     }
@@ -918,28 +919,28 @@ void DriverManager::RestAllDrivers(
         restedDrivers++;
 
         std::cout
-            << "Driver #"
+            << ConsoleTheme::FormatLiteral("Driver #")
             << driver.GetDriverID()
-            << " scheduled available at "
+            << ConsoleTheme::FormatLiteral(" scheduled available at ")
             << HOSManager::
             FormatDateTime(
                 driver.GetAvailableAtEpoch()
             )
-            << " with full HOS.\n";
+            << ConsoleTheme::FormatLiteral(" with full HOS.\n");
     }
 
     std::cout
-        << "\n"
+        << ConsoleTheme::FormatLiteral("\n")
         << restedDrivers
-        << " driver";
+        << ConsoleTheme::FormatLiteral(" driver");
 
     if (restedDrivers != 1)
     {
-        std::cout << "s";
+        std::cout << ConsoleTheme::FormatLiteral("s");
     }
 
     std::cout
-        << " scheduled for full HOS reset.\n";
+        << ConsoleTheme::FormatLiteral(" scheduled for full HOS reset.\n");
 }
 
 void DriverManager::Run(

@@ -1,3 +1,4 @@
+#include "ConsoleTheme.h"
 #include "FuelManager.h"
 
 #include <algorithm>
@@ -16,12 +17,12 @@ namespace
 
 void FuelManager::ShowMenu()
 {
-    std::cout << "\n";
-    std::cout << "========== FUEL MANAGEMENT ==========\n";
-    std::cout << "1. View Fuel Status\n";
-    std::cout << "2. Refuel Truck\n";
-    std::cout << "0. Return to Main Menu\n";
-    std::cout << "=====================================\n";
+    std::cout << ConsoleTheme::FormatLiteral("\n");
+    std::cout << ConsoleTheme::FormatLiteral("========== FUEL MANAGEMENT ==========\n");
+    std::cout << ConsoleTheme::FormatLiteral("1. View Fuel Status\n");
+    std::cout << ConsoleTheme::FormatLiteral("2. Refuel Truck\n");
+    std::cout << ConsoleTheme::FormatLiteral("0. Return to Main Menu\n");
+    std::cout << ConsoleTheme::FormatLiteral("=====================================\n");
 }
 
 Truck* FuelManager::FindTruck(
@@ -48,15 +49,15 @@ void FuelManager::DisplayFuelStatus(
         company.GetTrucks();
 
     std::cout
-        << "\n========== FLEET FUEL STATUS ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== FLEET FUEL STATUS ==========\n");
 
     if (trucks.empty())
     {
         std::cout
-            << "No trucks have been added yet.\n";
+            << ConsoleTheme::FormatLiteral("No trucks have been added yet.\n");
 
         std::cout
-            << "=======================================\n";
+            << ConsoleTheme::FormatLiteral("=======================================\n");
 
         return;
     }
@@ -64,29 +65,29 @@ void FuelManager::DisplayFuelStatus(
     for (const Truck& truck : trucks)
     {
         std::cout
-            << "\nTruck #"
+            << ConsoleTheme::FormatLiteral("\nTruck #")
             << truck.GetUnitNumber()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Status: "
-            << truck.GetStatus()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("Status: ")
+            << ConsoleTheme::Status(truck.GetStatus())
+            << ConsoleTheme::FormatLiteral("\n");
 
         if (truck.GetAvailableAtEpoch() >
             HOSManager::GetCurrentEpoch())
         {
             std::cout
-                << "Scheduled Available: "
+                << ConsoleTheme::FormatLiteral("Scheduled Available: ")
                 << HOSManager::FormatDateTime(
                     truck.GetAvailableAtEpoch()
                 )
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
         }
         else
         {
             std::cout
-                << "Scheduled Available: Now\n";
+                << ConsoleTheme::FormatLiteral("Scheduled Available: Now\n");
         }
 
         std::cout
@@ -94,31 +95,31 @@ void FuelManager::DisplayFuelStatus(
             << std::setprecision(1);
 
         std::cout
-            << "Fuel: "
+            << ConsoleTheme::FormatLiteral("Fuel: ")
             << truck.GetFuelGallons()
-            << " / "
+            << ConsoleTheme::FormatLiteral(" / ")
             << truck.GetFuelTankCapacity()
-            << " gallons\n";
+            << ConsoleTheme::FormatLiteral(" gallons\n");
 
         std::cout
-            << "Fuel Level: "
+            << ConsoleTheme::FormatLiteral("Fuel Level: ")
             << truck.GetFuelPercentage()
-            << "%\n";
+            << ConsoleTheme::FormatLiteral("%\n");
 
         std::cout
-            << "Fuel Economy: "
+            << ConsoleTheme::FormatLiteral("Fuel Economy: ")
             << truck.GetMilesPerGallon()
-            << " MPG\n";
+            << ConsoleTheme::FormatLiteral(" MPG\n");
 
         std::cout
-            << "Estimated Range: "
+            << ConsoleTheme::FormatLiteral("Estimated Range: ")
             << truck.GetFuelRangeMiles()
-            << " miles\n";
+            << ConsoleTheme::FormatLiteral(" miles\n");
 
         std::cout
-            << "Minimum Delivery Reserve: "
+            << ConsoleTheme::FormatLiteral("Minimum Delivery Reserve: ")
             << truck.GetMinimumArrivalFuelGallons()
-            << " gallons (50% tank)\n";
+            << ConsoleTheme::FormatLiteral(" gallons (50% tank)\n");
 
         std::cout
             << std::defaultfloat
@@ -126,21 +127,21 @@ void FuelManager::DisplayFuelStatus(
     }
 
     std::cout
-        << "\nCurrent Diesel Price: $"
+        << ConsoleTheme::FormatLiteral("\nCurrent Diesel Price: $")
         << std::fixed
         << std::setprecision(2)
         << FUEL_PRICE_PER_GALLON
-        << " per gallon\n";
+        << ConsoleTheme::FormatLiteral(" per gallon\n");
 
     std::cout
-        << "Fuel purchases are allowed even if the company balance becomes negative.\n";
+        << ConsoleTheme::FormatLiteral("Fuel purchases are allowed even if the company balance becomes negative.\n");
 
     std::cout
         << std::defaultfloat
         << std::setprecision(6);
 
     std::cout
-        << "=======================================\n";
+        << ConsoleTheme::FormatLiteral("=======================================\n");
 }
 
 void FuelManager::RefuelTruck(
@@ -149,7 +150,7 @@ void FuelManager::RefuelTruck(
     if (company.GetTrucks().empty())
     {
         std::cout
-            << "\nNo trucks are available to refuel.\n";
+            << ConsoleTheme::FormatLiteral("\nNo trucks are available to refuel.\n");
 
         return;
     }
@@ -171,9 +172,9 @@ void FuelManager::RefuelTruck(
     if (selectedTruck == nullptr)
     {
         std::cout
-            << "Truck #"
+            << ConsoleTheme::FormatLiteral("Truck #")
             << unitNumber
-            << " does not exist.\n";
+            << ConsoleTheme::FormatLiteral(" does not exist.\n");
 
         return;
     }
@@ -182,11 +183,11 @@ void FuelManager::RefuelTruck(
         "Available")
     {
         std::cout
-            << "Truck #"
+            << ConsoleTheme::FormatLiteral("Truck #")
             << unitNumber
-            << " is currently "
-            << selectedTruck->GetStatus()
-            << " and cannot be manually refueled.\n";
+            << ConsoleTheme::FormatLiteral(" is currently ")
+            << ConsoleTheme::Status(selectedTruck->GetStatus())
+            << ConsoleTheme::FormatLiteral(" and cannot be manually refueled.\n");
 
         return;
     }
@@ -198,9 +199,9 @@ void FuelManager::RefuelTruck(
     if (availableSpace <= 0.0)
     {
         std::cout
-            << "Truck #"
+            << ConsoleTheme::FormatLiteral("Truck #")
             << unitNumber
-            << " already has a full tank.\n";
+            << ConsoleTheme::FormatLiteral(" already has a full tank.\n");
 
         return;
     }
@@ -210,9 +211,9 @@ void FuelManager::RefuelTruck(
         << std::setprecision(1);
 
     std::cout
-        << "Maximum fuel that can be added: "
+        << ConsoleTheme::FormatLiteral("Maximum fuel that can be added: ")
         << availableSpace
-        << " gallons\n";
+        << ConsoleTheme::FormatLiteral(" gallons\n");
 
     std::cout
         << std::defaultfloat
@@ -235,55 +236,55 @@ void FuelManager::RefuelTruck(
         FUEL_PRICE_PER_GALLON;
 
     std::cout
-        << "\n========== REFUEL CONFIRMATION ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== REFUEL CONFIRMATION ==========\n");
 
     std::cout
-        << "Truck: #"
+        << ConsoleTheme::FormatLiteral("Truck: #")
         << unitNumber
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Gallons to Purchase: "
+        << ConsoleTheme::FormatLiteral("Gallons to Purchase: ")
         << gallonsToPurchase
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Fuel Price: $"
+        << ConsoleTheme::FormatLiteral("Fuel Price: $")
         << FUEL_PRICE_PER_GALLON
-        << " per gallon\n";
+        << ConsoleTheme::FormatLiteral(" per gallon\n");
 
     std::cout
-        << "Total Fuel Cost: $"
+        << ConsoleTheme::FormatLiteral("Total Fuel Cost: $")
         << totalCost
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Company Balance Before Purchase: $"
+        << ConsoleTheme::FormatLiteral("Company Balance Before Purchase: $")
         << company.GetBalance()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Projected Balance After Purchase: $"
+        << ConsoleTheme::FormatLiteral("Projected Balance After Purchase: $")
         << (company.GetBalance() - totalCost)
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::defaultfloat
         << std::setprecision(6);
 
     std::cout
-        << "=========================================\n";
+        << ConsoleTheme::FormatLiteral("=========================================\n");
 
     if (!InputManager::ReadYesNo(
         "Confirm fuel purchase? (Y/N): "))
     {
         std::cout
-            << "Refuel cancelled. "
-            << "No fuel was added and no expense was recorded.\n";
+            << ConsoleTheme::FormatLiteral("Refuel cancelled. ")
+            << ConsoleTheme::FormatLiteral("No fuel was added and no expense was recorded.\n");
 
         return;
     }
@@ -296,7 +297,7 @@ void FuelManager::RefuelTruck(
     if (gallonsAdded <= 0.0)
     {
         std::cout
-            << "No fuel was added.\n";
+            << ConsoleTheme::FormatLiteral("No fuel was added.\n");
 
         return;
     }
@@ -335,54 +336,54 @@ void FuelManager::RefuelTruck(
     );
 
     std::cout
-        << "\nTruck #"
+        << ConsoleTheme::FormatLiteral("\nTruck #")
         << unitNumber
-        << " refueled successfully.\n";
+        << ConsoleTheme::FormatLiteral(" refueled successfully.\n");
 
     std::cout
-        << "Refuel Time: "
+        << ConsoleTheme::FormatLiteral("Refuel Time: ")
         << HOSManager::FormatDateTime(
             refuelTime
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Gallons Purchased: "
+        << ConsoleTheme::FormatLiteral("Gallons Purchased: ")
         << gallonsAdded
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Fuel Price: $"
+        << ConsoleTheme::FormatLiteral("Fuel Price: $")
         << FUEL_PRICE_PER_GALLON
-        << " per gallon\n";
+        << ConsoleTheme::FormatLiteral(" per gallon\n");
 
     std::cout
-        << "Fuel Cost: $"
+        << ConsoleTheme::FormatLiteral("Fuel Cost: $")
         << totalCost
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Company Balance: $"
+        << ConsoleTheme::FormatLiteral("Company Balance: $")
         << company.GetBalance()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     if (company.GetBalance() < 0.0)
     {
         std::cout
-            << "The company is operating with a negative balance. "
-            << "Future revenue will reduce the deficit.\n";
+            << ConsoleTheme::FormatLiteral("The company is operating with a negative balance. ")
+            << ConsoleTheme::FormatLiteral("Future revenue will reduce the deficit.\n");
     }
 
     if (gallonsAdded <
         requestedGallons)
     {
         std::cout
-            << "The truck reached full capacity, "
-            << "so only the available tank space was purchased.\n";
+            << ConsoleTheme::FormatLiteral("The truck reached full capacity, ")
+            << ConsoleTheme::FormatLiteral("so only the available tank space was purchased.\n");
     }
 
     std::cout
@@ -421,8 +422,8 @@ void FuelManager::Run(
 
         default:
             std::cout
-                << "\nInvalid selection. "
-                << "Please choose 0, 1, or 2.\n";
+                << ConsoleTheme::FormatLiteral("\nInvalid selection. ")
+                << ConsoleTheme::FormatLiteral("Please choose 0, 1, or 2.\n");
 
             break;
         }

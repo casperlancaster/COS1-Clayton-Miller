@@ -1,3 +1,4 @@
+#include "ConsoleTheme.h"
 #include "InputManager.h"
 
 #include <cmath>
@@ -106,7 +107,7 @@ int InputManager::ReadInt(
         std::string input;
         int value = 0;
 
-        std::cout << prompt;
+        std::cout << ConsoleTheme::Prompt(prompt);
 
         std::getline(
             std::cin,
@@ -121,8 +122,8 @@ int InputManager::ReadInt(
         }
 
         std::cout
-            << "Invalid input. "
-            << "Please enter a whole number.\n";
+            << ConsoleTheme::FormatLiteral("Invalid input. ")
+            << ConsoleTheme::FormatLiteral("Please enter a whole number.\n");
     }
 }
 
@@ -145,12 +146,12 @@ int InputManager::ReadMenuChoice(
         }
 
         std::cout
-            << "Invalid selection. "
-            << "Please enter a number from "
+            << ConsoleTheme::FormatLiteral("Invalid selection. ")
+            << ConsoleTheme::FormatLiteral("Please enter a number from ")
             << minimumChoice
-            << " to "
+            << ConsoleTheme::FormatLiteral(" to ")
             << maximumChoice
-            << ".\n";
+            << ConsoleTheme::FormatLiteral(".\n");
     }
 }
 
@@ -171,10 +172,10 @@ int InputManager::ReadPositiveInt(
         }
 
         std::cout
-            << "Invalid "
+            << ConsoleTheme::FormatLiteral("Invalid ")
             << fieldName
-            << ". Please enter a number "
-            << "greater than 0.\n";
+            << ConsoleTheme::FormatLiteral(". Please enter a number ")
+            << ConsoleTheme::FormatLiteral("greater than 0.\n");
     }
 }
 
@@ -187,7 +188,7 @@ double InputManager::ReadNonNegativeDouble(
         std::string input;
         double value = 0.0;
 
-        std::cout << prompt;
+        std::cout << ConsoleTheme::Prompt(prompt);
 
         std::getline(
             std::cin,
@@ -203,10 +204,10 @@ double InputManager::ReadNonNegativeDouble(
         }
 
         std::cout
-            << "Invalid "
+            << ConsoleTheme::FormatLiteral("Invalid ")
             << fieldName
-            << ". Please enter a finite number "
-            << "that is 0 or greater.\n";
+            << ConsoleTheme::FormatLiteral(". Please enter a finite number ")
+            << ConsoleTheme::FormatLiteral("that is 0 or greater.\n");
     }
 }
 
@@ -219,7 +220,7 @@ double InputManager::ReadPositiveDouble(
         std::string input;
         double value = 0.0;
 
-        std::cout << prompt;
+        std::cout << ConsoleTheme::Prompt(prompt);
 
         std::getline(
             std::cin,
@@ -235,10 +236,10 @@ double InputManager::ReadPositiveDouble(
         }
 
         std::cout
-            << "Invalid "
+            << ConsoleTheme::FormatLiteral("Invalid ")
             << fieldName
-            << ". Please enter a finite number "
-            << "greater than 0.\n";
+            << ConsoleTheme::FormatLiteral(". Please enter a finite number ")
+            << ConsoleTheme::FormatLiteral("greater than 0.\n");
     }
 }
 
@@ -250,7 +251,7 @@ std::string InputManager::ReadRequiredText(
     {
         std::string input;
 
-        std::cout << prompt;
+        std::cout << ConsoleTheme::Prompt(prompt);
 
         std::getline(
             std::cin,
@@ -269,8 +270,8 @@ std::string InputManager::ReadRequiredText(
 
         std::cout
             << fieldName
-            << " cannot be empty. "
-            << "Please try again.\n";
+            << ConsoleTheme::FormatLiteral(" cannot be empty. ")
+            << ConsoleTheme::FormatLiteral("Please try again.\n");
     }
 }
 
@@ -283,7 +284,7 @@ double InputManager::ReadCurrency(
         std::string cleanedPay;
         double pay = 0.0;
 
-        std::cout << prompt;
+        std::cout << ConsoleTheme::Prompt(prompt);
 
         std::getline(
             std::cin,
@@ -314,8 +315,8 @@ double InputManager::ReadCurrency(
         }
 
         std::cout
-            << "Invalid load pay. "
-            << "Please enter an amount greater than 0.\n";
+            << ConsoleTheme::FormatLiteral("Invalid load pay. ")
+            << ConsoleTheme::FormatLiteral("Please enter an amount greater than 0.\n");
     }
 }
 
@@ -326,7 +327,7 @@ bool InputManager::ReadYesNo(
     {
         std::string input;
 
-        std::cout << prompt;
+        std::cout << ConsoleTheme::Prompt(prompt);
 
         std::getline(
             std::cin,
@@ -357,7 +358,7 @@ bool InputManager::ReadYesNo(
         }
 
         std::cout
-            << "Invalid response. "
-            << "Please enter Y/Yes or N/No.\n";
+            << ConsoleTheme::FormatLiteral("Invalid response. ")
+            << ConsoleTheme::FormatLiteral("Please enter Y/Yes or N/No.\n");
     }
 }

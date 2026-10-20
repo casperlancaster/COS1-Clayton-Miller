@@ -1,3 +1,4 @@
+#include "ConsoleTheme.h"
 #include "RepairManager.h"
 
 #include <algorithm>
@@ -174,12 +175,12 @@ bool RepairManager::RollForBreakdown(
 
 void RepairManager::ShowMenu()
 {
-    std::cout << "\n";
-    std::cout << "========== BREAKDOWN / REPAIR CENTER ==========\n";
-    std::cout << "1. View Active Breakdowns\n";
-    std::cout << "2. Repair Truck\n";
-    std::cout << "0. Return to Fleet Management\n";
-    std::cout << "===============================================\n";
+    std::cout << ConsoleTheme::FormatLiteral("\n");
+    std::cout << ConsoleTheme::FormatLiteral("========== BREAKDOWN / REPAIR CENTER ==========\n");
+    std::cout << ConsoleTheme::FormatLiteral("1. View Active Breakdowns\n");
+    std::cout << ConsoleTheme::FormatLiteral("2. Repair Truck\n");
+    std::cout << ConsoleTheme::FormatLiteral("0. Return to Fleet Management\n");
+    std::cout << ConsoleTheme::FormatLiteral("===============================================\n");
 }
 
 Truck* RepairManager::FindTruck(
@@ -205,7 +206,7 @@ void RepairManager::DisplayActiveBreakdowns(
     bool foundBreakdown = false;
 
     std::cout
-        << "\n========== ACTIVE BREAKDOWNS ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== ACTIVE BREAKDOWNS ==========\n");
 
     for (const Truck& truck :
         company.GetTrucks())
@@ -218,44 +219,44 @@ void RepairManager::DisplayActiveBreakdowns(
         foundBreakdown = true;
 
         std::cout
-            << "\nTruck #"
+            << ConsoleTheme::FormatLiteral("\nTruck #")
             << truck.GetUnitNumber()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Breakdown: "
+            << ConsoleTheme::FormatLiteral("Breakdown: ")
             << truck.GetBreakdownType()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
             << std::fixed
             << std::setprecision(2);
 
         std::cout
-            << "Parts Cost: $"
+            << ConsoleTheme::FormatLiteral("Parts Cost: $")
             << truck.GetBreakdownPartsCost()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Labor Cost: $"
+            << ConsoleTheme::FormatLiteral("Labor Cost: $")
             << truck.GetBreakdownLaborCost()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Service Call Charge: $"
+            << ConsoleTheme::FormatLiteral("Service Call Charge: $")
             << truck.
             GetBreakdownServiceCallCharge()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Total Repair Cost: $"
+            << ConsoleTheme::FormatLiteral("Total Repair Cost: $")
             << truck.GetBreakdownTotalCost()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Estimated Repair Time: "
+            << ConsoleTheme::FormatLiteral("Estimated Repair Time: ")
             << truck.GetBreakdownRepairHours()
-            << " hours\n";
+            << ConsoleTheme::FormatLiteral(" hours\n");
 
         std::cout
             << std::defaultfloat
@@ -265,12 +266,12 @@ void RepairManager::DisplayActiveBreakdowns(
     if (!foundBreakdown)
     {
         std::cout
-            << "No trucks currently have "
-            << "an active breakdown.\n";
+            << ConsoleTheme::FormatLiteral("No trucks currently have ")
+            << ConsoleTheme::FormatLiteral("an active breakdown.\n");
     }
 
     std::cout
-        << "=======================================\n";
+        << ConsoleTheme::FormatLiteral("=======================================\n");
 }
 
 void RepairManager::RepairTruck(
@@ -291,8 +292,8 @@ void RepairManager::RepairTruck(
     if (!foundBreakdown)
     {
         std::cout
-            << "\nThere are no active breakdowns "
-            << "to repair.\n";
+            << ConsoleTheme::FormatLiteral("\nThere are no active breakdowns ")
+            << ConsoleTheme::FormatLiteral("to repair.\n");
 
         return;
     }
@@ -316,9 +317,9 @@ void RepairManager::RepairTruck(
     if (selectedTruck == nullptr)
     {
         std::cout
-            << "Truck #"
+            << ConsoleTheme::FormatLiteral("Truck #")
             << unitNumber
-            << " does not exist.\n";
+            << ConsoleTheme::FormatLiteral(" does not exist.\n");
 
         return;
     }
@@ -326,9 +327,9 @@ void RepairManager::RepairTruck(
     if (!selectedTruck->HasBreakdown())
     {
         std::cout
-            << "Truck #"
+            << ConsoleTheme::FormatLiteral("Truck #")
             << unitNumber
-            << " does not have an active breakdown.\n";
+            << ConsoleTheme::FormatLiteral(" does not have an active breakdown.\n");
 
         return;
     }
@@ -375,79 +376,79 @@ void RepairManager::RepairTruck(
         repairSeconds;
 
     std::cout
-        << "\n========== REPAIR CONFIRMATION ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== REPAIR CONFIRMATION ==========\n");
 
     std::cout
-        << "Truck: #"
+        << ConsoleTheme::FormatLiteral("Truck: #")
         << unitNumber
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Repair: "
+        << ConsoleTheme::FormatLiteral("Repair: ")
         << repairType
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Parts: $"
+        << ConsoleTheme::FormatLiteral("Parts: $")
         << partsCost
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Labor: $"
+        << ConsoleTheme::FormatLiteral("Labor: $")
         << laborCost
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Service Call: $"
+        << ConsoleTheme::FormatLiteral("Service Call: $")
         << serviceCallCharge
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Total Repair Expense: $"
+        << ConsoleTheme::FormatLiteral("Total Repair Expense: $")
         << totalCost
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Company Balance Before Repair: $"
+        << ConsoleTheme::FormatLiteral("Company Balance Before Repair: $")
         << company.GetBalance()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Projected Balance After Repair: $"
+        << ConsoleTheme::FormatLiteral("Projected Balance After Repair: $")
         << (company.GetBalance() - totalCost)
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::defaultfloat
         << std::setprecision(6);
 
     std::cout
-        << "Repair Start: "
+        << ConsoleTheme::FormatLiteral("Repair Start: ")
         << HOSManager::FormatDateTime(
             repairStart
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Estimated Completion: "
+        << ConsoleTheme::FormatLiteral("Estimated Completion: ")
         << HOSManager::FormatDateTime(
             repairComplete
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "=========================================\n";
+        << ConsoleTheme::FormatLiteral("=========================================\n");
 
     if (!InputManager::ReadYesNo(
         "Authorize this repair? (Y/N): "))
     {
         std::cout
-            << "Repair cancelled. "
-            << "The truck remains in Breakdown status and no expense was recorded.\n";
+            << ConsoleTheme::FormatLiteral("Repair cancelled. ")
+            << ConsoleTheme::FormatLiteral("The truck remains in Breakdown status and no expense was recorded.\n");
 
         return;
     }
@@ -496,87 +497,87 @@ void RepairManager::RepairTruck(
         );
 
     std::cout
-        << "\n========== REPAIR COMPLETED ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== REPAIR COMPLETED ==========\n");
 
     std::cout
-        << "Truck: #"
+        << ConsoleTheme::FormatLiteral("Truck: #")
         << unitNumber
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Repair: "
+        << ConsoleTheme::FormatLiteral("Repair: ")
         << repairType
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Parts: $"
+        << ConsoleTheme::FormatLiteral("Parts: $")
         << partsCost
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Labor: $"
+        << ConsoleTheme::FormatLiteral("Labor: $")
         << laborCost
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Service Call: $"
+        << ConsoleTheme::FormatLiteral("Service Call: $")
         << serviceCallCharge
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Total Repair Expense: $"
+        << ConsoleTheme::FormatLiteral("Total Repair Expense: $")
         << totalCost
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Repair Time: "
+        << ConsoleTheme::FormatLiteral("Repair Time: ")
         << repairHours
-        << " hours\n";
+        << ConsoleTheme::FormatLiteral(" hours\n");
 
     std::cout
         << std::defaultfloat
         << std::setprecision(6);
 
     std::cout
-        << "Repair Start: "
+        << ConsoleTheme::FormatLiteral("Repair Start: ")
         << HOSManager::FormatDateTime(
             repairStart
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Truck Scheduled Available: "
+        << ConsoleTheme::FormatLiteral("Truck Scheduled Available: ")
         << HOSManager::FormatDateTime(
             repairComplete
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Company Expenses: $"
+        << ConsoleTheme::FormatLiteral("Company Expenses: $")
         << company.GetExpenses()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Company Balance: $"
+        << ConsoleTheme::FormatLiteral("Company Balance: $")
         << company.GetBalance()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     if (company.GetBalance() < 0.0)
     {
         std::cout
-            << "Financial Status: NEGATIVE BALANCE\n";
+            << ConsoleTheme::FormatLiteral("Financial Status: NEGATIVE BALANCE\n");
 
         std::cout
-            << "The repair was still completed. "
-            << "Future revenue will reduce the deficit.\n";
+            << ConsoleTheme::FormatLiteral("The repair was still completed. ")
+            << ConsoleTheme::FormatLiteral("Future revenue will reduce the deficit.\n");
     }
 
     std::cout
@@ -584,7 +585,7 @@ void RepairManager::RepairTruck(
         << std::setprecision(6);
 
     std::cout
-        << "======================================\n";
+        << ConsoleTheme::FormatLiteral("======================================\n");
 }
 
 void RepairManager::Run(
@@ -622,8 +623,8 @@ void RepairManager::Run(
 
         default:
             std::cout
-                << "\nInvalid selection. "
-                << "Please choose 0, 1, or 2.\n";
+                << ConsoleTheme::FormatLiteral("\nInvalid selection. ")
+                << ConsoleTheme::FormatLiteral("Please choose 0, 1, or 2.\n");
 
             break;
         }

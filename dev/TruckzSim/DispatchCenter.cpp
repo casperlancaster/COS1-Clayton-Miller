@@ -1,3 +1,4 @@
+#include "ConsoleTheme.h"
 #include "DispatchCenter.h"
 
 #include <algorithm>
@@ -104,149 +105,149 @@ namespace
             << std::setprecision(2);
 
         std::cout
-            << "\n========== HOS TRIP PLAN ==========\n";
+            << ConsoleTheme::FormatLiteral("\n========== HOS TRIP PLAN ==========\n");
 
         std::cout
-            << "Operation: "
+            << ConsoleTheme::FormatLiteral("Operation: ")
             << (plan.teamOperation
                 ? "TEAM"
                 : "SOLO")
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Scheduled Start: "
+            << ConsoleTheme::FormatLiteral("Scheduled Start: ")
             << HOSManager::
             FormatDateTime(
                 dispatchStart
             )
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Primary Driver: #"
+            << ConsoleTheme::FormatLiteral("Primary Driver: #")
             << primaryDriver.
             GetDriverID()
-            << " - "
+            << ConsoleTheme::FormatLiteral(" - ")
             << primaryDriver.GetName()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Primary HOS at Start: "
+            << ConsoleTheme::FormatLiteral("Primary HOS at Start: ")
             << primaryHours
-            << " hours\n";
+            << ConsoleTheme::FormatLiteral(" hours\n");
 
         std::cout
-            << "Primary Rest Progress at Start: "
+            << ConsoleTheme::FormatLiteral("Primary Rest Progress at Start: ")
             << primaryRest
-            << " / "
+            << ConsoleTheme::FormatLiteral(" / ")
             << HOSManager::
             GetRequiredRestHours()
-            << " hours\n";
+            << ConsoleTheme::FormatLiteral(" hours\n");
 
         if (secondDriver != nullptr)
         {
             std::cout
-                << "Team Driver: #"
+                << ConsoleTheme::FormatLiteral("Team Driver: #")
                 << secondDriver->
                 GetDriverID()
-                << " - "
+                << ConsoleTheme::FormatLiteral(" - ")
                 << secondDriver->
                 GetName()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Team HOS at Start: "
+                << ConsoleTheme::FormatLiteral("Team HOS at Start: ")
                 << secondDriver->
                 GetProjectedDrivingHoursAt(
                     dispatchStart
                 )
-                << " hours\n";
+                << ConsoleTheme::FormatLiteral(" hours\n");
 
             std::cout
-                << "Team Rest Progress at Start: "
+                << ConsoleTheme::FormatLiteral("Team Rest Progress at Start: ")
                 << secondDriver->
                 GetProjectedRestHoursAt(
                     dispatchStart
                 )
-                << " / "
+                << ConsoleTheme::FormatLiteral(" / ")
                 << HOSManager::
                 GetRequiredRestHours()
-                << " hours\n";
+                << ConsoleTheme::FormatLiteral(" hours\n");
         }
 
         std::cout
-            << "Average Planning Speed: "
+            << ConsoleTheme::FormatLiteral("Average Planning Speed: ")
             << HOSManager::
             GetAveragePlanningSpeedMph()
-            << " MPH\n";
+            << ConsoleTheme::FormatLiteral(" MPH\n");
 
         std::cout
-            << "Driving Time Required: "
+            << ConsoleTheme::FormatLiteral("Driving Time Required: ")
             << plan.
             drivingHoursRequired
-            << " hours\n";
+            << ConsoleTheme::FormatLiteral(" hours\n");
 
         if (!plan.teamOperation)
         {
             std::cout
-                << "Mandatory Rest Periods: "
+                << ConsoleTheme::FormatLiteral("Mandatory Rest Periods: ")
                 << plan.soloRestPeriods
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Stopped Rest Time Required: "
+                << ConsoleTheme::FormatLiteral("Stopped Rest Time Required: ")
                 << plan.stoppedRestHours
-                << " hours\n";
+                << ConsoleTheme::FormatLiteral(" hours\n");
         }
         else
         {
             std::cout
-                << "Stopped Rest Time Required: "
+                << ConsoleTheme::FormatLiteral("Stopped Rest Time Required: ")
                 << plan.stoppedRestHours
-                << " hours\n";
+                << ConsoleTheme::FormatLiteral(" hours\n");
 
             std::cout
-                << "Drivers alternate while "
-                << "the off-duty driver rests.\n";
+                << ConsoleTheme::FormatLiteral("Drivers alternate while ")
+                << ConsoleTheme::FormatLiteral("the off-duty driver rests.\n");
         }
 
         std::cout
-            << "Total Estimated Trip Time: "
+            << ConsoleTheme::FormatLiteral("Total Estimated Trip Time: ")
             << plan.totalTripHours
-            << " hours\n";
+            << ConsoleTheme::FormatLiteral(" hours\n");
 
         std::cout
             << std::defaultfloat
             << std::setprecision(6);
 
         std::cout
-            << "Estimated Delivery: "
+            << ConsoleTheme::FormatLiteral("Estimated Delivery: ")
             << HOSManager::
             FormatDateTime(
                 plan.
                 estimatedDeliveryEpoch
             )
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Delivery Deadline: "
+            << ConsoleTheme::FormatLiteral("Delivery Deadline: ")
             << HOSManager::
             FormatDateTime(
                 load.
                 GetDeliveryDeadlineEpoch()
             )
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         if (load.
             GetDeliveryDeadlineEpoch() <= 0)
         {
             std::cout
-                << "STATUS: LEGACY LOAD - "
-                << "NO DEADLINE\n";
+                << ConsoleTheme::FormatLiteral("STATUS: LEGACY LOAD - ")
+                << ConsoleTheme::FormatLiteral("NO DEADLINE\n");
         }
         else if (plan.meetsDeadline)
         {
             std::cout
-                << "STATUS: ON TIME\n";
+                << ConsoleTheme::FormatLiteral("STATUS: ON TIME\n");
         }
         else
         {
@@ -265,13 +266,13 @@ namespace
                 << std::setprecision(2);
 
             std::cout
-                << "STATUS: DEADLINE "
-                << "CANNOT BE MET\n";
+                << ConsoleTheme::FormatLiteral("STATUS: DEADLINE ")
+                << ConsoleTheme::FormatLiteral("CANNOT BE MET\n");
 
             std::cout
-                << "Estimated Late By: "
+                << ConsoleTheme::FormatLiteral("Estimated Late By: ")
                 << lateHours
-                << " hours\n";
+                << ConsoleTheme::FormatLiteral(" hours\n");
 
             std::cout
                 << std::defaultfloat
@@ -279,19 +280,19 @@ namespace
         }
 
         std::cout
-            << "===================================\n";
+            << ConsoleTheme::FormatLiteral("===================================\n");
     }
 }
 
 void DispatchCenter::ShowMenu()
 {
-    std::cout << "\n";
-    std::cout << "========== DISPATCH CENTER ==========\n";
-    std::cout << "1. Assign Load\n";
-    std::cout << "2. View Available Resources\n";
-    std::cout << "3. Complete Load\n";
-    std::cout << "0. Return to Main Menu\n";
-    std::cout << "=====================================\n";
+    std::cout << ConsoleTheme::FormatLiteral("\n");
+    std::cout << ConsoleTheme::FormatLiteral("========== DISPATCH CENTER ==========\n");
+    std::cout << ConsoleTheme::FormatLiteral("1. Assign Load\n");
+    std::cout << ConsoleTheme::FormatLiteral("2. View Available Resources\n");
+    std::cout << ConsoleTheme::FormatLiteral("3. Complete Load\n");
+    std::cout << ConsoleTheme::FormatLiteral("0. Return to Main Menu\n");
+    std::cout << ConsoleTheme::FormatLiteral("=====================================\n");
 }
 
 const Load* DispatchCenter::FindLoad(
@@ -400,7 +401,7 @@ void DispatchCenter::DisplayAvailableResources(
         HOSManager::GetCurrentEpoch();
 
     std::cout
-        << "\n========== AVAILABLE LOADS ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== AVAILABLE LOADS ==========\n");
 
     bool foundLoad = false;
 
@@ -413,42 +414,42 @@ void DispatchCenter::DisplayAvailableResources(
             foundLoad = true;
 
             std::cout
-                << "Load #"
+                << ConsoleTheme::FormatLiteral("Load #")
                 << load.GetLoadNumber()
-                << " | "
+                << ConsoleTheme::FormatLiteral(" | ")
                 << load.GetOrigin()
-                << " -> "
+                << ConsoleTheme::FormatLiteral(" -> ")
                 << load.GetDestination()
-                << " | "
+                << ConsoleTheme::FormatLiteral(" | ")
                 << load.GetDistanceMiles()
-                << " miles"
-                << " | Pay: $"
+                << ConsoleTheme::FormatLiteral(" miles")
+                << ConsoleTheme::FormatLiteral(" | Pay: $")
                 << std::fixed
                 << std::setprecision(2)
                 << load.GetPay()
                 << std::defaultfloat
                 << std::setprecision(6)
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Deadline: "
+                << ConsoleTheme::FormatLiteral("Deadline: ")
                 << HOSManager::
                 FormatDateTime(
                     load.
                     GetDeliveryDeadlineEpoch()
                 )
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
         }
     }
 
     if (!foundLoad)
     {
         std::cout
-            << "No available loads.\n";
+            << ConsoleTheme::FormatLiteral("No available loads.\n");
     }
 
     std::cout
-        << "\n========== SCHEDULABLE DRIVERS ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== SCHEDULABLE DRIVERS ==========\n");
 
     bool foundDriver = false;
 
@@ -472,22 +473,22 @@ void DispatchCenter::DisplayAvailableResources(
                 << std::setprecision(2);
 
             std::cout
-                << "Driver ID "
+                << ConsoleTheme::FormatLiteral("Driver ID ")
                 << driver.GetDriverID()
-                << " | "
+                << ConsoleTheme::FormatLiteral(" | ")
                 << driver.GetName()
-                << " | HOS at availability: "
+                << ConsoleTheme::FormatLiteral(" | HOS at availability: ")
                 << driver.
                 GetProjectedDrivingHoursAt(
                     planningTime
                 )
-                << " hours"
-                << " | Rest: "
+                << ConsoleTheme::FormatLiteral(" hours")
+                << ConsoleTheme::FormatLiteral(" | Rest: ")
                 << driver.
                 GetProjectedRestHoursAt(
                     planningTime
                 )
-                << " hours\n";
+                << ConsoleTheme::FormatLiteral(" hours\n");
 
             std::cout
                 << std::defaultfloat
@@ -497,18 +498,18 @@ void DispatchCenter::DisplayAvailableResources(
                 now)
             {
                 std::cout
-                    << "Scheduled Available: "
+                    << ConsoleTheme::FormatLiteral("Scheduled Available: ")
                     << HOSManager::
                     FormatDateTime(
                         driver.
                         GetAvailableAtEpoch()
                     )
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
             else
             {
                 std::cout
-                    << "Scheduled Available: Now\n";
+                    << ConsoleTheme::FormatLiteral("Scheduled Available: Now\n");
             }
         }
     }
@@ -516,11 +517,11 @@ void DispatchCenter::DisplayAvailableResources(
     if (!foundDriver)
     {
         std::cout
-            << "No schedulable drivers.\n";
+            << ConsoleTheme::FormatLiteral("No schedulable drivers.\n");
     }
 
     std::cout
-        << "\n========== SCHEDULABLE TRUCKS ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== SCHEDULABLE TRUCKS ==========\n");
 
     bool foundTruck = false;
 
@@ -537,18 +538,18 @@ void DispatchCenter::DisplayAvailableResources(
                 << std::setprecision(1);
 
             std::cout
-                << "Truck #"
+                << ConsoleTheme::FormatLiteral("Truck #")
                 << truck.GetUnitNumber()
-                << " | Mileage: "
+                << ConsoleTheme::FormatLiteral(" | Mileage: ")
                 << truck.GetMileage()
-                << " | Fuel: "
+                << ConsoleTheme::FormatLiteral(" | Fuel: ")
                 << truck.GetFuelGallons()
-                << " / "
+                << ConsoleTheme::FormatLiteral(" / ")
                 << truck.GetFuelTankCapacity()
-                << " gal"
-                << " | Range: "
+                << ConsoleTheme::FormatLiteral(" gal")
+                << ConsoleTheme::FormatLiteral(" | Range: ")
                 << truck.GetFuelRangeMiles()
-                << " miles\n";
+                << ConsoleTheme::FormatLiteral(" miles\n");
 
             std::cout
                 << std::defaultfloat
@@ -558,18 +559,18 @@ void DispatchCenter::DisplayAvailableResources(
                 now)
             {
                 std::cout
-                    << "Scheduled Available: "
+                    << ConsoleTheme::FormatLiteral("Scheduled Available: ")
                     << HOSManager::
                     FormatDateTime(
                         truck.
                         GetAvailableAtEpoch()
                     )
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
             else
             {
                 std::cout
-                    << "Scheduled Available: Now\n";
+                    << ConsoleTheme::FormatLiteral("Scheduled Available: Now\n");
             }
         }
     }
@@ -577,18 +578,18 @@ void DispatchCenter::DisplayAvailableResources(
     if (!foundTruck)
     {
         std::cout
-            << "No schedulable trucks.\n";
+            << ConsoleTheme::FormatLiteral("No schedulable trucks.\n");
     }
 
     std::cout
-        << "========================================\n";
+        << ConsoleTheme::FormatLiteral("========================================\n");
 }
 
 void DispatchCenter::DisplayAssignedLoads(
     const Company& company)
 {
     std::cout
-        << "\n========== ASSIGNED LOADS ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== ASSIGNED LOADS ==========\n");
 
     bool foundAssignedLoad = false;
 
@@ -601,85 +602,85 @@ void DispatchCenter::DisplayAssignedLoads(
             foundAssignedLoad = true;
 
             std::cout
-                << "\nLoad #"
+                << ConsoleTheme::FormatLiteral("\nLoad #")
                 << load.GetLoadNumber()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
                 << load.GetOrigin()
-                << " -> "
+                << ConsoleTheme::FormatLiteral(" -> ")
                 << load.GetDestination()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Distance: "
+                << ConsoleTheme::FormatLiteral("Distance: ")
                 << load.GetDistanceMiles()
-                << " miles\n";
+                << ConsoleTheme::FormatLiteral(" miles\n");
 
             std::cout
-                << "Primary Driver ID: "
+                << ConsoleTheme::FormatLiteral("Primary Driver ID: ")
                 << load.GetAssignedDriverID()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             if (load.IsTeamLoad())
             {
                 std::cout
-                    << "Team Driver ID: "
+                    << ConsoleTheme::FormatLiteral("Team Driver ID: ")
                     << load.
                     GetAssignedSecondDriverID()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
 
             std::cout
-                << "Truck #"
+                << ConsoleTheme::FormatLiteral("Truck #")
                 << load.
                 GetAssignedTruckUnitNumber()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Operation: "
+                << ConsoleTheme::FormatLiteral("Operation: ")
                 << (load.IsTeamLoad()
                     ? "TEAM"
                     : "SOLO")
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Scheduled Start: "
+                << ConsoleTheme::FormatLiteral("Scheduled Start: ")
                 << HOSManager::
                 FormatDateTime(
                     load.
                     GetDispatchStartEpoch()
                 )
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Estimated Delivery: "
+                << ConsoleTheme::FormatLiteral("Estimated Delivery: ")
                 << HOSManager::
                 FormatDateTime(
                     load.
                     GetEstimatedDeliveryEpoch()
                 )
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Deadline: "
+                << ConsoleTheme::FormatLiteral("Deadline: ")
                 << HOSManager::
                 FormatDateTime(
                     load.
                     GetDeliveryDeadlineEpoch()
                 )
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
         }
     }
 
     if (!foundAssignedLoad)
     {
         std::cout
-            << "No loads are currently assigned.\n";
+            << ConsoleTheme::FormatLiteral("No loads are currently assigned.\n");
     }
 
     std::cout
-        << "====================================\n";
+        << ConsoleTheme::FormatLiteral("====================================\n");
 }
 
 void DispatchCenter::Run(
@@ -706,8 +707,8 @@ void DispatchCenter::Run(
                 HasCompany())
             {
                 std::cout
-                    << "\nDispatch Center is not "
-                    << "connected to a company.\n";
+                    << ConsoleTheme::FormatLiteral("\nDispatch Center is not ")
+                    << ConsoleTheme::FormatLiteral("connected to a company.\n");
 
                 break;
             }
@@ -728,15 +729,15 @@ void DispatchCenter::Run(
                     *company))
             {
                 std::cout
-                    << "\nA load cannot be scheduled "
-                    << "until a load, driver, and truck "
-                    << "are available for scheduling.\n";
+                    << ConsoleTheme::FormatLiteral("\nA load cannot be scheduled ")
+                    << ConsoleTheme::FormatLiteral("until a load, driver, and truck ")
+                    << ConsoleTheme::FormatLiteral("are available for scheduling.\n");
 
                 break;
             }
 
             std::cout
-                << "\n========== ASSIGN LOAD ==========\n";
+                << ConsoleTheme::FormatLiteral("\n========== ASSIGN LOAD ==========\n");
 
             int loadNumber =
                 InputManager::ReadPositiveInt(
@@ -753,9 +754,9 @@ void DispatchCenter::Run(
             if (selectedLoad == nullptr)
             {
                 std::cout
-                    << "Load #"
+                    << ConsoleTheme::FormatLiteral("Load #")
                     << loadNumber
-                    << " does not exist.\n";
+                    << ConsoleTheme::FormatLiteral(" does not exist.\n");
 
                 break;
             }
@@ -764,11 +765,11 @@ void DispatchCenter::Run(
                 "Available")
             {
                 std::cout
-                    << "Load #"
+                    << ConsoleTheme::FormatLiteral("Load #")
                     << loadNumber
-                    << " is currently "
-                    << selectedLoad->GetStatus()
-                    << " and cannot be assigned.\n";
+                    << ConsoleTheme::FormatLiteral(" is currently ")
+                    << ConsoleTheme::Status(selectedLoad->GetStatus())
+                    << ConsoleTheme::FormatLiteral(" and cannot be assigned.\n");
 
                 break;
             }
@@ -788,9 +789,9 @@ void DispatchCenter::Run(
             if (primaryDriver == nullptr)
             {
                 std::cout
-                    << "Driver ID "
+                    << ConsoleTheme::FormatLiteral("Driver ID ")
                     << driverID
-                    << " does not exist.\n";
+                    << ConsoleTheme::FormatLiteral(" does not exist.\n");
 
                 break;
             }
@@ -799,11 +800,11 @@ void DispatchCenter::Run(
                 "Available")
             {
                 std::cout
-                    << "Driver ID "
+                    << ConsoleTheme::FormatLiteral("Driver ID ")
                     << driverID
-                    << " is currently "
-                    << primaryDriver->GetStatus()
-                    << " and cannot be scheduled.\n";
+                    << ConsoleTheme::FormatLiteral(" is currently ")
+                    << ConsoleTheme::Status(primaryDriver->GetStatus())
+                    << ConsoleTheme::FormatLiteral(" and cannot be scheduled.\n");
 
                 break;
             }
@@ -823,9 +824,9 @@ void DispatchCenter::Run(
             if (selectedTruck == nullptr)
             {
                 std::cout
-                    << "Truck #"
+                    << ConsoleTheme::FormatLiteral("Truck #")
                     << truckUnitNumber
-                    << " does not exist.\n";
+                    << ConsoleTheme::FormatLiteral(" does not exist.\n");
 
                 break;
             }
@@ -834,11 +835,11 @@ void DispatchCenter::Run(
                 "Available")
             {
                 std::cout
-                    << "Truck #"
+                    << ConsoleTheme::FormatLiteral("Truck #")
                     << truckUnitNumber
-                    << " is currently "
-                    << selectedTruck->GetStatus()
-                    << " and cannot be scheduled.\n";
+                    << ConsoleTheme::FormatLiteral(" is currently ")
+                    << ConsoleTheme::Status(selectedTruck->GetStatus())
+                    << ConsoleTheme::FormatLiteral(" and cannot be scheduled.\n");
 
                 break;
             }
@@ -889,20 +890,20 @@ void DispatchCenter::Run(
                 meetsDeadline)
             {
                 std::cout
-                    << "\nThe primary driver cannot "
-                    << "legally deliver this load "
-                    << "before the deadline.\n";
+                    << ConsoleTheme::FormatLiteral("\nThe primary driver cannot ")
+                    << ConsoleTheme::FormatLiteral("legally deliver this load ")
+                    << ConsoleTheme::FormatLiteral("before the deadline.\n");
 
                 if (!HasSecondAvailableDriver(
                     *company,
                     driverID))
                 {
                     std::cout
-                        << "No second available driver "
-                        << "exists for team operation.\n";
+                        << ConsoleTheme::FormatLiteral("No second available driver ")
+                        << ConsoleTheme::FormatLiteral("exists for team operation.\n");
 
                     std::cout
-                        << "Load cannot be dispatched.\n";
+                        << ConsoleTheme::FormatLiteral("Load cannot be dispatched.\n");
 
                     break;
                 }
@@ -915,14 +916,14 @@ void DispatchCenter::Run(
                 if (!tryTeam)
                 {
                     std::cout
-                        << "Dispatch cancelled. "
-                        << "No changes were made.\n";
+                        << ConsoleTheme::FormatLiteral("Dispatch cancelled. ")
+                        << ConsoleTheme::FormatLiteral("No changes were made.\n");
 
                     break;
                 }
 
                 std::cout
-                    << "\n========== AVAILABLE TEAM DRIVERS ==========\n";
+                    << ConsoleTheme::FormatLiteral("\n========== AVAILABLE TEAM DRIVERS ==========\n");
 
                 for (const Driver& driver :
                     company->GetDrivers())
@@ -944,21 +945,21 @@ void DispatchCenter::Run(
                             << std::setprecision(2);
 
                         std::cout
-                            << "Driver ID "
+                            << ConsoleTheme::FormatLiteral("Driver ID ")
                             << driver.GetDriverID()
-                            << " | "
+                            << ConsoleTheme::FormatLiteral(" | ")
                             << driver.GetName()
-                            << " | HOS: "
+                            << ConsoleTheme::FormatLiteral(" | HOS: ")
                             << driver.
                             GetProjectedDrivingHoursAt(
                                 candidateTime
                             )
-                            << " | Rest: "
+                            << ConsoleTheme::FormatLiteral(" | Rest: ")
                             << driver.
                             GetProjectedRestHoursAt(
                                 candidateTime
                             )
-                            << "\n";
+                            << ConsoleTheme::FormatLiteral("\n");
 
                         std::cout
                             << std::defaultfloat
@@ -981,9 +982,9 @@ void DispatchCenter::Run(
                 if (secondDriver == nullptr)
                 {
                     std::cout
-                        << "Driver ID "
+                        << ConsoleTheme::FormatLiteral("Driver ID ")
                         << secondDriverID
-                        << " does not exist.\n";
+                        << ConsoleTheme::FormatLiteral(" does not exist.\n");
 
                     break;
                 }
@@ -992,8 +993,8 @@ void DispatchCenter::Run(
                     driverID)
                 {
                     std::cout
-                        << "The team driver must "
-                        << "be a different driver.\n";
+                        << ConsoleTheme::FormatLiteral("The team driver must ")
+                        << ConsoleTheme::FormatLiteral("be a different driver.\n");
 
                     break;
                 }
@@ -1002,9 +1003,9 @@ void DispatchCenter::Run(
                     "Available")
                 {
                     std::cout
-                        << "Driver ID "
+                        << ConsoleTheme::FormatLiteral("Driver ID ")
                         << secondDriverID
-                        << " is not available.\n";
+                        << ConsoleTheme::FormatLiteral(" is not available.\n");
 
                     break;
                 }
@@ -1066,12 +1067,12 @@ void DispatchCenter::Run(
                     meetsDeadline)
                 {
                     std::cout
-                        << "\nEven a two-driver team "
-                        << "cannot legally meet "
-                        << "this delivery deadline.\n";
+                        << ConsoleTheme::FormatLiteral("\nEven a two-driver team ")
+                        << ConsoleTheme::FormatLiteral("cannot legally meet ")
+                        << ConsoleTheme::FormatLiteral("this delivery deadline.\n");
 
                     std::cout
-                        << "Load cannot be dispatched.\n";
+                        << ConsoleTheme::FormatLiteral("Load cannot be dispatched.\n");
 
                     break;
                 }
@@ -1115,123 +1116,123 @@ void DispatchCenter::Run(
                 << std::setprecision(2);
 
             std::cout
-                << "\n========== TRIP FUEL PLAN ==========\n";
+                << ConsoleTheme::FormatLiteral("\n========== TRIP FUEL PLAN ==========\n");
 
             std::cout
-                << "Current Fuel: "
+                << ConsoleTheme::FormatLiteral("Current Fuel: ")
                 << selectedTruck->
                 GetFuelGallons()
-                << " gallons\n";
+                << ConsoleTheme::FormatLiteral(" gallons\n");
 
             std::cout
-                << "Trip Fuel Required: "
+                << ConsoleTheme::FormatLiteral("Trip Fuel Required: ")
                 << tripFuelNeeded
-                << " gallons\n";
+                << ConsoleTheme::FormatLiteral(" gallons\n");
 
             std::cout
-                << "Required Delivery Reserve: "
+                << ConsoleTheme::FormatLiteral("Required Delivery Reserve: ")
                 << minimumArrivalFuel
-                << " gallons (50% tank)\n";
+                << ConsoleTheme::FormatLiteral(" gallons (50% tank)\n");
 
             std::cout
-                << "Estimated In-Trip Purchase: "
+                << ConsoleTheme::FormatLiteral("Estimated In-Trip Purchase: ")
                 << plannedFuelPurchase
-                << " gallons\n";
+                << ConsoleTheme::FormatLiteral(" gallons\n");
 
             std::cout
-                << "Estimated Fuel Cost: $"
+                << ConsoleTheme::FormatLiteral("Estimated Fuel Cost: $")
                 << plannedFuelCost
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "====================================\n";
+                << ConsoleTheme::FormatLiteral("====================================\n");
 
             std::cout
                 << std::defaultfloat
                 << std::setprecision(6);
 
             std::cout
-                << "\n========== DISPATCH CONFIRMATION ==========\n";
+                << ConsoleTheme::FormatLiteral("\n========== DISPATCH CONFIRMATION ==========\n");
 
             std::cout
-                << "Load: #"
+                << ConsoleTheme::FormatLiteral("Load: #")
                 << loadNumber
-                << " | "
+                << ConsoleTheme::FormatLiteral(" | ")
                 << selectedLoad->GetOrigin()
-                << " -> "
+                << ConsoleTheme::FormatLiteral(" -> ")
                 << selectedLoad->GetDestination()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Primary Driver: #"
+                << ConsoleTheme::FormatLiteral("Primary Driver: #")
                 << driverID
-                << " - "
+                << ConsoleTheme::FormatLiteral(" - ")
                 << primaryDriver->GetName()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             if (secondDriver != nullptr)
             {
                 std::cout
-                    << "Team Driver: #"
+                    << ConsoleTheme::FormatLiteral("Team Driver: #")
                     << secondDriverID
-                    << " - "
+                    << ConsoleTheme::FormatLiteral(" - ")
                     << secondDriver->GetName()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
 
             std::cout
-                << "Truck: #"
+                << ConsoleTheme::FormatLiteral("Truck: #")
                 << truckUnitNumber
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Scheduled Start: "
+                << ConsoleTheme::FormatLiteral("Scheduled Start: ")
                 << HOSManager::FormatDateTime(
                     dispatchStart
                 )
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Estimated Delivery: "
+                << ConsoleTheme::FormatLiteral("Estimated Delivery: ")
                 << HOSManager::FormatDateTime(
                     selectedPlan.estimatedDeliveryEpoch
                 )
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
                 << std::fixed
                 << std::setprecision(2);
 
             std::cout
-                << "Load Revenue: $"
+                << ConsoleTheme::FormatLiteral("Load Revenue: $")
                 << selectedLoad->GetPay()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Estimated In-Trip Fuel Cost: $"
+                << ConsoleTheme::FormatLiteral("Estimated In-Trip Fuel Cost: $")
                 << plannedFuelCost
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Driver Payroll on Completion: $"
+                << ConsoleTheme::FormatLiteral("Driver Payroll on Completion: $")
                 << estimatedPayroll
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             if (teamOperation)
             {
                 std::cout
-                    << "Team Pay Rate: $"
+                    << ConsoleTheme::FormatLiteral("Team Pay Rate: $")
                     << PayrollManager::
                     GetTeamRatePerMile()
-                    << " per mile per driver\n";
+                    << ConsoleTheme::FormatLiteral(" per mile per driver\n");
             }
             else
             {
                 std::cout
-                    << "Solo Pay Rate: $"
+                    << ConsoleTheme::FormatLiteral("Solo Pay Rate: $")
                     << PayrollManager::
                     GetSoloRatePerMile()
-                    << " per mile\n";
+                    << ConsoleTheme::FormatLiteral(" per mile\n");
             }
 
             std::cout
@@ -1239,14 +1240,14 @@ void DispatchCenter::Run(
                 << std::setprecision(6);
 
             std::cout
-                << "==========================================\n";
+                << ConsoleTheme::FormatLiteral("==========================================\n");
 
             if (!InputManager::ReadYesNo(
                 "Confirm dispatch? (Y/N): "))
             {
                 std::cout
-                    << "Dispatch cancelled. "
-                    << "No changes were made.\n";
+                    << ConsoleTheme::FormatLiteral("Dispatch cancelled. ")
+                    << ConsoleTheme::FormatLiteral("No changes were made.\n");
 
                 break;
             }
@@ -1263,59 +1264,59 @@ void DispatchCenter::Run(
             if (assigned)
             {
                 std::cout
-                    << "\nLoad #"
+                    << ConsoleTheme::FormatLiteral("\nLoad #")
                     << loadNumber
-                    << " assigned successfully.\n";
+                    << ConsoleTheme::FormatLiteral(" assigned successfully.\n");
 
                 std::cout
-                    << "Primary Driver: #"
+                    << ConsoleTheme::FormatLiteral("Primary Driver: #")
                     << driverID
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 if (secondDriverID > 0)
                 {
                     std::cout
-                        << "Team Driver: #"
+                        << ConsoleTheme::FormatLiteral("Team Driver: #")
                         << secondDriverID
-                        << "\n";
+                        << ConsoleTheme::FormatLiteral("\n");
 
                     std::cout
-                        << "Operation: TEAM\n";
+                        << ConsoleTheme::FormatLiteral("Operation: TEAM\n");
                 }
                 else
                 {
                     std::cout
-                        << "Operation: SOLO\n";
+                        << ConsoleTheme::FormatLiteral("Operation: SOLO\n");
                 }
 
                 std::cout
-                    << "Truck: #"
+                    << ConsoleTheme::FormatLiteral("Truck: #")
                     << truckUnitNumber
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 std::cout
-                    << "Scheduled Start: "
+                    << ConsoleTheme::FormatLiteral("Scheduled Start: ")
                     << HOSManager::
                     FormatDateTime(
                         dispatchStart
                     )
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 std::cout
-                    << "Estimated Delivery: "
+                    << ConsoleTheme::FormatLiteral("Estimated Delivery: ")
                     << HOSManager::
                     FormatDateTime(
                         selectedPlan.
                         estimatedDeliveryEpoch
                     )
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
             else
             {
                 std::cout
-                    << "\nUnable to assign load. "
-                    << "The HOS, deadline, or "
-                    << "resource state is no longer valid.\n";
+                    << ConsoleTheme::FormatLiteral("\nUnable to assign load. ")
+                    << ConsoleTheme::FormatLiteral("The HOS, deadline, or ")
+                    << ConsoleTheme::FormatLiteral("resource state is no longer valid.\n");
             }
 
             break;
@@ -1327,8 +1328,8 @@ void DispatchCenter::Run(
                 HasCompany())
             {
                 std::cout
-                    << "\nDispatch Center is not "
-                    << "connected to a company.\n";
+                    << ConsoleTheme::FormatLiteral("\nDispatch Center is not ")
+                    << ConsoleTheme::FormatLiteral("connected to a company.\n");
 
                 break;
             }
@@ -1347,8 +1348,8 @@ void DispatchCenter::Run(
                 HasCompany())
             {
                 std::cout
-                    << "\nDispatch Center is not "
-                    << "connected to a company.\n";
+                    << ConsoleTheme::FormatLiteral("\nDispatch Center is not ")
+                    << ConsoleTheme::FormatLiteral("connected to a company.\n");
 
                 break;
             }
@@ -1380,8 +1381,8 @@ void DispatchCenter::Run(
             if (!hasAssignedLoad)
             {
                 std::cout
-                    << "\nThere are no assigned "
-                    << "loads to complete.\n";
+                    << ConsoleTheme::FormatLiteral("\nThere are no assigned ")
+                    << ConsoleTheme::FormatLiteral("loads to complete.\n");
 
                 break;
             }
@@ -1404,7 +1405,7 @@ void DispatchCenter::Run(
                 "Assigned")
             {
                 std::cout
-                    << "That load is not currently assigned.\n";
+                    << ConsoleTheme::FormatLiteral("That load is not currently assigned.\n");
 
                 break;
             }
@@ -1473,122 +1474,122 @@ void DispatchCenter::Run(
                 secondDriverPay;
 
             std::cout
-                << "\n========== LOAD COMPLETION CONFIRMATION ==========\n";
+                << ConsoleTheme::FormatLiteral("\n========== LOAD COMPLETION CONFIRMATION ==========\n");
 
             std::cout
-                << "Load: #"
+                << ConsoleTheme::FormatLiteral("Load: #")
                 << loadNumber
-                << " | "
+                << ConsoleTheme::FormatLiteral(" | ")
                 << selectedLoad->GetOrigin()
-                << " -> "
+                << ConsoleTheme::FormatLiteral(" -> ")
                 << selectedLoad->GetDestination()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Truck: #"
+                << ConsoleTheme::FormatLiteral("Truck: #")
                 << truckUnitNumber
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Primary Driver: #"
+                << ConsoleTheme::FormatLiteral("Primary Driver: #")
                 << primaryDriverID
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             if (secondDriverID > 0)
             {
                 std::cout
-                    << "Team Driver: #"
+                    << ConsoleTheme::FormatLiteral("Team Driver: #")
                     << secondDriverID
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
 
             std::cout
-                << "Simulated Delivery: "
+                << ConsoleTheme::FormatLiteral("Simulated Delivery: ")
                 << HOSManager::FormatDateTime(
                     selectedLoad->
                     GetEstimatedDeliveryEpoch()
                 )
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
                 << std::fixed
                 << std::setprecision(2);
 
             std::cout
-                << "Load Revenue: $"
+                << ConsoleTheme::FormatLiteral("Load Revenue: $")
                 << selectedLoad->GetPay()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Trip Fuel Used: "
+                << ConsoleTheme::FormatLiteral("Trip Fuel Used: ")
                 << tripFuelUsed
-                << " gallons\n";
+                << ConsoleTheme::FormatLiteral(" gallons\n");
 
             std::cout
-                << "In-Trip Fuel Purchase: "
+                << ConsoleTheme::FormatLiteral("In-Trip Fuel Purchase: ")
                 << tripFuelPurchased
-                << " gallons\n";
+                << ConsoleTheme::FormatLiteral(" gallons\n");
 
             std::cout
-                << "In-Trip Fuel Cost: $"
+                << ConsoleTheme::FormatLiteral("In-Trip Fuel Cost: $")
                 << tripFuelCost
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             if (teamOperation)
             {
                 std::cout
-                    << "Team Pay Rate: $"
+                    << ConsoleTheme::FormatLiteral("Team Pay Rate: $")
                     << PayrollManager::
                     GetTeamRatePerMile()
-                    << " per mile per driver\n";
+                    << ConsoleTheme::FormatLiteral(" per mile per driver\n");
 
                 std::cout
-                    << "Primary Driver Payroll: $"
+                    << ConsoleTheme::FormatLiteral("Primary Driver Payroll: $")
                     << primaryDriverPay
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 std::cout
-                    << "Team Driver Payroll: $"
+                    << ConsoleTheme::FormatLiteral("Team Driver Payroll: $")
                     << secondDriverPay
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
             else
             {
                 std::cout
-                    << "Solo Pay Rate: $"
+                    << ConsoleTheme::FormatLiteral("Solo Pay Rate: $")
                     << PayrollManager::
                     GetSoloRatePerMile()
-                    << " per mile\n";
+                    << ConsoleTheme::FormatLiteral(" per mile\n");
 
                 std::cout
-                    << "Primary Driver Payroll: $"
+                    << ConsoleTheme::FormatLiteral("Primary Driver Payroll: $")
                     << primaryDriverPay
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
 
             std::cout
-                << "Total Driver Payroll Expense: $"
+                << ConsoleTheme::FormatLiteral("Total Driver Payroll Expense: $")
                 << totalPayroll
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
                 << std::defaultfloat
                 << std::setprecision(6);
 
             std::cout
-                << "Completing this load will update HOS, fuel, "
-                << "mileage, revenue, driver payroll, truck location, "
-                << "and may trigger a post-trip breakdown.\n";
+                << ConsoleTheme::FormatLiteral("Completing this load will update HOS, fuel, ")
+                << ConsoleTheme::FormatLiteral("mileage, revenue, driver payroll, truck location, ")
+                << ConsoleTheme::FormatLiteral("and may trigger a post-trip breakdown.\n");
 
             std::cout
-                << "==================================================\n";
+                << ConsoleTheme::FormatLiteral("==================================================\n");
 
             if (!InputManager::ReadYesNo(
                 "Confirm load completion? (Y/N): "))
             {
                 std::cout
-                    << "Load completion cancelled. "
-                    << "No changes were made.\n";
+                    << ConsoleTheme::FormatLiteral("Load completion cancelled. ")
+                    << ConsoleTheme::FormatLiteral("No changes were made.\n");
 
                 break;
             }
@@ -1632,20 +1633,20 @@ void DispatchCenter::Run(
                     );
 
                 std::cout
-                    << "\nLoad #"
+                    << ConsoleTheme::FormatLiteral("\nLoad #")
                     << loadNumber
-                    << " completed successfully.\n";
+                    << ConsoleTheme::FormatLiteral(" completed successfully.\n");
 
                 if (completedLoad != nullptr)
                 {
                     std::cout
-                        << "Simulated Delivery: "
+                        << ConsoleTheme::FormatLiteral("Simulated Delivery: ")
                         << HOSManager::
                         FormatDateTime(
                             completedLoad->
                             GetEstimatedDeliveryEpoch()
                         )
-                        << "\n";
+                        << ConsoleTheme::FormatLiteral("\n");
                 }
 
                 std::cout
@@ -1655,29 +1656,29 @@ void DispatchCenter::Run(
                 if (primaryDriver != nullptr)
                 {
                     std::cout
-                        << "Primary Driver HOS Remaining: "
+                        << ConsoleTheme::FormatLiteral("Primary Driver HOS Remaining: ")
                         << primaryDriver->
                         GetDrivingHoursRemaining()
-                        << " hours.\n";
+                        << ConsoleTheme::FormatLiteral(" hours.\n");
 
                     std::cout
-                        << "Primary Driver Rest Progress: "
+                        << ConsoleTheme::FormatLiteral("Primary Driver Rest Progress: ")
                         << primaryDriver->
                         GetRestHoursAccumulated()
-                        << " / 10.00 hours.\n";
+                        << ConsoleTheme::FormatLiteral(" / 10.00 hours.\n");
 
                     std::cout
                         << std::defaultfloat
                         << std::setprecision(6);
 
                     std::cout
-                        << "Primary Driver Scheduled Available: "
+                        << ConsoleTheme::FormatLiteral("Primary Driver Scheduled Available: ")
                         << HOSManager::
                         FormatDateTime(
                             primaryDriver->
                             GetAvailableAtEpoch()
                         )
-                        << "\n";
+                        << ConsoleTheme::FormatLiteral("\n");
 
                     std::cout
                         << std::fixed
@@ -1687,29 +1688,29 @@ void DispatchCenter::Run(
                 if (secondDriver != nullptr)
                 {
                     std::cout
-                        << "Team Driver HOS Remaining: "
+                        << ConsoleTheme::FormatLiteral("Team Driver HOS Remaining: ")
                         << secondDriver->
                         GetDrivingHoursRemaining()
-                        << " hours.\n";
+                        << ConsoleTheme::FormatLiteral(" hours.\n");
 
                     std::cout
-                        << "Team Driver Rest Progress: "
+                        << ConsoleTheme::FormatLiteral("Team Driver Rest Progress: ")
                         << secondDriver->
                         GetRestHoursAccumulated()
-                        << " / 10.00 hours.\n";
+                        << ConsoleTheme::FormatLiteral(" / 10.00 hours.\n");
 
                     std::cout
                         << std::defaultfloat
                         << std::setprecision(6);
 
                     std::cout
-                        << "Team Driver Scheduled Available: "
+                        << ConsoleTheme::FormatLiteral("Team Driver Scheduled Available: ")
                         << HOSManager::
                         FormatDateTime(
                             secondDriver->
                             GetAvailableAtEpoch()
                         )
-                        << "\n";
+                        << ConsoleTheme::FormatLiteral("\n");
 
                     std::cout
                         << std::fixed
@@ -1717,52 +1718,52 @@ void DispatchCenter::Run(
                 }
 
                 std::cout
-                    << "Trip Fuel Used: "
+                    << ConsoleTheme::FormatLiteral("Trip Fuel Used: ")
                     << tripFuelUsed
-                    << " gallons.\n";
+                    << ConsoleTheme::FormatLiteral(" gallons.\n");
 
                 std::cout
-                    << "In-Trip Fuel Purchased: "
+                    << ConsoleTheme::FormatLiteral("In-Trip Fuel Purchased: ")
                     << tripFuelPurchased
-                    << " gallons.\n";
+                    << ConsoleTheme::FormatLiteral(" gallons.\n");
 
                 std::cout
-                    << "In-Trip Fuel Expense: $"
+                    << ConsoleTheme::FormatLiteral("In-Trip Fuel Expense: $")
                     << tripFuelCost
-                    << ".\n";
+                    << ConsoleTheme::FormatLiteral(".\n");
 
                 if (completedTruck != nullptr)
                 {
                     std::cout
-                        << "Fuel at Delivery: "
+                        << ConsoleTheme::FormatLiteral("Fuel at Delivery: ")
                         << completedTruck->
                         GetFuelGallons()
-                        << " / "
+                        << ConsoleTheme::FormatLiteral(" / ")
                         << completedTruck->
                         GetFuelTankCapacity()
-                        << " gallons ("
+                        << ConsoleTheme::FormatLiteral(" gallons (")
                         << completedTruck->
                         GetFuelPercentage()
-                        << "%).\n";
+                        << ConsoleTheme::FormatLiteral("%).\n");
 
                     std::cout
-                        << "Truck Mileage: "
+                        << ConsoleTheme::FormatLiteral("Truck Mileage: ")
                         << completedTruck->
                         GetMileage()
-                        << " miles.\n";
+                        << ConsoleTheme::FormatLiteral(" miles.\n");
 
                     std::cout
                         << std::defaultfloat
                         << std::setprecision(6);
 
                     std::cout
-                        << "Truck Scheduled Available: "
+                        << ConsoleTheme::FormatLiteral("Truck Scheduled Available: ")
                         << HOSManager::
                         FormatDateTime(
                             completedTruck->
                             GetAvailableAtEpoch()
                         )
-                        << "\n";
+                        << ConsoleTheme::FormatLiteral("\n");
 
                     std::cout
                         << std::fixed
@@ -1772,42 +1773,42 @@ void DispatchCenter::Run(
                 if (teamOperation)
                 {
                     std::cout
-                        << "Primary Driver Payroll: $"
+                        << ConsoleTheme::FormatLiteral("Primary Driver Payroll: $")
                         << primaryDriverPay
-                        << ".\n";
+                        << ConsoleTheme::FormatLiteral(".\n");
 
                     std::cout
-                        << "Team Driver Payroll: $"
+                        << ConsoleTheme::FormatLiteral("Team Driver Payroll: $")
                         << secondDriverPay
-                        << ".\n";
+                        << ConsoleTheme::FormatLiteral(".\n");
                 }
                 else
                 {
                     std::cout
-                        << "Driver Payroll: $"
+                        << ConsoleTheme::FormatLiteral("Driver Payroll: $")
                         << primaryDriverPay
-                        << ".\n";
+                        << ConsoleTheme::FormatLiteral(".\n");
                 }
 
                 std::cout
-                    << "Total Driver Payroll Expense: $"
+                    << ConsoleTheme::FormatLiteral("Total Driver Payroll Expense: $")
                     << totalPayroll
-                    << ".\n";
+                    << ConsoleTheme::FormatLiteral(".\n");
 
                 std::cout
-                    << "Company Revenue: $"
+                    << ConsoleTheme::FormatLiteral("Company Revenue: $")
                     << company->GetRevenue()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 std::cout
-                    << "Company Expenses: $"
+                    << ConsoleTheme::FormatLiteral("Company Expenses: $")
                     << company->GetExpenses()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 std::cout
-                    << "Company Balance: $"
+                    << ConsoleTheme::FormatLiteral("Company Balance: $")
                     << company->GetBalance()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 std::cout
                     << std::defaultfloat
@@ -1816,9 +1817,9 @@ void DispatchCenter::Run(
             else
             {
                 std::cout
-                    << "\nUnable to complete load. "
-                    << "Check the dispatch state "
-                    << "and try again.\n";
+                    << ConsoleTheme::FormatLiteral("\nUnable to complete load. ")
+                    << ConsoleTheme::FormatLiteral("Check the dispatch state ")
+                    << ConsoleTheme::FormatLiteral("and try again.\n");
             }
 
             break;
@@ -1829,8 +1830,8 @@ void DispatchCenter::Run(
 
         default:
             std::cout
-                << "\nInvalid selection. "
-                << "Please choose 0, 1, 2, or 3.\n";
+                << ConsoleTheme::FormatLiteral("\nInvalid selection. ")
+                << ConsoleTheme::FormatLiteral("Please choose 0, 1, 2, or 3.\n");
 
             break;
         }

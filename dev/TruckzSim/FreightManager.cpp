@@ -1,3 +1,4 @@
+#include "ConsoleTheme.h"
 #include "FreightManager.h"
 
 #include <iomanip>
@@ -9,12 +10,12 @@
 
 void FreightManager::ShowMenu()
 {
-    std::cout << "\n";
-    std::cout << "========== FREIGHT MARKET ==========\n";
-    std::cout << "1. Add Load\n";
-    std::cout << "2. View Loads\n";
-    std::cout << "0. Return to Main Menu\n";
-    std::cout << "====================================\n";
+    std::cout << ConsoleTheme::FormatLiteral("\n");
+    std::cout << ConsoleTheme::FormatLiteral("========== FREIGHT MARKET ==========\n");
+    std::cout << ConsoleTheme::FormatLiteral("1. Add Load\n");
+    std::cout << ConsoleTheme::FormatLiteral("2. View Loads\n");
+    std::cout << ConsoleTheme::FormatLiteral("0. Return to Main Menu\n");
+    std::cout << ConsoleTheme::FormatLiteral("====================================\n");
 }
 
 void FreightManager::AddLoad(
@@ -23,7 +24,7 @@ void FreightManager::AddLoad(
     Load newLoad;
 
     std::cout
-        << "\n========== ADD LOAD ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== ADD LOAD ==========\n");
 
     int loadNumber = 0;
 
@@ -42,10 +43,10 @@ void FreightManager::AddLoad(
         }
 
         std::cout
-            << "Load #"
+            << ConsoleTheme::FormatLiteral("Load #")
             << loadNumber
-            << " already exists. "
-            << "Please enter a unique load number.\n";
+            << ConsoleTheme::FormatLiteral(" already exists. ")
+            << ConsoleTheme::FormatLiteral("Please enter a unique load number.\n");
     }
 
     std::string origin =
@@ -76,25 +77,25 @@ void FreightManager::AddLoad(
     while (true)
     {
         std::cout
-            << "\nEnter the delivery deadline using local time.\n";
+            << ConsoleTheme::FormatLiteral("\nEnter the delivery deadline using local time.\n");
 
         std::cout
-            << "Preferred Date Format: "
+            << ConsoleTheme::FormatLiteral("Preferred Date Format: ")
             << HOSManager::GetDateFormat()
-            << " | Example: "
+            << ConsoleTheme::FormatLiteral(" | Example: ")
             << HOSManager::GetDateInputExample()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Preferred Time Format: "
+            << ConsoleTheme::FormatLiteral("Preferred Time Format: ")
             << HOSManager::GetTimeFormat()
-            << " | Example: "
+            << ConsoleTheme::FormatLiteral(" | Example: ")
             << HOSManager::GetTimeInputExample()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Separators are optional, so entries like "
-            << "10222026 and 830 PM also work.\n";
+            << ConsoleTheme::FormatLiteral("Separators are optional, so entries like ")
+            << ConsoleTheme::FormatLiteral("10222026 and 830 PM also work.\n");
 
         std::string dueDate =
             InputManager::ReadRequiredText(
@@ -114,7 +115,7 @@ void FreightManager::AddLoad(
             deadlineEpoch))
         {
             std::cout
-                << "Invalid date or time. Please try again.\n";
+                << ConsoleTheme::FormatLiteral("Invalid date or time. Please try again.\n");
 
             continue;
         }
@@ -123,7 +124,7 @@ void FreightManager::AddLoad(
             HOSManager::GetCurrentEpoch())
         {
             std::cout
-                << "The delivery deadline must be in the future.\n";
+                << ConsoleTheme::FormatLiteral("The delivery deadline must be in the future.\n");
 
             continue;
         }
@@ -164,16 +165,16 @@ void FreightManager::AddLoad(
     );
 
     std::cout
-        << "\nLoad #"
+        << ConsoleTheme::FormatLiteral("\nLoad #")
         << loadNumber
-        << " added successfully.\n";
+        << ConsoleTheme::FormatLiteral(" added successfully.\n");
 
     std::cout
-        << "Delivery Deadline: "
+        << ConsoleTheme::FormatLiteral("Delivery Deadline: ")
         << HOSManager::FormatDateTime(
             deadlineEpoch
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 }
 
 void FreightManager::DisplayLoads(
@@ -183,12 +184,12 @@ void FreightManager::DisplayLoads(
         company.GetLoads();
 
     std::cout
-        << "\n========== COMPANY LOADS ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== COMPANY LOADS ==========\n");
 
     if (loads.empty())
     {
         std::cout
-            << "No loads have been added yet.\n";
+            << ConsoleTheme::FormatLiteral("No loads have been added yet.\n");
     }
     else
     {
@@ -196,99 +197,99 @@ void FreightManager::DisplayLoads(
             loads)
         {
             std::cout
-                << "\nLoad #"
+                << ConsoleTheme::FormatLiteral("\nLoad #")
                 << load.GetLoadNumber()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Origin: "
+                << ConsoleTheme::FormatLiteral("Origin: ")
                 << load.GetOrigin()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Destination: "
+                << ConsoleTheme::FormatLiteral("Destination: ")
                 << load.GetDestination()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Distance: "
+                << ConsoleTheme::FormatLiteral("Distance: ")
                 << load.GetDistanceMiles()
-                << " miles\n";
+                << ConsoleTheme::FormatLiteral(" miles\n");
 
             std::cout
                 << std::fixed
                 << std::setprecision(2);
 
             std::cout
-                << "Pay: $"
+                << ConsoleTheme::FormatLiteral("Pay: $")
                 << load.GetPay()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
                 << std::defaultfloat
                 << std::setprecision(6);
 
             std::cout
-                << "Deadline: "
+                << ConsoleTheme::FormatLiteral("Deadline: ")
                 << HOSManager::FormatDateTime(
                     load.GetDeliveryDeadlineEpoch()
                 )
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Status: "
-                << load.GetStatus()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("Status: ")
+                << ConsoleTheme::Status(load.GetStatus())
+                << ConsoleTheme::FormatLiteral("\n");
 
             if (load.GetAssignedDriverID() > 0)
             {
                 std::cout
-                    << "Primary Driver ID: "
+                    << ConsoleTheme::FormatLiteral("Primary Driver ID: ")
                     << load.GetAssignedDriverID()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
 
             if (load.GetAssignedSecondDriverID() > 0)
             {
                 std::cout
-                    << "Team Driver ID: "
+                    << ConsoleTheme::FormatLiteral("Team Driver ID: ")
                     << load.GetAssignedSecondDriverID()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
 
             if (load.GetAssignedTruckUnitNumber() > 0)
             {
                 std::cout
-                    << "Assigned Truck: "
+                    << ConsoleTheme::FormatLiteral("Assigned Truck: ")
                     << load.GetAssignedTruckUnitNumber()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
 
             if (load.GetEstimatedDeliveryEpoch() > 0)
             {
                 std::cout
-                    << "Planned Delivery: "
+                    << ConsoleTheme::FormatLiteral("Planned Delivery: ")
                     << HOSManager::FormatDateTime(
                         load.GetEstimatedDeliveryEpoch()
                     )
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
 
             if (load.IsTeamLoad())
             {
                 std::cout
-                    << "Operation: TEAM\n";
+                    << ConsoleTheme::FormatLiteral("Operation: TEAM\n");
             }
             else if (load.GetAssignedDriverID() > 0)
             {
                 std::cout
-                    << "Operation: SOLO\n";
+                    << ConsoleTheme::FormatLiteral("Operation: SOLO\n");
             }
         }
     }
 
     std::cout
-        << "=====================================\n";
+        << ConsoleTheme::FormatLiteral("=====================================\n");
 }
 
 void FreightManager::Run(

@@ -1,3 +1,4 @@
+#include "ConsoleTheme.h"
 #include "MaintenanceManager.h"
 
 #include <algorithm>
@@ -15,13 +16,13 @@ namespace
 
 void MaintenanceManager::ShowMenu()
 {
-    std::cout << "\n";
-    std::cout << "========== MAINTENANCE CENTER ==========\n";
-    std::cout << "1. View Maintenance Status\n";
-    std::cout << "2. Send Truck to Maintenance\n";
-    std::cout << "3. Complete Maintenance\n";
-    std::cout << "0. Return to Main Menu\n";
-    std::cout << "========================================\n";
+    std::cout << ConsoleTheme::FormatLiteral("\n");
+    std::cout << ConsoleTheme::FormatLiteral("========== MAINTENANCE CENTER ==========\n");
+    std::cout << ConsoleTheme::FormatLiteral("1. View Maintenance Status\n");
+    std::cout << ConsoleTheme::FormatLiteral("2. Send Truck to Maintenance\n");
+    std::cout << ConsoleTheme::FormatLiteral("3. Complete Maintenance\n");
+    std::cout << ConsoleTheme::FormatLiteral("0. Return to Main Menu\n");
+    std::cout << ConsoleTheme::FormatLiteral("========================================\n");
 }
 
 Truck* MaintenanceManager::FindTruck(
@@ -44,64 +45,64 @@ void MaintenanceManager::DisplayMaintenanceStatus(
 {
     const std::vector<Truck>& trucks = company.GetTrucks();
 
-    std::cout << "\n========== FLEET MAINTENANCE STATUS ==========\n";
+    std::cout << ConsoleTheme::FormatLiteral("\n========== FLEET MAINTENANCE STATUS ==========\n");
 
     if (trucks.empty())
     {
-        std::cout << "No trucks have been added yet.\n";
-        std::cout << "==============================================\n";
+        std::cout << ConsoleTheme::FormatLiteral("No trucks have been added yet.\n");
+        std::cout << ConsoleTheme::FormatLiteral("==============================================\n");
         return;
     }
 
     for (const Truck& truck : trucks)
     {
-        std::cout << "\nTruck #" << truck.GetUnitNumber() << "\n";
-        std::cout << "Mileage: " << truck.GetMileage() << "\n";
-        std::cout << "Truck Status: " << truck.GetStatus() << "\n";
-        std::cout << "Last Service Mileage: "
-            << truck.GetLastServiceMileage() << "\n";
-        std::cout << "Next Service Due: "
-            << truck.GetNextServiceMileage() << " miles\n";
+        std::cout << ConsoleTheme::FormatLiteral("\nTruck #") << truck.GetUnitNumber() << ConsoleTheme::FormatLiteral("\n");
+        std::cout << ConsoleTheme::FormatLiteral("Mileage: ") << truck.GetMileage() << ConsoleTheme::FormatLiteral("\n");
+        std::cout << ConsoleTheme::FormatLiteral("Truck Status: ") << ConsoleTheme::Status(truck.GetStatus()) << ConsoleTheme::FormatLiteral("\n");
+        std::cout << ConsoleTheme::FormatLiteral("Last Service Mileage: ")
+            << truck.GetLastServiceMileage() << ConsoleTheme::FormatLiteral("\n");
+        std::cout << ConsoleTheme::FormatLiteral("Next Service Due: ")
+            << truck.GetNextServiceMileage() << ConsoleTheme::FormatLiteral(" miles\n");
 
         if (truck.GetAvailableAtEpoch() >
             HOSManager::GetCurrentEpoch())
         {
-            std::cout << "Scheduled Available: "
+            std::cout << ConsoleTheme::FormatLiteral("Scheduled Available: ")
                 << HOSManager::FormatDateTime(
                     truck.GetAvailableAtEpoch()
                 )
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
         }
         else
         {
-            std::cout << "Scheduled Available: Now\n";
+            std::cout << ConsoleTheme::FormatLiteral("Scheduled Available: Now\n");
         }
 
         if (truck.GetStatus() == "Maintenance")
         {
-            std::cout << "Maintenance Status: IN MAINTENANCE\n";
+            std::cout << ConsoleTheme::FormatLiteral("Maintenance Status: IN MAINTENANCE\n");
         }
         else if (truck.IsMaintenanceDue())
         {
-            std::cout << "Maintenance Status: SERVICE DUE\n";
+            std::cout << ConsoleTheme::FormatLiteral("Maintenance Status: SERVICE DUE\n");
         }
         else
         {
-            std::cout << "Maintenance Status: OK\n";
-            std::cout << "Miles Until Service: "
-                << truck.GetMilesUntilService() << "\n";
+            std::cout << ConsoleTheme::FormatLiteral("Maintenance Status: OK\n");
+            std::cout << ConsoleTheme::FormatLiteral("Miles Until Service: ")
+                << truck.GetMilesUntilService() << ConsoleTheme::FormatLiteral("\n");
         }
     }
 
-    std::cout << "\nStandard Service Cost: $"
+    std::cout << ConsoleTheme::FormatLiteral("\nStandard Service Cost: $")
         << std::fixed
         << std::setprecision(2)
         << SERVICE_COST
         << std::defaultfloat
         << std::setprecision(6)
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
-    std::cout << "==============================================\n";
+    std::cout << ConsoleTheme::FormatLiteral("==============================================\n");
 }
 
 void MaintenanceManager::SendTruckToMaintenance(
@@ -109,7 +110,7 @@ void MaintenanceManager::SendTruckToMaintenance(
 {
     if (company.GetTrucks().empty())
     {
-        std::cout << "\nNo trucks are available for maintenance.\n";
+        std::cout << ConsoleTheme::FormatLiteral("\nNo trucks are available for maintenance.\n");
         return;
     }
 
@@ -124,22 +125,22 @@ void MaintenanceManager::SendTruckToMaintenance(
 
     if (selectedTruck == nullptr)
     {
-        std::cout << "Truck #" << unitNumber << " does not exist.\n";
+        std::cout << ConsoleTheme::FormatLiteral("Truck #") << unitNumber << ConsoleTheme::FormatLiteral(" does not exist.\n");
         return;
     }
 
     if (selectedTruck->GetStatus() == "Maintenance")
     {
-        std::cout << "Truck #" << unitNumber
-            << " is already in maintenance.\n";
+        std::cout << ConsoleTheme::FormatLiteral("Truck #") << unitNumber
+            << ConsoleTheme::FormatLiteral(" is already in maintenance.\n");
         return;
     }
 
     if (selectedTruck->GetStatus() != "Available")
     {
-        std::cout << "Truck #" << unitNumber
-            << " is currently " << selectedTruck->GetStatus()
-            << " and cannot be sent to maintenance.\n";
+        std::cout << ConsoleTheme::FormatLiteral("Truck #") << unitNumber
+            << ConsoleTheme::FormatLiteral(" is currently ") << ConsoleTheme::Status(selectedTruck->GetStatus())
+            << ConsoleTheme::FormatLiteral(" and cannot be sent to maintenance.\n");
         return;
     }
 
@@ -150,73 +151,73 @@ void MaintenanceManager::SendTruckToMaintenance(
         );
 
     std::cout
-        << "\n========== MAINTENANCE CONFIRMATION ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== MAINTENANCE CONFIRMATION ==========\n");
 
     std::cout
-        << "Truck: #"
+        << ConsoleTheme::FormatLiteral("Truck: #")
         << unitNumber
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Current Mileage: "
+        << ConsoleTheme::FormatLiteral("Current Mileage: ")
         << selectedTruck->GetMileage()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Service Status: "
+        << ConsoleTheme::FormatLiteral("Service Status: ")
         << (selectedTruck->IsMaintenanceDue()
             ? "SERVICE DUE"
             : "PREVENTIVE / EARLY")
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Maintenance Scheduled For: "
+        << ConsoleTheme::FormatLiteral("Maintenance Scheduled For: ")
         << HOSManager::FormatDateTime(
             maintenanceStart
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "The truck will become unavailable for dispatch "
-        << "until maintenance is completed.\n";
+        << ConsoleTheme::FormatLiteral("The truck will become unavailable for dispatch ")
+        << ConsoleTheme::FormatLiteral("until maintenance is completed.\n");
 
     std::cout
-        << "==============================================\n";
+        << ConsoleTheme::FormatLiteral("==============================================\n");
 
     if (!InputManager::ReadYesNo(
         "Send this truck to maintenance? (Y/N): "))
     {
         std::cout
-            << "Maintenance request cancelled. "
-            << "Truck status was not changed.\n";
+            << ConsoleTheme::FormatLiteral("Maintenance request cancelled. ")
+            << ConsoleTheme::FormatLiteral("Truck status was not changed.\n");
 
         return;
     }
 
     selectedTruck->SetStatus("Maintenance");
 
-    std::cout << "\nTruck #" << unitNumber
-        << " has been sent to maintenance.\n";
+    std::cout << ConsoleTheme::FormatLiteral("\nTruck #") << unitNumber
+        << ConsoleTheme::FormatLiteral(" has been sent to maintenance.\n");
 
-    std::cout << "Maintenance Scheduled For: "
+    std::cout << ConsoleTheme::FormatLiteral("Maintenance Scheduled For: ")
         << HOSManager::FormatDateTime(
             maintenanceStart
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "The truck is unavailable for dispatch "
-        << "until service is completed.\n";
+        << ConsoleTheme::FormatLiteral("The truck is unavailable for dispatch ")
+        << ConsoleTheme::FormatLiteral("until service is completed.\n");
 
     if (selectedTruck->IsMaintenanceDue())
     {
-        std::cout << "This truck was due for scheduled service.\n";
+        std::cout << ConsoleTheme::FormatLiteral("This truck was due for scheduled service.\n");
     }
     else
     {
         std::cout
-            << "Preventive maintenance started before "
-            << "the service deadline.\n";
+            << ConsoleTheme::FormatLiteral("Preventive maintenance started before ")
+            << ConsoleTheme::FormatLiteral("the service deadline.\n");
     }
 }
 
@@ -225,7 +226,7 @@ void MaintenanceManager::CompleteTruckMaintenance(
 {
     bool foundTruckInMaintenance = false;
 
-    std::cout << "\n========== TRUCKS IN MAINTENANCE ==========\n";
+    std::cout << ConsoleTheme::FormatLiteral("\n========== TRUCKS IN MAINTENANCE ==========\n");
 
     for (const Truck& truck : company.GetTrucks())
     {
@@ -233,20 +234,20 @@ void MaintenanceManager::CompleteTruckMaintenance(
         {
             foundTruckInMaintenance = true;
 
-            std::cout << "Truck #" << truck.GetUnitNumber()
-                << " | Mileage: " << truck.GetMileage()
-                << "\n";
+            std::cout << ConsoleTheme::FormatLiteral("Truck #") << truck.GetUnitNumber()
+                << ConsoleTheme::FormatLiteral(" | Mileage: ") << truck.GetMileage()
+                << ConsoleTheme::FormatLiteral("\n");
         }
     }
 
     if (!foundTruckInMaintenance)
     {
-        std::cout << "No trucks are currently in maintenance.\n";
-        std::cout << "===========================================\n";
+        std::cout << ConsoleTheme::FormatLiteral("No trucks are currently in maintenance.\n");
+        std::cout << ConsoleTheme::FormatLiteral("===========================================\n");
         return;
     }
 
-    std::cout << "===========================================\n";
+    std::cout << ConsoleTheme::FormatLiteral("===========================================\n");
 
     int unitNumber = InputManager::ReadPositiveInt(
         "\nEnter the truck unit number to complete maintenance: ",
@@ -257,14 +258,14 @@ void MaintenanceManager::CompleteTruckMaintenance(
 
     if (selectedTruck == nullptr)
     {
-        std::cout << "Truck #" << unitNumber << " does not exist.\n";
+        std::cout << ConsoleTheme::FormatLiteral("Truck #") << unitNumber << ConsoleTheme::FormatLiteral(" does not exist.\n");
         return;
     }
 
     if (selectedTruck->GetStatus() != "Maintenance")
     {
-        std::cout << "Truck #" << unitNumber
-            << " is not currently in maintenance.\n";
+        std::cout << ConsoleTheme::FormatLiteral("Truck #") << unitNumber
+            << ConsoleTheme::FormatLiteral(" is not currently in maintenance.\n");
         return;
     }
 
@@ -278,52 +279,52 @@ void MaintenanceManager::CompleteTruckMaintenance(
         );
 
     std::cout
-        << "\n========== SERVICE COMPLETION CONFIRMATION ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== SERVICE COMPLETION CONFIRMATION ==========\n");
 
     std::cout
-        << "Truck: #"
+        << ConsoleTheme::FormatLiteral("Truck: #")
         << unitNumber
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Service Time: "
+        << ConsoleTheme::FormatLiteral("Service Time: ")
         << HOSManager::FormatDateTime(
             maintenanceTime
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Service Cost: $"
+        << ConsoleTheme::FormatLiteral("Service Cost: $")
         << SERVICE_COST
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Company Balance Before Service: $"
+        << ConsoleTheme::FormatLiteral("Company Balance Before Service: $")
         << company.GetBalance()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Projected Balance After Service: $"
+        << ConsoleTheme::FormatLiteral("Projected Balance After Service: $")
         << (company.GetBalance() - SERVICE_COST)
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
         << std::defaultfloat
         << std::setprecision(6);
 
     std::cout
-        << "====================================================\n";
+        << ConsoleTheme::FormatLiteral("====================================================\n");
 
     if (!InputManager::ReadYesNo(
         "Complete maintenance and record the service expense? (Y/N): "))
     {
         std::cout
-            << "Maintenance completion cancelled. "
-            << "The truck remains in maintenance and no expense was recorded.\n";
+            << ConsoleTheme::FormatLiteral("Maintenance completion cancelled. ")
+            << ConsoleTheme::FormatLiteral("The truck remains in maintenance and no expense was recorded.\n");
 
         return;
     }
@@ -353,29 +354,29 @@ void MaintenanceManager::CompleteTruckMaintenance(
         maintenanceTransaction
     );
 
-    std::cout << "\nMaintenance completed for Truck #"
-        << unitNumber << ".\n";
+    std::cout << ConsoleTheme::FormatLiteral("\nMaintenance completed for Truck #")
+        << unitNumber << ConsoleTheme::FormatLiteral(".\n");
 
-    std::cout << "Service Time: "
+    std::cout << ConsoleTheme::FormatLiteral("Service Time: ")
         << HOSManager::FormatDateTime(
             maintenanceTime
         )
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
-    std::cout << "Service cost: $"
+    std::cout << ConsoleTheme::FormatLiteral("Service cost: $")
         << std::fixed
         << std::setprecision(2)
         << SERVICE_COST
         << std::defaultfloat
         << std::setprecision(6)
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
-    std::cout << "Truck #" << unitNumber
-        << " is now Available for dispatch.\n";
+    std::cout << ConsoleTheme::FormatLiteral("Truck #") << unitNumber
+        << ConsoleTheme::FormatLiteral(" is now Available for dispatch.\n");
 
-    std::cout << "Next service is due at "
+    std::cout << ConsoleTheme::FormatLiteral("Next service is due at ")
         << selectedTruck->GetNextServiceMileage()
-        << " miles.\n";
+        << ConsoleTheme::FormatLiteral(" miles.\n");
 }
 
 void MaintenanceManager::Run(Company& company)
@@ -411,7 +412,7 @@ void MaintenanceManager::Run(Company& company)
 
         default:
             std::cout
-                << "\nInvalid selection. Please choose 0, 1, 2, or 3.\n";
+                << ConsoleTheme::FormatLiteral("\nInvalid selection. Please choose 0, 1, 2, or 3.\n");
             break;
         }
     }

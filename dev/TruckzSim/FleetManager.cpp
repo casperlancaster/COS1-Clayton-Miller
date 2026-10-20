@@ -1,3 +1,4 @@
+#include "ConsoleTheme.h"
 #include "FleetManager.h"
 
 #include <iomanip>
@@ -11,13 +12,13 @@
 
 void FleetManager::ShowMenu()
 {
-    std::cout << "\n";
-    std::cout << "========== FLEET MANAGEMENT ==========\n";
-    std::cout << "1. Add Truck\n";
-    std::cout << "2. View Trucks\n";
-    std::cout << "3. Breakdown / Repair Center\n";
-    std::cout << "0. Return to Main Menu\n";
-    std::cout << "======================================\n";
+    std::cout << ConsoleTheme::FormatLiteral("\n");
+    std::cout << ConsoleTheme::FormatLiteral("========== FLEET MANAGEMENT ==========\n");
+    std::cout << ConsoleTheme::FormatLiteral("1. Add Truck\n");
+    std::cout << ConsoleTheme::FormatLiteral("2. View Trucks\n");
+    std::cout << ConsoleTheme::FormatLiteral("3. Breakdown / Repair Center\n");
+    std::cout << ConsoleTheme::FormatLiteral("0. Return to Main Menu\n");
+    std::cout << ConsoleTheme::FormatLiteral("======================================\n");
 }
 
 void FleetManager::AddTruck(
@@ -26,7 +27,7 @@ void FleetManager::AddTruck(
     Truck newTruck;
 
     std::cout
-        << "\n========== ADD TRUCK ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== ADD TRUCK ==========\n");
 
     int unitNumber = 0;
 
@@ -45,10 +46,10 @@ void FleetManager::AddTruck(
         }
 
         std::cout
-            << "Truck #"
+            << ConsoleTheme::FormatLiteral("Truck #")
             << unitNumber
-            << " already exists. "
-            << "Please enter a unique unit number.\n";
+            << ConsoleTheme::FormatLiteral(" already exists. ")
+            << ConsoleTheme::FormatLiteral("Please enter a unique unit number.\n");
     }
 
     double mileage =
@@ -107,13 +108,13 @@ void FleetManager::AddTruck(
     );
 
     std::cout
-        << "\nTruck #"
+        << ConsoleTheme::FormatLiteral("\nTruck #")
         << unitNumber
-        << " added successfully with a full "
+        << ConsoleTheme::FormatLiteral(" added successfully with a full ")
         << std::fixed
         << std::setprecision(1)
         << fuelTankCapacity
-        << "-gallon tank.\n"
+        << ConsoleTheme::FormatLiteral("-gallon tank.\n")
         << std::defaultfloat
         << std::setprecision(6);
 }
@@ -128,12 +129,12 @@ void FleetManager::DisplayTrucks(
         HOSManager::GetCurrentEpoch();
 
     std::cout
-        << "\n========== COMPANY FLEET ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== COMPANY FLEET ==========\n");
 
     if (trucks.empty())
     {
         std::cout
-            << "No trucks have been added yet.\n";
+            << ConsoleTheme::FormatLiteral("No trucks have been added yet.\n");
     }
     else
     {
@@ -141,41 +142,41 @@ void FleetManager::DisplayTrucks(
             trucks)
         {
             std::cout
-                << "\nTruck #"
+                << ConsoleTheme::FormatLiteral("\nTruck #")
                 << truck.GetUnitNumber()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Mileage: "
+                << ConsoleTheme::FormatLiteral("Mileage: ")
                 << truck.GetMileage()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Status: "
-                << truck.GetStatus()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("Status: ")
+                << ConsoleTheme::Status(truck.GetStatus())
+                << ConsoleTheme::FormatLiteral("\n");
 
             std::cout
-                << "Current Location: "
+                << ConsoleTheme::FormatLiteral("Current Location: ")
                 << truck.GetCurrentLocation()
-                << "\n";
+                << ConsoleTheme::FormatLiteral("\n");
 
             if (truck.GetAvailableAtEpoch() >
                 now)
             {
                 std::cout
-                    << "Scheduled Available: "
+                    << ConsoleTheme::FormatLiteral("Scheduled Available: ")
                     << HOSManager::
                     FormatDateTime(
                         truck.
                         GetAvailableAtEpoch()
                     )
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
             else
             {
                 std::cout
-                    << "Scheduled Available: Now\n";
+                    << ConsoleTheme::FormatLiteral("Scheduled Available: Now\n");
             }
 
             std::cout
@@ -183,72 +184,72 @@ void FleetManager::DisplayTrucks(
                 << std::setprecision(1);
 
             std::cout
-                << "Fuel: "
+                << ConsoleTheme::FormatLiteral("Fuel: ")
                 << truck.GetFuelGallons()
-                << " / "
+                << ConsoleTheme::FormatLiteral(" / ")
                 << truck.GetFuelTankCapacity()
-                << " gallons\n";
+                << ConsoleTheme::FormatLiteral(" gallons\n");
 
             std::cout
-                << "Fuel Level: "
+                << ConsoleTheme::FormatLiteral("Fuel Level: ")
                 << truck.GetFuelPercentage()
-                << "%\n";
+                << ConsoleTheme::FormatLiteral("%\n");
 
             std::cout
-                << "Fuel Economy: "
+                << ConsoleTheme::FormatLiteral("Fuel Economy: ")
                 << truck.GetMilesPerGallon()
-                << " MPG\n";
+                << ConsoleTheme::FormatLiteral(" MPG\n");
 
             std::cout
-                << "Estimated Fuel Range: "
+                << ConsoleTheme::FormatLiteral("Estimated Fuel Range: ")
                 << truck.GetFuelRangeMiles()
-                << " miles\n";
+                << ConsoleTheme::FormatLiteral(" miles\n");
 
             std::cout
-                << "Required Delivery Reserve: "
+                << ConsoleTheme::FormatLiteral("Required Delivery Reserve: ")
                 << truck.
                 GetMinimumArrivalFuelGallons()
-                << " gallons\n";
+                << ConsoleTheme::FormatLiteral(" gallons\n");
 
             if (truck.HasBreakdown())
             {
                 std::cout
-                    << "\n*** ACTIVE BREAKDOWN ***\n";
+                    << ConsoleTheme::FormatLiteral("\n*** ACTIVE BREAKDOWN ***\n");
 
                 std::cout
-                    << "Repair Required: "
+                    << ConsoleTheme::FormatLiteral("Repair Required: ")
                     << truck.GetBreakdownType()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 std::cout
                     << std::fixed
                     << std::setprecision(2);
 
                 std::cout
-                    << "Parts: $"
+                    << ConsoleTheme::FormatLiteral("Parts: $")
                     << truck.GetBreakdownPartsCost()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 std::cout
-                    << "Labor: $"
+                    << ConsoleTheme::FormatLiteral("Labor: $")
                     << truck.GetBreakdownLaborCost()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 std::cout
-                    << "Service Call: $"
+                    << ConsoleTheme::FormatLiteral("Service Call: $")
                     << truck.
                     GetBreakdownServiceCallCharge()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 std::cout
-                    << "Total Repair: $"
+                    << ConsoleTheme::FormatLiteral("Total Repair: $")
                     << truck.GetBreakdownTotalCost()
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
 
                 std::cout
-                    << "Repair Time: "
+                    << ConsoleTheme::FormatLiteral("Repair Time: ")
                     << truck.GetBreakdownRepairHours()
-                    << " hours\n";
+                    << ConsoleTheme::FormatLiteral(" hours\n");
             }
 
             std::cout
@@ -258,7 +259,7 @@ void FleetManager::DisplayTrucks(
     }
 
     std::cout
-        << "==================================\n";
+        << ConsoleTheme::FormatLiteral("==================================\n");
 }
 
 void FleetManager::Run(
@@ -302,7 +303,7 @@ void FleetManager::Run(
 
         default:
             std::cout
-                << "\nInvalid selection.\n";
+                << ConsoleTheme::FormatLiteral("\nInvalid selection.\n");
             break;
         }
     }

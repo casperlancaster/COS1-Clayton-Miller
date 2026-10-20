@@ -1,3 +1,4 @@
+#include "ConsoleTheme.h"
 #include "DispatchManager.h"
 
 #include <iomanip>
@@ -569,69 +570,69 @@ bool DispatchManager::CompleteLoad(
     if (breakdownOccurred)
     {
         std::cout
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "!!!!!!!!!! POST-TRIP BREAKDOWN !!!!!!!!!!\n";
+            << ConsoleTheme::FormatLiteral("!!!!!!!!!! POST-TRIP BREAKDOWN !!!!!!!!!!\n");
 
         std::cout
-            << "Truck #"
+            << ConsoleTheme::FormatLiteral("Truck #")
             << selectedTruck->GetUnitNumber()
-            << " suffered a mechanical failure.\n";
+            << ConsoleTheme::FormatLiteral(" suffered a mechanical failure.\n");
 
         std::cout
-            << "Breakdown: "
+            << ConsoleTheme::FormatLiteral("Breakdown: ")
             << selectedTruck->GetBreakdownType()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
             << std::fixed
             << std::setprecision(2);
 
         std::cout
-            << "Parts Estimate: $"
+            << ConsoleTheme::FormatLiteral("Parts Estimate: $")
             << selectedTruck->
             GetBreakdownPartsCost()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Labor Estimate: $"
+            << ConsoleTheme::FormatLiteral("Labor Estimate: $")
             << selectedTruck->
             GetBreakdownLaborCost()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Service Call: $"
+            << ConsoleTheme::FormatLiteral("Service Call: $")
             << selectedTruck->
             GetBreakdownServiceCallCharge()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Estimated Total Repair: $"
+            << ConsoleTheme::FormatLiteral("Estimated Total Repair: $")
             << selectedTruck->
             GetBreakdownTotalCost()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Estimated Repair Time: "
+            << ConsoleTheme::FormatLiteral("Estimated Repair Time: ")
             << selectedTruck->
             GetBreakdownRepairHours()
-            << " hours\n";
+            << ConsoleTheme::FormatLiteral(" hours\n");
 
         std::cout
             << std::defaultfloat
             << std::setprecision(6);
 
         std::cout
-            << "Truck status is now BREAKDOWN.\n";
+            << ConsoleTheme::FormatLiteral("Truck status is now BREAKDOWN.\n");
 
         std::cout
-            << "Use Fleet Management -> "
-            << "Breakdown / Repair Center "
-            << "before dispatching this truck again.\n";
+            << ConsoleTheme::FormatLiteral("Use Fleet Management -> ")
+            << ConsoleTheme::FormatLiteral("Breakdown / Repair Center ")
+            << ConsoleTheme::FormatLiteral("before dispatching this truck again.\n");
 
         std::cout
-            << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+            << ConsoleTheme::FormatLiteral("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     }
 
     return true;

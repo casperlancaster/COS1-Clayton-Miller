@@ -1,3 +1,4 @@
+#include "ConsoleTheme.h"
 #include "SettingsManager.h"
 
 #include <algorithm>
@@ -21,54 +22,54 @@ void SettingsManager::ApplyDateTimeSettings(
 
 void SettingsManager::ShowMenu()
 {
-    std::cout << "\n";
-    std::cout << "========== SETTINGS ==========\n";
-    std::cout << "1. Date / Time Format\n";
-    std::cout << "2. View Current Settings\n";
-    std::cout << "3. Edit Truck\n";
-    std::cout << "4. Edit Driver\n";
-    std::cout << "5. Edit Load\n";
-    std::cout << "6. Reset Display Settings\n";
-    std::cout << "0. Return to Main Menu\n";
-    std::cout << "==============================\n";
+    std::cout << ConsoleTheme::FormatLiteral("\n");
+    std::cout << ConsoleTheme::FormatLiteral("========== SETTINGS ==========\n");
+    std::cout << ConsoleTheme::FormatLiteral("1. Date / Time Format\n");
+    std::cout << ConsoleTheme::FormatLiteral("2. View Current Settings\n");
+    std::cout << ConsoleTheme::FormatLiteral("3. Edit Truck\n");
+    std::cout << ConsoleTheme::FormatLiteral("4. Edit Driver\n");
+    std::cout << ConsoleTheme::FormatLiteral("5. Edit Load\n");
+    std::cout << ConsoleTheme::FormatLiteral("6. Reset Display Settings\n");
+    std::cout << ConsoleTheme::FormatLiteral("0. Return to Main Menu\n");
+    std::cout << ConsoleTheme::FormatLiteral("==============================\n");
 }
 
 void SettingsManager::ShowCurrentSettings(
     const Company& company)
 {
     std::cout
-        << "\n========== CURRENT SETTINGS ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== CURRENT SETTINGS ==========\n");
 
     std::cout
-        << "Date Format: "
+        << ConsoleTheme::FormatLiteral("Date Format: ")
         << company.GetDateFormat()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Time Format: "
+        << ConsoleTheme::FormatLiteral("Time Format: ")
         << company.GetTimeFormat()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Date Entry Example: "
+        << ConsoleTheme::FormatLiteral("Date Entry Example: ")
         << HOSManager::GetDateInputExample()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Time Entry Example: "
+        << ConsoleTheme::FormatLiteral("Time Entry Example: ")
         << HOSManager::GetTimeInputExample()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Flexible entry is enabled. Dates may use "
-        << "slashes, dashes, spaces, or numbers only.\n";
+        << ConsoleTheme::FormatLiteral("Flexible entry is enabled. Dates may use ")
+        << ConsoleTheme::FormatLiteral("slashes, dashes, spaces, or numbers only.\n");
 
     std::cout
-        << "Time colons are optional. AM/PM is accepted, "
-        << "and 24-hour time is also accepted.\n";
+        << ConsoleTheme::FormatLiteral("Time colons are optional. AM/PM is accepted, ")
+        << ConsoleTheme::FormatLiteral("and 24-hour time is also accepted.\n");
 
     std::cout
-        << "======================================\n";
+        << ConsoleTheme::FormatLiteral("======================================\n");
 }
 
 void SettingsManager::ConfigureDateTime(
@@ -79,19 +80,19 @@ void SettingsManager::ConfigureDateTime(
     while (choice != 0)
     {
         std::cout
-            << "\n========== DATE / TIME FORMAT ==========\n";
+            << ConsoleTheme::FormatLiteral("\n========== DATE / TIME FORMAT ==========\n");
         std::cout
-            << "Current Date Format: "
+            << ConsoleTheme::FormatLiteral("Current Date Format: ")
             << company.GetDateFormat()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
         std::cout
-            << "Current Time Format: "
+            << ConsoleTheme::FormatLiteral("Current Time Format: ")
             << company.GetTimeFormat()
-            << "\n\n";
-        std::cout << "1. Change Date Format\n";
-        std::cout << "2. Change Time Format\n";
-        std::cout << "0. Return to Settings\n";
-        std::cout << "========================================\n";
+            << ConsoleTheme::FormatLiteral("\n\n");
+        std::cout << ConsoleTheme::FormatLiteral("1. Change Date Format\n");
+        std::cout << ConsoleTheme::FormatLiteral("2. Change Time Format\n");
+        std::cout << ConsoleTheme::FormatLiteral("0. Return to Settings\n");
+        std::cout << ConsoleTheme::FormatLiteral("========================================\n");
 
         choice =
             InputManager::ReadMenuChoice(
@@ -103,9 +104,9 @@ void SettingsManager::ConfigureDateTime(
         if (choice == 1)
         {
             std::cout
-                << "\n1. MM/DD/YYYY   Example: 10/22/2026\n";
+                << ConsoleTheme::FormatLiteral("\n1. MM/DD/YYYY   Example: 10/22/2026\n");
             std::cout
-                << "2. YYYY-MM-DD   Example: 2026-10-22\n";
+                << ConsoleTheme::FormatLiteral("2. YYYY-MM-DD   Example: 2026-10-22\n");
 
             int dateChoice =
                 InputManager::ReadMenuChoice(
@@ -125,16 +126,16 @@ void SettingsManager::ConfigureDateTime(
             );
 
             std::cout
-                << "Date format updated to "
+                << ConsoleTheme::FormatLiteral("Date format updated to ")
                 << company.GetDateFormat()
-                << ".\n";
+                << ConsoleTheme::FormatLiteral(".\n");
         }
         else if (choice == 2)
         {
             std::cout
-                << "\n1. 12-hour AM/PM   Example: 8:30 PM\n";
+                << ConsoleTheme::FormatLiteral("\n1. 12-hour AM/PM   Example: 8:30 PM\n");
             std::cout
-                << "2. 24-hour          Example: 20:30\n";
+                << ConsoleTheme::FormatLiteral("2. 24-hour          Example: 20:30\n");
 
             int timeChoice =
                 InputManager::ReadMenuChoice(
@@ -154,9 +155,9 @@ void SettingsManager::ConfigureDateTime(
             );
 
             std::cout
-                << "Time format updated to "
+                << ConsoleTheme::FormatLiteral("Time format updated to ")
                 << company.GetTimeFormat()
-                << ".\n";
+                << ConsoleTheme::FormatLiteral(".\n");
         }
     }
 }
@@ -166,14 +167,14 @@ long long SettingsManager::ReadDeadline()
     while (true)
     {
         std::cout
-            << "\nPreferred Date Format: "
+            << ConsoleTheme::FormatLiteral("\nPreferred Date Format: ")
             << HOSManager::GetDateFormat()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::cout
-            << "Preferred Time Format: "
+            << ConsoleTheme::FormatLiteral("Preferred Time Format: ")
             << HOSManager::GetTimeFormat()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
 
         std::string dateText =
             InputManager::ReadRequiredText(
@@ -195,11 +196,11 @@ long long SettingsManager::ReadDeadline()
             deadlineEpoch))
         {
             std::cout
-                << "Invalid date or time. Try "
+                << ConsoleTheme::FormatLiteral("Invalid date or time. Try ")
                 << HOSManager::GetDateInputExample()
-                << " with "
+                << ConsoleTheme::FormatLiteral(" with ")
                 << HOSManager::GetTimeInputExample()
-                << ".\n";
+                << ConsoleTheme::FormatLiteral(".\n");
 
             continue;
         }
@@ -208,7 +209,7 @@ long long SettingsManager::ReadDeadline()
             HOSManager::GetCurrentEpoch())
         {
             std::cout
-                << "The delivery deadline must be in the future.\n";
+                << ConsoleTheme::FormatLiteral("The delivery deadline must be in the future.\n");
 
             continue;
         }
@@ -223,25 +224,25 @@ void SettingsManager::EditTruck(
     if (company.GetTrucks().empty())
     {
         std::cout
-            << "\nNo trucks have been added yet.\n";
+            << ConsoleTheme::FormatLiteral("\nNo trucks have been added yet.\n");
         return;
     }
 
     std::cout
-        << "\n========== EDIT TRUCK ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== EDIT TRUCK ==========\n");
 
     for (const Truck& truck : company.GetTrucks())
     {
         std::cout
-            << "Truck #"
+            << ConsoleTheme::FormatLiteral("Truck #")
             << truck.GetUnitNumber()
-            << " | Status: "
-            << truck.GetStatus()
-            << " | Mileage: "
+            << ConsoleTheme::FormatLiteral(" | Status: ")
+            << ConsoleTheme::Status(truck.GetStatus())
+            << ConsoleTheme::FormatLiteral(" | Mileage: ")
             << truck.GetMileage()
-            << " | Location: "
+            << ConsoleTheme::FormatLiteral(" | Location: ")
             << truck.GetCurrentLocation()
-            << "\n";
+            << ConsoleTheme::FormatLiteral("\n");
     }
 
     int unitNumber =
@@ -258,20 +259,20 @@ void SettingsManager::EditTruck(
     if (selectedTruck == nullptr)
     {
         std::cout
-            << "Truck #"
+            << ConsoleTheme::FormatLiteral("Truck #")
             << unitNumber
-            << " does not exist.\n";
+            << ConsoleTheme::FormatLiteral(" does not exist.\n");
         return;
     }
 
     if (selectedTruck->GetStatus() != "Available")
     {
         std::cout
-            << "Truck #"
+            << ConsoleTheme::FormatLiteral("Truck #")
             << unitNumber
-            << " is currently "
-            << selectedTruck->GetStatus()
-            << " and cannot be edited until it is Available.\n";
+            << ConsoleTheme::FormatLiteral(" is currently ")
+            << ConsoleTheme::Status(selectedTruck->GetStatus())
+            << ConsoleTheme::FormatLiteral(" and cannot be edited until it is Available.\n");
         return;
     }
 
@@ -280,16 +281,16 @@ void SettingsManager::EditTruck(
     while (choice != 0)
     {
         std::cout
-            << "\nEditing Truck #"
+            << ConsoleTheme::FormatLiteral("\nEditing Truck #")
             << selectedTruck->GetUnitNumber()
-            << "\n";
-        std::cout << "1. Unit Number\n";
-        std::cout << "2. Mileage\n";
-        std::cout << "3. Fuel Tank Capacity\n";
-        std::cout << "4. Fuel Economy (MPG)\n";
-        std::cout << "5. Current Fuel Gallons\n";
-        std::cout << "6. Current Location\n";
-        std::cout << "0. Return to Settings\n";
+            << ConsoleTheme::FormatLiteral("\n");
+        std::cout << ConsoleTheme::FormatLiteral("1. Unit Number\n");
+        std::cout << ConsoleTheme::FormatLiteral("2. Mileage\n");
+        std::cout << ConsoleTheme::FormatLiteral("3. Fuel Tank Capacity\n");
+        std::cout << ConsoleTheme::FormatLiteral("4. Fuel Economy (MPG)\n");
+        std::cout << ConsoleTheme::FormatLiteral("5. Current Fuel Gallons\n");
+        std::cout << ConsoleTheme::FormatLiteral("6. Current Location\n");
+        std::cout << ConsoleTheme::FormatLiteral("0. Return to Settings\n");
 
         choice =
             InputManager::ReadMenuChoice(
@@ -310,21 +311,21 @@ void SettingsManager::EditTruck(
                 );
 
             std::cout
-                << "\nTruck Unit Number Change\n"
-                << "Current: #"
+                << ConsoleTheme::FormatLiteral("\nTruck Unit Number Change\n")
+                << ConsoleTheme::FormatLiteral("Current: #")
                 << oldUnitNumber
-                << "\n"
-                << "New: #"
+                << ConsoleTheme::FormatLiteral("\n")
+                << ConsoleTheme::FormatLiteral("New: #")
                 << newUnitNumber
-                << "\n"
-                << "Existing load and financial references "
-                << "will also be updated.\n";
+                << ConsoleTheme::FormatLiteral("\n")
+                << ConsoleTheme::FormatLiteral("Existing load and financial references ")
+                << ConsoleTheme::FormatLiteral("will also be updated.\n");
 
             if (!InputManager::ReadYesNo(
                 "Confirm unit number change? (Y/N): "))
             {
                 std::cout
-                    << "Truck unit number change cancelled.\n";
+                    << ConsoleTheme::FormatLiteral("Truck unit number change cancelled.\n");
 
                 continue;
             }
@@ -334,15 +335,15 @@ void SettingsManager::EditTruck(
                 newUnitNumber))
             {
                 std::cout
-                    << "Truck unit number updated to #"
+                    << ConsoleTheme::FormatLiteral("Truck unit number updated to #")
                     << newUnitNumber
-                    << ". Existing load and financial references were updated.\n";
+                    << ConsoleTheme::FormatLiteral(". Existing load and financial references were updated.\n");
             }
             else
             {
                 std::cout
-                    << "Unable to change the unit number. "
-                    << "The new number may already be in use.\n";
+                    << ConsoleTheme::FormatLiteral("Unable to change the unit number. ")
+                    << ConsoleTheme::FormatLiteral("The new number may already be in use.\n");
             }
         }
         else if (choice == 2)
@@ -369,7 +370,7 @@ void SettingsManager::EditTruck(
             );
 
             std::cout
-                << "Truck mileage updated.\n";
+                << ConsoleTheme::FormatLiteral("Truck mileage updated.\n");
         }
         else if (choice == 3)
         {
@@ -392,7 +393,7 @@ void SettingsManager::EditTruck(
             );
 
             std::cout
-                << "Fuel tank capacity updated.\n";
+                << ConsoleTheme::FormatLiteral("Fuel tank capacity updated.\n");
         }
         else if (choice == 4)
         {
@@ -409,7 +410,7 @@ void SettingsManager::EditTruck(
             );
 
             std::cout
-                << "Fuel economy updated.\n";
+                << ConsoleTheme::FormatLiteral("Fuel economy updated.\n");
         }
         else if (choice == 5)
         {
@@ -431,14 +432,14 @@ void SettingsManager::EditTruck(
                     );
 
                     std::cout
-                        << "Current fuel level updated.\n";
+                        << ConsoleTheme::FormatLiteral("Current fuel level updated.\n");
                     break;
                 }
 
                 std::cout
-                    << "Fuel cannot exceed the truck's tank capacity of "
+                    << ConsoleTheme::FormatLiteral("Fuel cannot exceed the truck's tank capacity of ")
                     << selectedTruck->GetFuelTankCapacity()
-                    << " gallons.\n";
+                    << ConsoleTheme::FormatLiteral(" gallons.\n");
             }
         }
         else if (choice == 6)
@@ -454,9 +455,9 @@ void SettingsManager::EditTruck(
             );
 
             std::cout
-                << "Truck location updated to "
+                << ConsoleTheme::FormatLiteral("Truck location updated to ")
                 << selectedTruck->GetCurrentLocation()
-                << ".\n";
+                << ConsoleTheme::FormatLiteral(".\n");
         }
     }
 }
@@ -467,23 +468,23 @@ void SettingsManager::EditDriver(
     if (company.GetDrivers().empty())
     {
         std::cout
-            << "\nNo drivers have been added yet.\n";
+            << ConsoleTheme::FormatLiteral("\nNo drivers have been added yet.\n");
         return;
     }
 
     std::cout
-        << "\n========== EDIT DRIVER ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== EDIT DRIVER ==========\n");
 
     for (const Driver& driver : company.GetDrivers())
     {
         std::cout
-            << "Driver #"
+            << ConsoleTheme::FormatLiteral("Driver #")
             << driver.GetDriverID()
-            << " | "
+            << ConsoleTheme::FormatLiteral(" | ")
             << driver.GetName()
-            << " | Status: "
-            << driver.GetStatus()
-            << "\n";
+            << ConsoleTheme::FormatLiteral(" | Status: ")
+            << ConsoleTheme::Status(driver.GetStatus())
+            << ConsoleTheme::FormatLiteral("\n");
     }
 
     int driverID =
@@ -506,20 +507,20 @@ void SettingsManager::EditDriver(
     if (selectedDriver == nullptr)
     {
         std::cout
-            << "Driver #"
+            << ConsoleTheme::FormatLiteral("Driver #")
             << driverID
-            << " does not exist.\n";
+            << ConsoleTheme::FormatLiteral(" does not exist.\n");
         return;
     }
 
     if (selectedDriver->GetStatus() != "Available")
     {
         std::cout
-            << "Driver #"
+            << ConsoleTheme::FormatLiteral("Driver #")
             << driverID
-            << " is currently "
-            << selectedDriver->GetStatus()
-            << " and cannot be edited until Available.\n";
+            << ConsoleTheme::FormatLiteral(" is currently ")
+            << ConsoleTheme::Status(selectedDriver->GetStatus())
+            << ConsoleTheme::FormatLiteral(" and cannot be edited until Available.\n");
         return;
     }
 
@@ -528,14 +529,14 @@ void SettingsManager::EditDriver(
     while (choice != 0)
     {
         std::cout
-            << "\nEditing Driver #"
+            << ConsoleTheme::FormatLiteral("\nEditing Driver #")
             << selectedDriver->GetDriverID()
-            << " - "
+            << ConsoleTheme::FormatLiteral(" - ")
             << selectedDriver->GetName()
-            << "\n";
-        std::cout << "1. Driver ID\n";
-        std::cout << "2. Driver Name\n";
-        std::cout << "0. Return to Settings\n";
+            << ConsoleTheme::FormatLiteral("\n");
+        std::cout << ConsoleTheme::FormatLiteral("1. Driver ID\n");
+        std::cout << ConsoleTheme::FormatLiteral("2. Driver Name\n");
+        std::cout << ConsoleTheme::FormatLiteral("0. Return to Settings\n");
 
         choice =
             InputManager::ReadMenuChoice(
@@ -556,21 +557,21 @@ void SettingsManager::EditDriver(
                 );
 
             std::cout
-                << "\nDriver ID Change\n"
-                << "Current: #"
+                << ConsoleTheme::FormatLiteral("\nDriver ID Change\n")
+                << ConsoleTheme::FormatLiteral("Current: #")
                 << oldDriverID
-                << "\n"
-                << "New: #"
+                << ConsoleTheme::FormatLiteral("\n")
+                << ConsoleTheme::FormatLiteral("New: #")
                 << newDriverID
-                << "\n"
-                << "Existing load and financial references "
-                << "will also be updated.\n";
+                << ConsoleTheme::FormatLiteral("\n")
+                << ConsoleTheme::FormatLiteral("Existing load and financial references ")
+                << ConsoleTheme::FormatLiteral("will also be updated.\n");
 
             if (!InputManager::ReadYesNo(
                 "Confirm Driver ID change? (Y/N): "))
             {
                 std::cout
-                    << "Driver ID change cancelled.\n";
+                    << ConsoleTheme::FormatLiteral("Driver ID change cancelled.\n");
 
                 continue;
             }
@@ -580,15 +581,15 @@ void SettingsManager::EditDriver(
                 newDriverID))
             {
                 std::cout
-                    << "Driver ID updated to #"
+                    << ConsoleTheme::FormatLiteral("Driver ID updated to #")
                     << newDriverID
-                    << ". Existing load and financial references were updated.\n";
+                    << ConsoleTheme::FormatLiteral(". Existing load and financial references were updated.\n");
             }
             else
             {
                 std::cout
-                    << "Unable to change the Driver ID. "
-                    << "The new ID may already be in use.\n";
+                    << ConsoleTheme::FormatLiteral("Unable to change the Driver ID. ")
+                    << ConsoleTheme::FormatLiteral("The new ID may already be in use.\n");
             }
         }
         else if (choice == 2)
@@ -604,7 +605,7 @@ void SettingsManager::EditDriver(
             );
 
             std::cout
-                << "Driver name updated.\n";
+                << ConsoleTheme::FormatLiteral("Driver name updated.\n");
         }
     }
 }
@@ -615,25 +616,25 @@ void SettingsManager::EditLoad(
     if (company.GetLoads().empty())
     {
         std::cout
-            << "\nNo loads have been added yet.\n";
+            << ConsoleTheme::FormatLiteral("\nNo loads have been added yet.\n");
         return;
     }
 
     std::cout
-        << "\n========== EDIT LOAD ==========\n";
+        << ConsoleTheme::FormatLiteral("\n========== EDIT LOAD ==========\n");
 
     for (const Load& load : company.GetLoads())
     {
         std::cout
-            << "Load #"
+            << ConsoleTheme::FormatLiteral("Load #")
             << load.GetLoadNumber()
-            << " | "
+            << ConsoleTheme::FormatLiteral(" | ")
             << load.GetOrigin()
-            << " -> "
+            << ConsoleTheme::FormatLiteral(" -> ")
             << load.GetDestination()
-            << " | Status: "
-            << load.GetStatus()
-            << "\n";
+            << ConsoleTheme::FormatLiteral(" | Status: ")
+            << ConsoleTheme::Status(load.GetStatus())
+            << ConsoleTheme::FormatLiteral("\n");
     }
 
     int loadNumber =
@@ -656,22 +657,22 @@ void SettingsManager::EditLoad(
     if (selectedLoad == nullptr)
     {
         std::cout
-            << "Load #"
+            << ConsoleTheme::FormatLiteral("Load #")
             << loadNumber
-            << " does not exist.\n";
+            << ConsoleTheme::FormatLiteral(" does not exist.\n");
         return;
     }
 
     if (selectedLoad->GetStatus() != "Available")
     {
         std::cout
-            << "Load #"
+            << ConsoleTheme::FormatLiteral("Load #")
             << loadNumber
-            << " is "
-            << selectedLoad->GetStatus()
-            << ". Only Available loads can be edited.\n";
+            << ConsoleTheme::FormatLiteral(" is ")
+            << ConsoleTheme::Status(selectedLoad->GetStatus())
+            << ConsoleTheme::FormatLiteral(". Only Available loads can be edited.\n");
         std::cout
-            << "This protects mileage, HOS, fuel, revenue, and transaction history from becoming inconsistent.\n";
+            << ConsoleTheme::FormatLiteral("This protects mileage, HOS, fuel, revenue, and transaction history from becoming inconsistent.\n");
         return;
     }
 
@@ -680,16 +681,16 @@ void SettingsManager::EditLoad(
     while (choice != 0)
     {
         std::cout
-            << "\nEditing Load #"
+            << ConsoleTheme::FormatLiteral("\nEditing Load #")
             << selectedLoad->GetLoadNumber()
-            << "\n";
-        std::cout << "1. Load Number\n";
-        std::cout << "2. Origin\n";
-        std::cout << "3. Destination\n";
-        std::cout << "4. Distance\n";
-        std::cout << "5. Pay\n";
-        std::cout << "6. Delivery Deadline\n";
-        std::cout << "0. Return to Settings\n";
+            << ConsoleTheme::FormatLiteral("\n");
+        std::cout << ConsoleTheme::FormatLiteral("1. Load Number\n");
+        std::cout << ConsoleTheme::FormatLiteral("2. Origin\n");
+        std::cout << ConsoleTheme::FormatLiteral("3. Destination\n");
+        std::cout << ConsoleTheme::FormatLiteral("4. Distance\n");
+        std::cout << ConsoleTheme::FormatLiteral("5. Pay\n");
+        std::cout << ConsoleTheme::FormatLiteral("6. Delivery Deadline\n");
+        std::cout << ConsoleTheme::FormatLiteral("0. Return to Settings\n");
 
         choice =
             InputManager::ReadMenuChoice(
@@ -710,21 +711,21 @@ void SettingsManager::EditLoad(
                 );
 
             std::cout
-                << "\nLoad Number Change\n"
-                << "Current: #"
+                << ConsoleTheme::FormatLiteral("\nLoad Number Change\n")
+                << ConsoleTheme::FormatLiteral("Current: #")
                 << oldLoadNumber
-                << "\n"
-                << "New: #"
+                << ConsoleTheme::FormatLiteral("\n")
+                << ConsoleTheme::FormatLiteral("New: #")
                 << newLoadNumber
-                << "\n"
-                << "Existing financial references will also "
-                << "be updated.\n";
+                << ConsoleTheme::FormatLiteral("\n")
+                << ConsoleTheme::FormatLiteral("Existing financial references will also ")
+                << ConsoleTheme::FormatLiteral("be updated.\n");
 
             if (!InputManager::ReadYesNo(
                 "Confirm load number change? (Y/N): "))
             {
                 std::cout
-                    << "Load number change cancelled.\n";
+                    << ConsoleTheme::FormatLiteral("Load number change cancelled.\n");
 
                 continue;
             }
@@ -734,15 +735,15 @@ void SettingsManager::EditLoad(
                 newLoadNumber))
             {
                 std::cout
-                    << "Load number updated to #"
+                    << ConsoleTheme::FormatLiteral("Load number updated to #")
                     << newLoadNumber
-                    << ".\n";
+                    << ConsoleTheme::FormatLiteral(".\n");
             }
             else
             {
                 std::cout
-                    << "Unable to change the load number. "
-                    << "The new number may already be in use.\n";
+                    << ConsoleTheme::FormatLiteral("Unable to change the load number. ")
+                    << ConsoleTheme::FormatLiteral("The new number may already be in use.\n");
             }
         }
         else if (choice == 2)
@@ -755,7 +756,7 @@ void SettingsManager::EditLoad(
             );
 
             std::cout
-                << "Load origin updated.\n";
+                << ConsoleTheme::FormatLiteral("Load origin updated.\n");
         }
         else if (choice == 3)
         {
@@ -767,7 +768,7 @@ void SettingsManager::EditLoad(
             );
 
             std::cout
-                << "Load destination updated.\n";
+                << ConsoleTheme::FormatLiteral("Load destination updated.\n");
         }
         else if (choice == 4)
         {
@@ -779,7 +780,7 @@ void SettingsManager::EditLoad(
             );
 
             std::cout
-                << "Load distance updated.\n";
+                << ConsoleTheme::FormatLiteral("Load distance updated.\n");
         }
         else if (choice == 5)
         {
@@ -790,7 +791,7 @@ void SettingsManager::EditLoad(
             );
 
             std::cout
-                << "Load pay updated.\n";
+                << ConsoleTheme::FormatLiteral("Load pay updated.\n");
         }
         else if (choice == 6)
         {
@@ -799,11 +800,11 @@ void SettingsManager::EditLoad(
             );
 
             std::cout
-                << "Delivery deadline updated to "
+                << ConsoleTheme::FormatLiteral("Delivery deadline updated to ")
                 << HOSManager::FormatDateTime(
                     selectedLoad->GetDeliveryDeadlineEpoch()
                 )
-                << ".\n";
+                << ConsoleTheme::FormatLiteral(".\n");
         }
     }
 }
@@ -824,7 +825,7 @@ void SettingsManager::ResetDisplaySettings(
     );
 
     std::cout
-        << "\nDisplay settings reset to MM/DD/YYYY and 12-hour AM/PM time.\n";
+        << ConsoleTheme::FormatLiteral("\nDisplay settings reset to MM/DD/YYYY and 12-hour AM/PM time.\n");
 }
 
 void SettingsManager::Run(

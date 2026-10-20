@@ -1,7 +1,9 @@
+#include "ConsoleTheme.h"
 #include "TruckzSimApp.h"
 
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -32,31 +34,31 @@ bool TruckzSimApp::RunStartupMenu()
     while (true)
     {
         std::cout
-            << "=============================================\n";
+            << ConsoleTheme::FormatLiteral("=============================================\n");
 
         std::cout
-            << "               T R U C K Z S I M             \n";
+            << ConsoleTheme::FormatLiteral("               T R U C K Z S I M             \n");
 
         std::cout
-            << "=============================================\n";
+            << ConsoleTheme::FormatLiteral("=============================================\n");
 
         std::cout
-            << "               COMPANY STARTUP                \n";
+            << ConsoleTheme::FormatLiteral("               COMPANY STARTUP                \n");
 
         std::cout
-            << "---------------------------------------------\n";
+            << ConsoleTheme::FormatLiteral("---------------------------------------------\n");
 
         std::cout
-            << "1. Create New Company\n";
+            << ConsoleTheme::FormatLiteral("1. Create New Company\n");
 
         std::cout
-            << "2. Load Saved Company\n";
+            << ConsoleTheme::FormatLiteral("2. Load Saved Company\n");
 
         std::cout
-            << "0. Exit\n";
+            << ConsoleTheme::FormatLiteral("0. Exit\n");
 
         std::cout
-            << "---------------------------------------------\n";
+            << ConsoleTheme::FormatLiteral("---------------------------------------------\n");
 
         choice =
             InputManager::ReadMenuChoice(
@@ -65,7 +67,7 @@ bool TruckzSimApp::RunStartupMenu()
                 2
             );
 
-        std::cout << "\n";
+        std::cout << ConsoleTheme::FormatLiteral("\n");
 
         switch (choice)
         {
@@ -95,14 +97,14 @@ bool TruckzSimApp::RunStartupMenu()
             if (savedCompanies.empty())
             {
                 std::cout
-                    << "No saved companies were found.\n"
-                    << "Please create a new company first.\n\n";
+                    << ConsoleTheme::FormatLiteral("No saved companies were found.\n")
+                    << ConsoleTheme::FormatLiteral("Please create a new company first.\n\n");
 
                 break;
             }
 
             std::cout
-                << "========== SAVED COMPANIES ==========\n";
+                << ConsoleTheme::FormatLiteral("========== SAVED COMPANIES ==========\n");
 
             for (std::size_t i = 0;
                 i < savedCompanies.size();
@@ -110,25 +112,33 @@ bool TruckzSimApp::RunStartupMenu()
             {
                 std::cout
                     << (i + 1)
-                    << ". "
+                    << ConsoleTheme::FormatLiteral(". ")
                     << savedCompanies[i]
-                    << "\n";
+                    << ConsoleTheme::FormatLiteral("\n");
             }
 
             std::cout
-                << "0. Cancel\n"
-                << "=====================================\n";
+                << ConsoleTheme::FormatLiteral("0. Cancel\n")
+                << ConsoleTheme::FormatLiteral("=====================================\n");
+
+            // ReadMenuChoice expects an int upper bound. Cap the
+            // size_t count before casting, avoiding MSVC warning C4267.
+            const int maxCompanyChoice =
+                savedCompanies.size() >
+                static_cast<std::size_t>(std::numeric_limits<int>::max())
+                ? std::numeric_limits<int>::max()
+                : static_cast<int>(savedCompanies.size());
 
             int saveChoice =
                 InputManager::ReadMenuChoice(
                     "Select a company: ",
                     0,
-                    savedCompanies.size()
+                    maxCompanyChoice
                 );
 
             if (saveChoice == 0)
             {
-                std::cout << "\n";
+                std::cout << ConsoleTheme::FormatLiteral("\n");
                 break;
             }
 
@@ -149,8 +159,8 @@ bool TruckzSimApp::RunStartupMenu()
                     validationIssues))
                 {
                     std::cout
-                        << "\nThe saved company failed system "
-                        << "validation and was not opened.\n";
+                        << ConsoleTheme::FormatLiteral("\nThe saved company failed system ")
+                        << ConsoleTheme::FormatLiteral("validation and was not opened.\n");
 
                     for (std::size_t i = 0;
                         i < validationIssues.size();
@@ -158,9 +168,9 @@ bool TruckzSimApp::RunStartupMenu()
                     {
                         std::cout
                             << (i + 1)
-                            << ". "
+                            << ConsoleTheme::FormatLiteral(". ")
                             << validationIssues[i]
-                            << "\n";
+                            << ConsoleTheme::FormatLiteral("\n");
                     }
 
                     company =
@@ -175,7 +185,7 @@ bool TruckzSimApp::RunStartupMenu()
                             company
                         );
 
-                    std::cout << "\n";
+                    std::cout << ConsoleTheme::FormatLiteral("\n");
 
                     break;
                 }
@@ -189,26 +199,26 @@ bool TruckzSimApp::RunStartupMenu()
                 );
 
                 std::cout
-                    << "\nCompany loaded successfully.\n";
+                    << ConsoleTheme::FormatLiteral("\nCompany loaded successfully.\n");
 
                 std::cout
-                    << "Welcome back to "
+                    << ConsoleTheme::FormatLiteral("Welcome back to ")
                     << company.GetCompanyName()
-                    << "!\n\n";
+                    << ConsoleTheme::FormatLiteral("!\n\n");
 
                 return true;
             }
 
             std::cout
-                << "\nThe saved company could not be loaded.\n"
-                << "The save file may be damaged or invalid.\n\n";
+                << ConsoleTheme::FormatLiteral("\nThe saved company could not be loaded.\n")
+                << ConsoleTheme::FormatLiteral("The save file may be damaged or invalid.\n\n");
 
             break;
         }
 
         case 0:
             std::cout
-                << "Exiting TruckzSim...\n";
+                << ConsoleTheme::FormatLiteral("Exiting TruckzSim...\n");
 
             return false;
         }
@@ -218,7 +228,7 @@ bool TruckzSimApp::RunStartupMenu()
 void TruckzSimApp::SetupCompany()
 {
     std::cout
-        << "========== COMPANY SETUP ==========\n";
+        << ConsoleTheme::FormatLiteral("========== COMPANY SETUP ==========\n");
 
     std::string companyName =
         InputManager::ReadRequiredText(
@@ -231,46 +241,46 @@ void TruckzSimApp::SetupCompany()
     );
 
     std::cout
-        << "\nWelcome to "
+        << ConsoleTheme::FormatLiteral("\nWelcome to ")
         << company.GetCompanyName()
-        << "!\n";
+        << ConsoleTheme::FormatLiteral("!\n");
 
     std::cout
-        << "===================================\n\n";
+        << ConsoleTheme::FormatLiteral("===================================\n\n");
 }
 
 void TruckzSimApp::ShowMainMenu() const
 {
     std::cout
-        << "=============================================\n";
+        << ConsoleTheme::FormatLiteral("=============================================\n");
 
     std::cout
-        << "               T R U C K Z S I M             \n";
+        << ConsoleTheme::FormatLiteral("               T R U C K Z S I M             \n");
 
     std::cout
-        << "=============================================\n";
+        << ConsoleTheme::FormatLiteral("=============================================\n");
 
     std::cout
-        << "         Trucking Company Simulator           \n";
+        << ConsoleTheme::FormatLiteral("         Trucking Company Simulator           \n");
 
     std::cout
-        << "---------------------------------------------\n";
+        << ConsoleTheme::FormatLiteral("---------------------------------------------\n");
 
-    std::cout << "1. Dispatch Center\n";
-    std::cout << "2. Fleet Management\n";
-    std::cout << "3. Driver Management\n";
-    std::cout << "4. Freight Market\n";
-    std::cout << "5. Company Overview\n";
-    std::cout << "6. Banking\n";
-    std::cout << "7. Maintenance\n";
-    std::cout << "8. Fuel Management\n";
-    std::cout << "9. Save Company\n";
-    std::cout << "10. Settings\n";
-    std::cout << "11. System Validation\n";
-    std::cout << "0. Exit\n";
+    std::cout << ConsoleTheme::FormatLiteral("1. Dispatch Center\n");
+    std::cout << ConsoleTheme::FormatLiteral("2. Fleet Management\n");
+    std::cout << ConsoleTheme::FormatLiteral("3. Driver Management\n");
+    std::cout << ConsoleTheme::FormatLiteral("4. Freight Market\n");
+    std::cout << ConsoleTheme::FormatLiteral("5. Company Overview\n");
+    std::cout << ConsoleTheme::FormatLiteral("6. Banking\n");
+    std::cout << ConsoleTheme::FormatLiteral("7. Maintenance\n");
+    std::cout << ConsoleTheme::FormatLiteral("8. Fuel Management\n");
+    std::cout << ConsoleTheme::FormatLiteral("9. Save Company\n");
+    std::cout << ConsoleTheme::FormatLiteral("10. Settings\n");
+    std::cout << ConsoleTheme::FormatLiteral("11. System Validation\n");
+    std::cout << ConsoleTheme::FormatLiteral("0. Exit\n");
 
     std::cout
-        << "---------------------------------------------\n";
+        << ConsoleTheme::FormatLiteral("---------------------------------------------\n");
 }
 
 void TruckzSimApp::ShowCompanyOverview() const
@@ -354,116 +364,123 @@ void TruckzSimApp::ShowCompanyOverview() const
     }
 
     std::cout
-        << "=============== COMPANY OVERVIEW ===============\n";
+        << ConsoleTheme::FormatLiteral("=============== COMPANY OVERVIEW ===============\n");
 
     std::cout
-        << "Company: "
+        << ConsoleTheme::FormatLiteral("Company: ")
         << company.GetCompanyName()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "\nFLEET\n";
+        << ConsoleTheme::FormatLiteral("\nFLEET\n");
 
     std::cout
-        << "Total Trucks: "
+        << ConsoleTheme::FormatLiteral("Total Trucks: ")
         << company.GetTrucks().size()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Available: "
+        << ConsoleTheme::FormatLiteral("Available: ")
         << availableTrucks
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Dispatched: "
+        << ConsoleTheme::FormatLiteral("Dispatched: ")
         << dispatchedTrucks
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "In Maintenance: "
+        << ConsoleTheme::FormatLiteral("In Maintenance: ")
         << maintenanceTrucks
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Breakdown: "
+        << ConsoleTheme::FormatLiteral("Breakdown: ")
         << breakdownTrucks
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Maintenance Due: "
+        << ConsoleTheme::FormatLiteral("Maintenance Due: ")
         << maintenanceDueTrucks
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "\nDRIVERS\n";
+        << ConsoleTheme::FormatLiteral("\nDRIVERS\n");
 
     std::cout
-        << "Total Drivers: "
+        << ConsoleTheme::FormatLiteral("Total Drivers: ")
         << company.GetDrivers().size()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Available: "
+        << ConsoleTheme::FormatLiteral("Available: ")
         << availableDrivers
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Dispatched: "
+        << ConsoleTheme::FormatLiteral("Dispatched: ")
         << dispatchedDrivers
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "\nFREIGHT\n";
+        << ConsoleTheme::FormatLiteral("\nFREIGHT\n");
 
     std::cout
-        << "Total Loads: "
+        << ConsoleTheme::FormatLiteral("Total Loads: ")
         << company.GetLoads().size()
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Available: "
+        << ConsoleTheme::FormatLiteral("Available: ")
         << availableLoads
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Active / Assigned: "
+        << ConsoleTheme::FormatLiteral("Active / Assigned: ")
         << assignedLoads
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Completed: "
+        << ConsoleTheme::FormatLiteral("Completed: ")
         << completedLoads
-        << "\n";
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "\nFINANCIALS\n"
+        << ConsoleTheme::FormatLiteral("\nFINANCIALS\n")
         << std::fixed
         << std::setprecision(2);
 
     std::cout
-        << "Revenue:  $"
+        << ConsoleTheme::FormatLiteral("Revenue:  $")
+        << ConsoleTheme::Begin(ConsoleTheme::Color::Lime)
         << company.GetRevenue()
-        << "\n";
+        << ConsoleTheme::End()
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Expenses: $"
+        << ConsoleTheme::FormatLiteral("Expenses: $")
+        << ConsoleTheme::Begin(ConsoleTheme::Color::Yellow)
         << company.GetExpenses()
-        << "\n";
+        << ConsoleTheme::End()
+        << ConsoleTheme::FormatLiteral("\n");
 
     std::cout
-        << "Balance:  $"
+        << ConsoleTheme::FormatLiteral("Balance:  $")
+        << ConsoleTheme::Begin(company.GetBalance() < 0.0
+            ? ConsoleTheme::Color::Red : ConsoleTheme::Color::Lime)
         << company.GetBalance()
-        << "\n";
+        << ConsoleTheme::End()
+        << ConsoleTheme::FormatLiteral("\n");
 
     if (company.GetBalance() < 0.0)
     {
         std::cout
-            << "Financial Status: NEGATIVE BALANCE\n";
+            << ConsoleTheme::FormatLiteral("Financial Status: NEGATIVE BALANCE\n");
     }
     else
     {
         std::cout
-            << "Financial Status: POSITIVE / BALANCED\n";
+            << ConsoleTheme::FormatLiteral("Financial Status: POSITIVE / BALANCED\n");
     }
 
     std::cout
@@ -471,12 +488,12 @@ void TruckzSimApp::ShowCompanyOverview() const
         << std::setprecision(6);
 
     std::cout
-        << "\nTRUCK LOCATIONS\n";
+        << ConsoleTheme::FormatLiteral("\nTRUCK LOCATIONS\n");
 
     if (company.GetTrucks().empty())
     {
         std::cout
-            << "No trucks have been added yet.\n";
+            << ConsoleTheme::FormatLiteral("No trucks have been added yet.\n");
     }
     else
     {
@@ -484,18 +501,18 @@ void TruckzSimApp::ShowCompanyOverview() const
             company.GetTrucks())
         {
             std::cout
-                << "Truck #"
+                << ConsoleTheme::FormatLiteral("Truck #")
                 << truck.GetUnitNumber()
-                << " - "
+                << ConsoleTheme::FormatLiteral(" - ")
                 << truck.GetCurrentLocation()
-                << " ["
-                << truck.GetStatus()
-                << "]\n";
+                << ConsoleTheme::FormatLiteral(" [")
+                << ConsoleTheme::Status(truck.GetStatus())
+                << ConsoleTheme::FormatLiteral("]\n");
         }
     }
 
     std::cout
-        << "================================================\n";
+        << ConsoleTheme::FormatLiteral("================================================\n");
 }
 
 void TruckzSimApp::Run()
@@ -518,7 +535,7 @@ void TruckzSimApp::Run()
                 11
             );
 
-        std::cout << "\n";
+        std::cout << ConsoleTheme::FormatLiteral("\n");
 
         switch (choice)
         {
@@ -578,8 +595,8 @@ void TruckzSimApp::Run()
                 validationIssues))
             {
                 std::cout
-                    << "Company save blocked because "
-                    << "system validation failed.\n";
+                    << ConsoleTheme::FormatLiteral("Company save blocked because ")
+                    << ConsoleTheme::FormatLiteral("system validation failed.\n");
 
                 for (std::size_t i = 0;
                     i < validationIssues.size();
@@ -587,9 +604,9 @@ void TruckzSimApp::Run()
                 {
                     std::cout
                         << (i + 1)
-                        << ". "
+                        << ConsoleTheme::FormatLiteral(". ")
                         << validationIssues[i]
-                        << "\n";
+                        << ConsoleTheme::FormatLiteral("\n");
                 }
 
                 break;
@@ -599,12 +616,12 @@ void TruckzSimApp::Run()
                 company))
             {
                 std::cout
-                    << "Company saved successfully.\n";
+                    << ConsoleTheme::FormatLiteral("Company saved successfully.\n");
             }
             else
             {
                 std::cout
-                    << "Unable to save company data.\n";
+                    << ConsoleTheme::FormatLiteral("Unable to save company data.\n");
             }
 
             break;
@@ -628,19 +645,19 @@ void TruckzSimApp::Run()
                 "saved automatically. (Y/N): "))
             {
                 std::cout
-                    << "Exiting TruckzSim...\n";
+                    << ConsoleTheme::FormatLiteral("Exiting TruckzSim...\n");
             }
             else
             {
                 choice = -1;
 
                 std::cout
-                    << "Exit cancelled. "
-                    << "Returning to the main menu.\n";
+                    << ConsoleTheme::FormatLiteral("Exit cancelled. ")
+                    << ConsoleTheme::FormatLiteral("Returning to the main menu.\n");
             }
             break;
         }
 
-        std::cout << "\n";
+        std::cout << ConsoleTheme::FormatLiteral("\n");
     }
 }
