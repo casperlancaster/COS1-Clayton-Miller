@@ -224,9 +224,73 @@ void FuelManager::RefuelTruck(
             "fuel amount"
         );
 
+    double gallonsToPurchase =
+        std::min(
+            requestedGallons,
+            availableSpace
+        );
+
+    double totalCost =
+        gallonsToPurchase *
+        FUEL_PRICE_PER_GALLON;
+
+    std::cout
+        << "\n========== REFUEL CONFIRMATION ==========\n";
+
+    std::cout
+        << "Truck: #"
+        << unitNumber
+        << "\n";
+
+    std::cout
+        << std::fixed
+        << std::setprecision(2);
+
+    std::cout
+        << "Gallons to Purchase: "
+        << gallonsToPurchase
+        << "\n";
+
+    std::cout
+        << "Fuel Price: $"
+        << FUEL_PRICE_PER_GALLON
+        << " per gallon\n";
+
+    std::cout
+        << "Total Fuel Cost: $"
+        << totalCost
+        << "\n";
+
+    std::cout
+        << "Company Balance Before Purchase: $"
+        << company.GetBalance()
+        << "\n";
+
+    std::cout
+        << "Projected Balance After Purchase: $"
+        << (company.GetBalance() - totalCost)
+        << "\n";
+
+    std::cout
+        << std::defaultfloat
+        << std::setprecision(6);
+
+    std::cout
+        << "=========================================\n";
+
+    if (!InputManager::ReadYesNo(
+        "Confirm fuel purchase? (Y/N): "))
+    {
+        std::cout
+            << "Refuel cancelled. "
+            << "No fuel was added and no expense was recorded.\n";
+
+        return;
+    }
+
     double gallonsAdded =
         selectedTruck->AddFuel(
-            requestedGallons
+            gallonsToPurchase
         );
 
     if (gallonsAdded <= 0.0)
@@ -236,10 +300,6 @@ void FuelManager::RefuelTruck(
 
         return;
     }
-
-    double totalCost =
-        gallonsAdded *
-        FUEL_PRICE_PER_GALLON;
 
     long long refuelTime =
         std::max(
@@ -340,8 +400,10 @@ void FuelManager::Run(
         ShowMenu();
 
         choice =
-            InputManager::ReadInt(
-                "Select an option: "
+            InputManager::ReadMenuChoice(
+                "Select an option: ",
+                0,
+                2
             );
 
         switch (choice)

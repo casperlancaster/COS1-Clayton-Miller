@@ -693,8 +693,10 @@ void DispatchCenter::Run(
         ShowMenu();
 
         choice =
-            InputManager::ReadInt(
-                "Select an option: "
+            InputManager::ReadMenuChoice(
+                "Select an option: ",
+                0,
+                3
             );
 
         switch (choice)
@@ -906,29 +908,16 @@ void DispatchCenter::Run(
                     break;
                 }
 
-                int teamChoice = -1;
+                bool tryTeam =
+                    InputManager::ReadYesNo(
+                        "Try a team operation? (Y/N): "
+                    );
 
-                while (teamChoice != 1 &&
-                    teamChoice != 2)
-                {
-                    teamChoice =
-                        InputManager::ReadInt(
-                            "Try a team operation? "
-                            "(1 = Yes, 2 = No): "
-                        );
-
-                    if (teamChoice != 1 &&
-                        teamChoice != 2)
-                    {
-                        std::cout
-                            << "Please enter 1 or 2.\n";
-                    }
-                }
-
-                if (teamChoice == 2)
+                if (!tryTeam)
                 {
                     std::cout
-                        << "Dispatch cancelled.\n";
+                        << "Dispatch cancelled. "
+                        << "No changes were made.\n";
 
                     break;
                 }
@@ -1151,6 +1140,85 @@ void DispatchCenter::Run(
                 << std::defaultfloat
                 << std::setprecision(6);
 
+            std::cout
+                << "\n========== DISPATCH CONFIRMATION ==========\n";
+
+            std::cout
+                << "Load: #"
+                << loadNumber
+                << " | "
+                << selectedLoad->GetOrigin()
+                << " -> "
+                << selectedLoad->GetDestination()
+                << "\n";
+
+            std::cout
+                << "Primary Driver: #"
+                << driverID
+                << " - "
+                << primaryDriver->GetName()
+                << "\n";
+
+            if (secondDriver != nullptr)
+            {
+                std::cout
+                    << "Team Driver: #"
+                    << secondDriverID
+                    << " - "
+                    << secondDriver->GetName()
+                    << "\n";
+            }
+
+            std::cout
+                << "Truck: #"
+                << truckUnitNumber
+                << "\n";
+
+            std::cout
+                << "Scheduled Start: "
+                << HOSManager::FormatDateTime(
+                    dispatchStart
+                )
+                << "\n";
+
+            std::cout
+                << "Estimated Delivery: "
+                << HOSManager::FormatDateTime(
+                    selectedPlan.estimatedDeliveryEpoch
+                )
+                << "\n";
+
+            std::cout
+                << std::fixed
+                << std::setprecision(2);
+
+            std::cout
+                << "Load Revenue: $"
+                << selectedLoad->GetPay()
+                << "\n";
+
+            std::cout
+                << "Estimated In-Trip Fuel Cost: $"
+                << plannedFuelCost
+                << "\n";
+
+            std::cout
+                << std::defaultfloat
+                << std::setprecision(6);
+
+            std::cout
+                << "==========================================\n";
+
+            if (!InputManager::ReadYesNo(
+                "Confirm dispatch? (Y/N): "))
+            {
+                std::cout
+                    << "Dispatch cancelled. "
+                    << "No changes were made.\n";
+
+                break;
+            }
+
             bool assigned =
                 dispatchManager.AssignLoad(
                     loadNumber,
@@ -1350,6 +1418,90 @@ void DispatchCenter::Run(
                 tripFuelCost =
                     tripFuelPurchased *
                     FUEL_PRICE_PER_GALLON;
+            }
+
+            std::cout
+                << "\n========== LOAD COMPLETION CONFIRMATION ==========\n";
+
+            std::cout
+                << "Load: #"
+                << loadNumber
+                << " | "
+                << selectedLoad->GetOrigin()
+                << " -> "
+                << selectedLoad->GetDestination()
+                << "\n";
+
+            std::cout
+                << "Truck: #"
+                << truckUnitNumber
+                << "\n";
+
+            std::cout
+                << "Primary Driver: #"
+                << primaryDriverID
+                << "\n";
+
+            if (secondDriverID > 0)
+            {
+                std::cout
+                    << "Team Driver: #"
+                    << secondDriverID
+                    << "\n";
+            }
+
+            std::cout
+                << "Simulated Delivery: "
+                << HOSManager::FormatDateTime(
+                    selectedLoad->
+                    GetEstimatedDeliveryEpoch()
+                )
+                << "\n";
+
+            std::cout
+                << std::fixed
+                << std::setprecision(2);
+
+            std::cout
+                << "Load Revenue: $"
+                << selectedLoad->GetPay()
+                << "\n";
+
+            std::cout
+                << "Trip Fuel Used: "
+                << tripFuelUsed
+                << " gallons\n";
+
+            std::cout
+                << "In-Trip Fuel Purchase: "
+                << tripFuelPurchased
+                << " gallons\n";
+
+            std::cout
+                << "In-Trip Fuel Cost: $"
+                << tripFuelCost
+                << "\n";
+
+            std::cout
+                << std::defaultfloat
+                << std::setprecision(6);
+
+            std::cout
+                << "Completing this load will update HOS, fuel, "
+                << "mileage, revenue, truck location, and may trigger "
+                << "a post-trip breakdown.\n";
+
+            std::cout
+                << "==================================================\n";
+
+            if (!InputManager::ReadYesNo(
+                "Confirm load completion? (Y/N): "))
+            {
+                std::cout
+                    << "Load completion cancelled. "
+                    << "No changes were made.\n";
+
+                break;
             }
 
             bool completed =

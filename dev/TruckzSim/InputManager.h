@@ -37,6 +37,10 @@ public:
         const std::string& prompt
     );
 
+    static bool ReadYesNo(
+        const std::string& prompt
+    );
+
 private:
     static std::string Trim(
         const std::string& input

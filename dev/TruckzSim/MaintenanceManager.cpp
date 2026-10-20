@@ -149,6 +149,50 @@ void MaintenanceManager::SendTruckToMaintenance(
             selectedTruck->GetAvailableAtEpoch()
         );
 
+    std::cout
+        << "\n========== MAINTENANCE CONFIRMATION ==========\n";
+
+    std::cout
+        << "Truck: #"
+        << unitNumber
+        << "\n";
+
+    std::cout
+        << "Current Mileage: "
+        << selectedTruck->GetMileage()
+        << "\n";
+
+    std::cout
+        << "Service Status: "
+        << (selectedTruck->IsMaintenanceDue()
+            ? "SERVICE DUE"
+            : "PREVENTIVE / EARLY")
+        << "\n";
+
+    std::cout
+        << "Maintenance Scheduled For: "
+        << HOSManager::FormatDateTime(
+            maintenanceStart
+        )
+        << "\n";
+
+    std::cout
+        << "The truck will become unavailable for dispatch "
+        << "until maintenance is completed.\n";
+
+    std::cout
+        << "==============================================\n";
+
+    if (!InputManager::ReadYesNo(
+        "Send this truck to maintenance? (Y/N): "))
+    {
+        std::cout
+            << "Maintenance request cancelled. "
+            << "Truck status was not changed.\n";
+
+        return;
+    }
+
     selectedTruck->SetStatus("Maintenance");
 
     std::cout << "\nTruck #" << unitNumber
@@ -233,6 +277,57 @@ void MaintenanceManager::CompleteTruckMaintenance(
             selectedTruck->GetAvailableAtEpoch()
         );
 
+    std::cout
+        << "\n========== SERVICE COMPLETION CONFIRMATION ==========\n";
+
+    std::cout
+        << "Truck: #"
+        << unitNumber
+        << "\n";
+
+    std::cout
+        << "Service Time: "
+        << HOSManager::FormatDateTime(
+            maintenanceTime
+        )
+        << "\n";
+
+    std::cout
+        << std::fixed
+        << std::setprecision(2);
+
+    std::cout
+        << "Service Cost: $"
+        << SERVICE_COST
+        << "\n";
+
+    std::cout
+        << "Company Balance Before Service: $"
+        << company.GetBalance()
+        << "\n";
+
+    std::cout
+        << "Projected Balance After Service: $"
+        << (company.GetBalance() - SERVICE_COST)
+        << "\n";
+
+    std::cout
+        << std::defaultfloat
+        << std::setprecision(6);
+
+    std::cout
+        << "====================================================\n";
+
+    if (!InputManager::ReadYesNo(
+        "Complete maintenance and record the service expense? (Y/N): "))
+    {
+        std::cout
+            << "Maintenance completion cancelled. "
+            << "The truck remains in maintenance and no expense was recorded.\n";
+
+        return;
+    }
+
     selectedTruck->CompleteMaintenance();
 
     FinancialTransaction maintenanceTransaction;
@@ -290,7 +385,12 @@ void MaintenanceManager::Run(Company& company)
     while (choice != 0)
     {
         ShowMenu();
-        choice = InputManager::ReadInt("Select an option: ");
+        choice =
+            InputManager::ReadMenuChoice(
+                "Select an option: ",
+                0,
+                3
+            );
 
         switch (choice)
         {

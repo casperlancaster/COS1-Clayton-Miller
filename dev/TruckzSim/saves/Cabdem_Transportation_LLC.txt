@@ -6,8 +6,8 @@ TRUCKZSIM_SAVE_V8
 501 51650 "Available" 50000 10000 200 100 7 0 0 "" 0 0 0 0 "Unknown"
 270 100140 "Available" 100140 10000 200 180 7 1792492579 0 "" 0 0 0 0 "Omaha, NE"
 3
-501 "Solo Driver" "Available" 3 0 0
-502 "Team Driver" "Available" 0 0 0
+501 "Solo Driver" "Available" 11 0 1792503956
+502 "Team Driver" "Available" 11 0 1792503931
 270 "Location Driver" "Available" 8.454545454545455 0 1792474579
 2
 501 "Des Moines, IA" "Miami, FL" 1650 6000 "Completed" 501 501 502 1792587600 1792436725 1792544725

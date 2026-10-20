@@ -625,8 +625,21 @@ void TruckzSimApp::Run()
             break;
 
         case 0:
-            std::cout
-                << "Exiting TruckzSim...\n";
+            if (InputManager::ReadYesNo(
+                "Exit TruckzSim? Unsaved changes are not "
+                "saved automatically. (Y/N): "))
+            {
+                std::cout
+                    << "Exiting TruckzSim...\n";
+            }
+            else
+            {
+                choice = -1;
+
+                std::cout
+                    << "Exit cancelled. "
+                    << "Returning to the main menu.\n";
+            }
             break;
         }
 

@@ -309,6 +309,26 @@ void SettingsManager::EditTruck(
                     "unit number"
                 );
 
+            std::cout
+                << "\nTruck Unit Number Change\n"
+                << "Current: #"
+                << oldUnitNumber
+                << "\n"
+                << "New: #"
+                << newUnitNumber
+                << "\n"
+                << "Existing load and financial references "
+                << "will also be updated.\n";
+
+            if (!InputManager::ReadYesNo(
+                "Confirm unit number change? (Y/N): "))
+            {
+                std::cout
+                    << "Truck unit number change cancelled.\n";
+
+                continue;
+            }
+
             if (company.ChangeTruckUnitNumber(
                 oldUnitNumber,
                 newUnitNumber))
@@ -535,6 +555,26 @@ void SettingsManager::EditDriver(
                     "driver ID"
                 );
 
+            std::cout
+                << "\nDriver ID Change\n"
+                << "Current: #"
+                << oldDriverID
+                << "\n"
+                << "New: #"
+                << newDriverID
+                << "\n"
+                << "Existing load and financial references "
+                << "will also be updated.\n";
+
+            if (!InputManager::ReadYesNo(
+                "Confirm Driver ID change? (Y/N): "))
+            {
+                std::cout
+                    << "Driver ID change cancelled.\n";
+
+                continue;
+            }
+
             if (company.ChangeDriverID(
                 oldDriverID,
                 newDriverID))
@@ -668,6 +708,26 @@ void SettingsManager::EditLoad(
                     "Enter new load number: ",
                     "load number"
                 );
+
+            std::cout
+                << "\nLoad Number Change\n"
+                << "Current: #"
+                << oldLoadNumber
+                << "\n"
+                << "New: #"
+                << newLoadNumber
+                << "\n"
+                << "Existing financial references will also "
+                << "be updated.\n";
+
+            if (!InputManager::ReadYesNo(
+                "Confirm load number change? (Y/N): "))
+            {
+                std::cout
+                    << "Load number change cancelled.\n";
+
+                continue;
+            }
 
             if (company.ChangeLoadNumber(
                 oldLoadNumber,

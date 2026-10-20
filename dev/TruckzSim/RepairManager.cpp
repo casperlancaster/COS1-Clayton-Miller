@@ -376,6 +376,84 @@ void RepairManager::RepairTruck(
         repairStart +
         repairSeconds;
 
+    std::cout
+        << "\n========== REPAIR CONFIRMATION ==========\n";
+
+    std::cout
+        << "Truck: #"
+        << unitNumber
+        << "\n";
+
+    std::cout
+        << "Repair: "
+        << repairType
+        << "\n";
+
+    std::cout
+        << std::fixed
+        << std::setprecision(2);
+
+    std::cout
+        << "Parts: $"
+        << partsCost
+        << "\n";
+
+    std::cout
+        << "Labor: $"
+        << laborCost
+        << "\n";
+
+    std::cout
+        << "Service Call: $"
+        << serviceCallCharge
+        << "\n";
+
+    std::cout
+        << "Total Repair Expense: $"
+        << totalCost
+        << "\n";
+
+    std::cout
+        << "Company Balance Before Repair: $"
+        << company.GetBalance()
+        << "\n";
+
+    std::cout
+        << "Projected Balance After Repair: $"
+        << (company.GetBalance() - totalCost)
+        << "\n";
+
+    std::cout
+        << std::defaultfloat
+        << std::setprecision(6);
+
+    std::cout
+        << "Repair Start: "
+        << HOSManager::FormatDateTime(
+            repairStart
+        )
+        << "\n";
+
+    std::cout
+        << "Estimated Completion: "
+        << HOSManager::FormatDateTime(
+            repairComplete
+        )
+        << "\n";
+
+    std::cout
+        << "=========================================\n";
+
+    if (!InputManager::ReadYesNo(
+        "Authorize this repair? (Y/N): "))
+    {
+        std::cout
+            << "Repair cancelled. "
+            << "The truck remains in Breakdown status and no expense was recorded.\n";
+
+        return;
+    }
+
     FinancialTransaction repairTransaction;
 
     repairTransaction.transactionEpoch =
@@ -521,8 +599,10 @@ void RepairManager::Run(
         ShowMenu();
 
         choice =
-            InputManager::ReadInt(
-                "Select an option: "
+            InputManager::ReadMenuChoice(
+                "Select an option: ",
+                0,
+                2
             );
 
         switch (choice)

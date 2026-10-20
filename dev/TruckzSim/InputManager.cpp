@@ -1,6 +1,5 @@
 #include "InputManager.h"
 
-#include <cctype>
 #include <cmath>
 #include <iostream>
 
@@ -10,9 +9,10 @@ std::string InputManager::Trim(
     std::size_t start = 0;
 
     while (start < input.size() &&
-        std::isspace(
-            static_cast<unsigned char>(
-                input[start])))
+        (input[start] == ' ' ||
+            input[start] == '\t' ||
+            input[start] == '\n' ||
+            input[start] == '\r'))
     {
         start++;
     }
@@ -21,9 +21,10 @@ std::string InputManager::Trim(
         input.size();
 
     while (end > start &&
-        std::isspace(
-            static_cast<unsigned char>(
-                input[end - 1])))
+        (input[end - 1] == ' ' ||
+            input[end - 1] == '\t' ||
+            input[end - 1] == '\n' ||
+            input[end - 1] == '\r'))
     {
         end--;
     }
@@ -294,8 +295,7 @@ double InputManager::ReadCurrency(
                 payInput
             );
 
-        for (char character :
-        payInput)
+        for (char character : payInput)
         {
             if (character != ',' &&
                 character != '$')
@@ -316,5 +316,48 @@ double InputManager::ReadCurrency(
         std::cout
             << "Invalid load pay. "
             << "Please enter an amount greater than 0.\n";
+    }
+}
+
+bool InputManager::ReadYesNo(
+    const std::string& prompt)
+{
+    while (true)
+    {
+        std::string input;
+
+        std::cout << prompt;
+
+        std::getline(
+            std::cin,
+            input
+        );
+
+        input =
+            Trim(
+                input
+            );
+
+        if (input == "y" ||
+            input == "Y" ||
+            input == "yes" ||
+            input == "Yes" ||
+            input == "YES")
+        {
+            return true;
+        }
+
+        if (input == "n" ||
+            input == "N" ||
+            input == "no" ||
+            input == "No" ||
+            input == "NO")
+        {
+            return false;
+        }
+
+        std::cout
+            << "Invalid response. "
+            << "Please enter Y/Yes or N/No.\n";
     }
 }
